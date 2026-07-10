@@ -11,6 +11,8 @@
 
 ## 2. What the draft missed from the interrogator repo
 
+> **Reading note (owner direction, 2026-07-10):** everything below is *evidence and overlap-awareness*, not binding precedent. The build is requirements-first (PLAN §0.1); only the contract artifacts (USR facets, wire/command contract, the #7 integration checkpoint) bind. Prototype implementation details inform, and are otherwise free to be discarded.
+
 1. **The PCB gate already has a definition of done — issue #7.** Exit KPIs: e2e re-validated on PCB, binary IDL (ADR-0004) live with text debug mode, diagnostics re-run vs breadboard golden baseline with no regression, PLAN §7.10 latency budget met. The plan's phases now terminate on these KPIs instead of a generic "production-ready package."
 2. **The electrical architecture was already researched upstream — PLAN §7.5.3.18.** Parallel buses with concurrency per bus, VL53L8CX+BNO085 → SPI+DMA, INT-driven acquisition with FIFO watermarks, GPS-PPS input-capture timestamping, mux off the critical path, I3C deferred to v2, MCU candidate list. The draft's pipeline focused on EDA mechanics and skipped that the *electrical* answer largely exists; the plan adopts §7.5.3.18 wholesale.
 3. **A device profile view (#123) is the per-instance placement contract** (which sensor on which bus at which address) — distinct from the per-type records. The v1 board must *instantiate* a device profile, not invent its own table.

@@ -14,9 +14,13 @@ Hardware design repo for the [Reality Interrogator](https://github.com/Dustin21/
 - Heavy binaries (footprints, 3D models, gerbers, renders) live **here via Git LFS**, referenced by `{asset_id, version, sha256}` — the same AssetPin discipline as datasheets.
 - This repo's CI = ERC/DRC (`kicad-cli`), asset-checksum, and contract-pin drift checks. Upstream CI (pytest/contract) is untouched.
 
+## Design stance
+
+**Requirements-first, clean sheet** ([`PLAN.md`](PLAN.md) §0.1): the upstream *contract* binds (registry facets, wire/command contract); the breadboard *prototype* does not (board split, modules, mux topology, pinmaps are evidence, not constraints). Firmware accommodations are the upstream project's work; this repo publishes the interface requirements.
+
 ## Definition of done for the v1 board
 
-The upstream **PCB Gate — [interrogator#7](https://github.com/Dustin21/interrogator/issues/7)**: e2e loop re-validated on PCB · binary IDL live with text debug mode · diagnostics re-run with no regression vs the breadboard golden baseline · PLAN §7.10 latency budget met.
+(a) The owner's spec scorecard (PLAN §1, R1–R12) against the built device; then (b) the joint integration milestone — the upstream **PCB Gate, [interrogator#7](https://github.com/Dustin21/interrogator/issues/7)**: e2e re-validated on PCB · binary IDL live with text debug mode · diagnostics no-regression vs the breadboard golden baseline · latency budget met.
 
 ## Layout (will grow per PLAN.md §7 phases)
 
