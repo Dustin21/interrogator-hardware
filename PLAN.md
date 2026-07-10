@@ -96,7 +96,7 @@ Upstream already researched what a PCB should change relative to the breadboard;
 
 1. **The Unified Sensor Registry (USR, ADR-0013) is the single source of truth** for per-sensor identity, electrical, mechanical, and asset facts. This repo **consumes** `shared/schemas/sensors/*.yaml` — pinned, never copied. Mechanism: **git submodule pinned to a reviewed SHA** (or a vendored, checksummed snapshot with the pin recorded), bumped only by explicit PR.
 2. **What we bind to (read-only):** `facets.electrical` (bus, i2c_addresses, logic_level_v, relay), `facets.mechanical` (footprint_ref, dimensions_mm), `assets` pins (datasheet/cad_footprint/model_3d with rev + sha256). Per-instance placement (bus assignment, address, board) binds to the **device profile (#123)** view, which the PCB v1 profile will instantiate.
-3. **Single-writer stays upstream.** Registry facets are `pending` today (electrical facts knowingly inconsistent across inventory CSV / build docs / contract.py — USR-3 is the resolution task, owner: embedded-SME; mechanical owner: pcb). This repo **drafts resolution packets** (per-sensor electrical/mechanical fact sheets with datasheet citations) as PR-ready proposals, but **the owner applies them upstream** — we never write into `interrogator`.
+3. **Change flow (ratified 2026-07-10): hardware originates, interrogator ingests.** Sensor changes are *decided in this project*; once the PCB/device rev is approved, the delta ships downstream as an **ingest package** (USR record drafts, electrical/mechanical facets with datasheet citations, AssetPins, interface-requirements delta) that firmware + the interrogator repo ingest and update. Single-writer discipline is preserved — this repo produces PR-ready packages, the owner lands them upstream; we never write into `interrogator` directly. The same mechanism resolves today's `pending`/inconsistent electrical facets (USR-3).
 4. **AssetPin discipline extends to everything heavy here:** datasheets already live in `registry_assets/<SENSOR>/{datasheet,schematics,standards}` (14 parts populated; only BMV080 has a STEP today). Footprints, symbols, 3D models, gerbers, renders live in **this repo via Git LFS**, each referenced by `{asset_id, version/rev, sha256}`. An upstream asset rev-bump reopens the citing facets and (by CI tripwire) flags the affected board areas — the anti-drift loop.
 5. **Cadence separation:** upstream CI = pytest/contract; this repo's CI = ERC/DRC/asset-checksum/fab-output checks (§6.4). The PCB is "just another registry consumer."
 6. **Firmware co-changes** (binary IDL, ESP-IDF port, INT-driven acquisition) are upstream work items; this plan flags them as cross-repo dependencies at each phase boundary rather than absorbing them.
@@ -171,7 +171,11 @@ The 16 registered types are the **capability baseline**, not a BOM of breakouts.
 | Radiation | **BG51-class solid-state detector (raw, not the carrier board)** | evaluate current solid-state alternatives at H1 |
 | Camera (if D7 = yes) | raw sensor + FPC connector into the app MCU's CSI/DVP | not a dev-board camera |
 
-Additions come from the gap register + market scan (the "new sensor ships → we ship" loop). Every selected part gets a USR record upstream (new/updated) **before** it enters the schematic — the contract stays the single source of truth, and interrogator's firmware follows our interface doc.
+Additions come from the gap register + market scan (the "new sensor ships → we ship" loop), following the **ratified change flow (owner decision 2026-07-10):**
+
+> **1. Sensor change decided** (added / removed / updated) — here, in this project · **2. PCB + device designed and approved** — the pipeline regenerates the board rev; owner approves · **3. Firmware + interrogator repo ingest and update** — the approved sensor delta ships downstream as an ingest package (USR record drafts, electrical/mechanical facets, AssetPins, interface-requirements delta), interrogator updates its registry/firmware to match, and the backend stacks on top.
+
+Hardware originates sensor changes; the registry remains the system's single source of sensor truth by *ingesting* each approved change — it never blocks the design, and nothing here waits on upstream to decide.
 
 ### 5.8 Dynamic boundary co-optimization (R4 — the sizing method, from the brief)
 Board size is elastic, not preset: baseline floor area = sum of component courtyards + a layout clearance multiplier (~40 % starting point, tuned per zone — analog and RF zones need more, digital less). When placement/routing fails inside the boundary, escalate in order: **Z-axis lever** (4 → 6 → 8 layers; JLCPCB through-via + POFV keeps this cheap) before **XY lever** (grow unconstrained edges in 0.5 mm steps). The final envelope — outline, max component heights top/bottom, keepouts — exports as STEP and *defines the chassis* (§5.6 apertures wrap around it). The phone-attach question (D7) is answered by this output, not assumed.
@@ -204,8 +208,8 @@ Because this is a product, not a lab board:
 ### 6.2 Trust boundaries (explicit)
 Automated & trusted: BOM/sourcing, contract-derived netlist data, ERC/DRC loops, fab packaging, STEP export, checksum tripwires. AI-assisted with human sign-off: schematic review, placement suggestions, fix proposals, datasheet cross-checks. Human-only: footprint promotion to E1, critical-net routing, final fab release, anything touching safety (battery, laser, UV).
 
-### 6.3 Regeneration promise (R12)
-A sensor swap = new USR record upstream → pin bump here → stages 1–2 regenerate the delta automatically → stages 3–7 replay on the delta inside the frozen envelope. Measured goal: **sensor-swap respin in ≤2 human-days of touch time** by v2.
+### 6.3 Regeneration promise (R12) — implements the ratified change flow
+A sensor change is **decided here** → stages 1–2 regenerate the delta (facts, library, netlist skeleton) → stages 3–7 replay on the delta inside the frozen envelope → **owner approves the board/device rev** → the approved delta ships downstream as the ingest package (USR records, facets, AssetPins, interface delta) for **firmware + interrogator to ingest and update**. Measured goal: **sensor-swap respin in ≤2 human-days of touch time** by v2.
 
 ### 6.4 CI (this repo)
 On PR: ERC/DRC (kicad-cli, JSON artifacts), AssetPin checksum verification, contract-pin drift check (fails if upstream SHA moved without a pin PR), fab-output regeneration diff, LFS integrity. Releases: tagged fab packages with full provenance (contract SHA + asset checksums + toolchain versions).
