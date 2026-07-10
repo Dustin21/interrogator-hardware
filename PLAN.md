@@ -14,13 +14,13 @@ Design, fabricate, and bring up the **first custom PCB ("v1 board") plus chassis
 **In scope here:** PCB architecture, schematic, layout, fab/assembly packages, footprint/3D asset library, enclosure co-design, bring-up plan, the EDA automation pipeline and its CI.
 **Out of scope here (lives upstream in `interrogator`):** firmware, the sensor registry and all facet YAMLs, diagnostics/conformance, backend, semantics, regulatory validation content. The hardware repo is *a consumer* of the upstream contract — never a fork of it. Firmware changes needed to accommodate this board (binary IDL, INT-driven acquisition, ESP-IDF or other port) are **upstream work owned by the separate interrogator project**; this repo publishes the interface requirements they build against.
 
-### 0.1 Design stance — requirements-first, not prototype-first
+### 0.1 Design stance — commercial hardware, clean sheet, chip-down
 
-This is a **clean-sheet design to the owner's spec (§1), not an evolution of the breadboard**. The interrogator prototype is treated as two different things, and the distinction is load-bearing:
+This is the **commercial device, designed from scratch to the owner's spec (§1)**. Raw sensor silicon on our own board — no breakouts, no dev-modules-as-components, no breadboard heritage. Modules are used only where that is the *commercially correct* engineering choice (pre-certified radio to keep the intentional-radiator cert path modular; GNSS module class where an antenna-integrated part wins on performance/cert). The plan takes positions (a recommended reference architecture, §5.1) based on independent analysis of the spec; H1 exists to *validate* those positions on eval hardware, not to reopen everything.
 
-**Binding (the overlap we must mind):** the USR contract (per-sensor electrical/mechanical facets + AssetPins + device-profile view), the wire/record + command contract the device must speak, the diagnostics/no-regression machinery we'll re-validate against, and the PCB Gate (#7) as the *integration checkpoint* where the new board is accepted into the system.
+**The interrogator repo's role here is narrow:** it supplies the sensor-truth contract (USR facets + AssetPins + device profile) and the data/command semantics the device must ultimately speak — and **interrogator adapts to this design**, not the reverse. Firmware accommodations (new MCU port, binary IDL, INT-driven acquisition) are the upstream project's work against the interface-requirements doc we publish at H1. The PCB Gate (#7) remains the later *integration checkpoint*, not a design constraint.
 
-**Evidence, not constraint (free to discard):** the three-board split, XIAO modules, the PCA9548A single-mux topology, Perma-Proto pinmaps, the prototype's power tree, the repo's interim PCB size target, and any breakout-board-era workaround. Bench lessons (§2.5) carry over only where they encode *physics and protocol reality* (I²C lockup modes, thermal cross-talk, address collisions, pull-up budgets) — those hold for any implementation. Where the true hardware makes a prototype convention obsolete, the new design wins and the delta is flagged upstream as an interface requirement, not absorbed as a compromise here.
+**Explicitly non-binding:** the three-board split, XIAO/any dev modules, the PCA9548A mux topology, prototype pinmaps, its power tree, and interim size targets. Bench lessons (§2.5) carry over only where they encode physics and protocol reality (I²C lockup modes, thermal cross-talk, address collisions, pull-up budgets) — those hold for any implementation.
 
 ## 1. Requirements (from the owner brief, reconciled with repo reality)
 
@@ -36,7 +36,7 @@ This is a **clean-sheet design to the owner's spec (§1), not an evolution of th
 | R8 | Contact / air-entry / liquid-entry / internal sensor classes | Exposure classes defined per sensor in §5.6; microfluidics is **deferred upstream** (PLAN Stage 16–17) → liquid path is a chassis *provision* (port + volume reservation), not populated in v1. |
 | R9 | Right medium → right sensor; minimize interaction effects | Zoning + EMI/thermal rules from bench lessons (§5.5); data-quality flags (`motors_active` etc.) already in the record contract. |
 | R10 | Regulated posture: wellness-only claims until validated | Matches upstream: capability-coverage ratifies `body-physiological` as **wellness-only**; ship-gate #10 requires a per-modality privacy/regulatory pack (SEM-5/#54). Hardware side: laser class 1 (BMV080), UV-LED eye-safety, skin-contact material safety. |
-| R11 | MCU syncs+streams all sensors comfortably; on-device AI nice-to-have | MCU selection is an **open trade study (D1, §9)** driven by this spec — bus/DMA count, timestamping hardware, power, NPU/on-device-AI headroom — not by prototype continuity. On-device AI is a scored criterion, not a v1 gate. |
+| R11 | MCU syncs+streams all sensors comfortably; on-device AI nice-to-have | Answered by the §5.1 reference architecture: NPU-class application MCU (STM32N6 primary candidate) gives real on-device-AI headroom + the bus/DMA/timestamping fabric; always-on sentinel domain covers ambient. H1 eval-kit spike validates before freeze (D1/D2). |
 | R12 | Pipeline regenerates ship-ready state when sensors change | §6 — but with 2026-realistic trust boundaries: automated BOM/netlist/ERC/DRC/fab-export; human-owned placement and critical routing. "Zero-touch ship-ready" is not achievable today and is not claimed. |
 
 ## 2. Evidence base — what exists today (context and inputs, **not constraints** — see §0.1)
@@ -117,8 +117,15 @@ Full detail + sources in [`docs/draft-review.md`](docs/draft-review.md). The dec
 
 ## 5. Target v1 hardware architecture
 
-### 5.1 Compute
-**One main PCB, clean sheet.** The compute architecture comes out of the H1 trade study (D1/D2), scored against the spec: sync + parallel streaming of the full sensor set with headroom toward R1's growth path, hardware timestamping (input capture / PPS), DMA-capable bus count, an always-on low-power sentinel domain (µA–mA class ambient monitoring so R3 is reachable), radio needs, on-device-AI headroom (NPU/vector — e.g. ESP32-P4, STM32N6, i.MX RT, nRF54 class parts), toolchain maturity, and supply. Candidate patterns to score — not defaults: (a) single big MCU with integrated low-power domain; (b) big MCU + tiny always-on companion (the prototype's split is *one instance* of this pattern, not a requirement to preserve); (c) SoM/module vs chip-down for the radio + certification question. Whatever wins defines the interface requirements handed upstream for the firmware port.
+### 5.1 Compute — recommended reference architecture (position taken; H1 validates on eval kits)
+
+**Two-domain architecture on one board.** The spec pulls in two opposite directions — burst compute for parallel multi-sensor streaming + on-device AI (R7, R11), and week-scale always-on ambient vigilance inside an 8 h+ active budget (R3). No single 2026 MCU is best at both; a two-domain design is the honest answer, and it also cleanly implements "AI decides what runs" (R7) as hardware power domains.
+
+**Application domain — primary candidate: STM32N6 class** (Cortex-M55 ~800 MHz + Neural-ART NPU, MIPI-CSI camera pipeline, USB-HS, rich I²C/I3C/SPI+DMA set, hardware timers for input-capture timestamping). Rationale against the spec: the NPU gives real on-device AI headroom (R11) instead of "maybe later"; native I3C is the R1 growth path (dynamic addressing kills the address-collision class entirely); the integrated ISP makes the camera decision (D7) a stuff-option rather than an architecture fork. **Fallback: NXP i.MX RT1170 class** (mature, 6×I²C + 6×SPI + eDMA — the widest bus fabric in the segment) if N6 toolchain/supply disappoints at H1. **Cost-down option: ESP32-P4** (native I3C, cheap; weaker AI story, no radio). The application domain sleeps in ambient mode and is woken by the sentinel on triggers or user intent.
+
+**Sentinel + connectivity domain — pre-certified BLE module, nRF54L15 class.** Always-on at µA–mA: radiation pulse counting, capacitive touch wake, battery/fuel-gauge supervision, haptic + glow control, BLE link, RTC hold, and power-domain sequencing for everything else. Using a **pre-certified module** here is the deliberate commercial choice: the intentional-radiator (FCC/ISED/CE-RED) burden stays modular instead of forcing full radio certification of our board. Wi-Fi burst offload (if the H1 bandwidth analysis demands more than BLE + USB-C) is likewise a pre-certified companion module, added only on evidence.
+
+This is pattern (b) — big MCU + always-on companion — chosen from first principles (power physics + certification economics), not inherited. D1/D2 record the owner's ratification; H1 spikes both candidates on eval kits against the streaming + timestamping + power targets before schematic freeze.
 
 ### 5.2 Buses
 Candidate topology (from §2.4 evidence, confirmed or amended at H1): high-rate sensors on SPI+DMA with INT lines; remaining I²C split across ≥2 controllers with per-segment isolation; address-colliding parts resolved by bus assignment/straps rather than a monolithic mux; calculated pull-up budget per segment; per-segment load switches for fault isolation and power gating (this is also how "why stream fluidic if there's no fluid around" becomes hardware: the AI layer can power/clock-gate whole sensor domains). If the H1 MCU choice brings mature I3C, it may enter v1 rather than v2. Reserve: one spare expansion segment (I²C/I3C + power + INT) for future sensors (R6 headroom).
@@ -141,14 +148,45 @@ Quiet Nose (camera, spectral, optical windows) — Brain Middle (MCUs, buses, IM
 - **Sky window**: GNSS antenna.
 - **Feedback**: NeoPixel light-pipe ring/zones for the "twinkling stars" per-sensor activity glow + haptic — the subtle-glow shell from sketch 2.
 
-### 5.7 Sensor selection is re-opened for v1 (not inherited)
-The 16 registered types are the **candidate set**, not the final BOM. H1 re-validates each against the spec: regulated/health-grade preference (R10), bare-die/LGA package availability (we design chip-down, not breakouts), power per orthogonal bit of information, and 2026 market successors (e.g. the PPG front-end and PM sensor classes move fast; the gap register drives additions). Deltas are proposed upstream as new/updated USR records first — the contract stays the single source of truth — then flow into H2 via the pipeline.
+### 5.7 Sensor BOM — raw silicon, chip-down (breakout parts are dead)
+The 16 registered types are the **capability baseline**, not a BOM of breakouts. Every channel is re-sourced as raw silicon on our board; H1 confirms packages/successors from the datasheets in `registry_assets` (land patterns and dimensions get pinned there — no dimension is asserted here without a datasheet citation):
+
+| Capability | Chip-down part (position) | Note |
+|---|---|---|
+| Gas/T/RH/P | **BME688** (LGA) | direct solder; keep out of thermal plume |
+| VOC/NOx | **SGP41** (DFN) | co-located in air path |
+| PM2.5 | **BMV080** (solderable miniature unit) | smallest PM sensor extant; free-air window is a chassis feature |
+| Thermal imaging | **AMG8833** (SMD) | evaluate higher-res successors at H1 (32×24 class) if power/price fit |
+| PPG (HR/SpO₂) | **MAX30102EFD** (OLGA) | per the brief; evaluate current ADI/ams successors for regulated-grade optical front end (R10) |
+| ToF depth 8×8 | **VL53L8CX** (LGA) | strap interface-select in copper; SPI mode per §5.2 |
+| Visible spectral | **AS7343** (OLGA) | |
+| UV A/B/C | **AS7331** (OLGA) | direct/quartz aperture (UV-C) |
+| NIR spectral | **AS7263** (LGA) | + NIR LED |
+| IMU 9-DoF | **BNO085** (LGA) | INT wired; vibration-isolated mount zone |
+| 3D magnetics | **TMAG5273** (SOT-23) | trivially chip-down |
+| Precision analog | **re-evaluate ADS1115** | the application MCU's own ADCs may absorb this; keep an external Δ-Σ ADC only if the RF-power (AD8317) / piezo chains demand it |
+| 60 GHz radar | **Acconeer A121 (raw, antenna-in-package)** — not the XM125 module | AiP makes chip-down feasible; RF keepout + radome per datasheet |
+| GNSS | **antenna-integrated module class (u-blox MIA/NEO-M9/M10)** | module is the correct commercial choice here (RF + antenna certification/performance); exact part at H1 |
+| Touch | **MPR121 (QFN) or MCU-native cap-touch** | sentinel MCU class has capable touch peripherals — absorb if electrode count allows (fewer parts, lower ambient power) |
+| Radiation | **BG51-class solid-state detector (raw, not the carrier board)** | evaluate current solid-state alternatives at H1 |
+| Camera (if D7 = yes) | raw sensor + FPC connector into the app MCU's CSI/DVP | not a dev-board camera |
+
+Additions come from the gap register + market scan (the "new sensor ships → we ship" loop). Every selected part gets a USR record upstream (new/updated) **before** it enters the schematic — the contract stays the single source of truth, and interrogator's firmware follows our interface doc.
 
 ### 5.8 Dynamic boundary co-optimization (R4 — the sizing method, from the brief)
 Board size is elastic, not preset: baseline floor area = sum of component courtyards + a layout clearance multiplier (~40 % starting point, tuned per zone — analog and RF zones need more, digital less). When placement/routing fails inside the boundary, escalate in order: **Z-axis lever** (4 → 6 → 8 layers; JLCPCB through-via + POFV keeps this cheap) before **XY lever** (grow unconstrained edges in 0.5 mm steps). The final envelope — outline, max component heights top/bottom, keepouts — exports as STEP and *defines the chassis* (§5.6 apertures wrap around it). The phone-attach question (D7) is answered by this output, not assumed.
 
 ### 5.9 Modularity mechanism (R6)
 v1 modularity = **contract-driven regeneration + frozen chassis interface**: (a) board outline, mounting bosses, connector positions, and the aperture plate geometry are frozen after H5; (b) sensor churn re-enters at H2 with the pipeline regenerating schematic/layout deltas inside the frozen envelope; (c) the aperture plate (the one part that must physically change when an exposed sensor changes) is a cheap, replaceable, separately-versioned part. Physical plug-in sensor modules (mezzanine/flex) are a v2 study item (D6) — they cost density, which is the primary v1 constraint.
+
+### 5.10 Commercial-grade requirements (new — DFM/DFT/certification/production)
+
+Because this is a product, not a lab board:
+
+- **Certification path (W-CERT):** unintentional radiator EMC (FCC Part 15B / CE-EMC / ISED) planned from H1 — pre-scan at H4 on the first spin; intentional-radiator scope kept inside pre-certified radio modules (§5.1); BMV080 laser class 1 carried; UV-LED photobiological safety (IEC 62471) with hardware interlock; skin-contact materials biocompat considerations at H5; battery system to IEC 62133-class expectations (protected cell + protection circuitry + fuel gauge + thermal cutoff); RoHS/REACH-compatible BOM from the start.
+- **DFM/DFT:** design against the chosen fab/assembly class from day one (JLCPCB 6–8-layer + POFV baseline, D3); paneling with fiducials + tooling; controlled-impedance stackup documented; **test points on every rail and every bus**; a bring-up/test header (SWD/JTAG via tag-connect footprint, UART console); per-domain current-measurement shunt points (this is how the R3 power budget gets *measured*, not estimated); DNP options for camera + Wi-Fi companion so one layout serves both D7 outcomes.
+- **Production programming + identity:** flash/provision path (SWD gang or bootloader), per-unit serial + device identity (the sentinel MCU class carries crypto/KeyStore for later fleet mTLS — matches upstream's P1+ security posture without binding to it).
+- **Serviceability:** actuators (fan/pump/valve — the only wear parts, R2) on a replaceable sub-assembly path; battery replaceable without board rework.
 
 ## 6. The design pipeline (closed-loop, human-gated)
 
@@ -177,7 +215,7 @@ On PR: ERC/DRC (kicad-cli, JSON artifacts), AssetPin checksum verification, cont
 | Phase | Content | Exit criteria |
 |---|---|---|
 | **H0 — Foundations** (~1–2 wk) | Repo scaffold (this PR); toolchain pin (KiCad 10.0.x, kicad-cli CI container); submodule/pin mechanism to `interrogator`; LFS; stage-1 contract-ingest script; **draft USR-3 electrical resolution packets** for the candidate set (PR-ready for upstream); kick D1–D6 decision spikes | CI green on empty board; ingest script emits the IO map from pinned records; resolution packets delivered upstream |
-| **H1 — Architecture lock** (~2–3 wk) | Compute trade study (D1/D2) scored against the spec; **sensor-set re-validation (§5.7)** incl. successor parts + chip-down packages; bus topology (candidate = §2.4, confirmed/amended); power tree + **power budget table vs R3**; block diagram; layer stack + fab capability freeze (D3); battery/cell choice (D4); interface-requirements doc handed to the upstream firmware project | Owner ratifies architecture doc + budget + v1 sensor set; upstream electrical facets `approved` for the ratified set |
+| **H1 — Architecture validation** (~2–3 wk) | Eval-kit spikes validating the §5.1 reference architecture (streaming + timestamping + sentinel power); **chip-down BOM confirmation (§5.7)** incl. successor parts, from `registry_assets` datasheets; bus topology finalized; power tree + **measured-basis power budget vs R3**; block diagram; layer stack + fab class freeze (D3); battery/cell choice (D4); certification plan v0 (W-CERT); **interface-requirements doc → upstream firmware project** | Owner ratifies architecture + budget + v1 BOM; upstream electrical facets `approved` for the ratified set |
 | **H2 — Schematic** (~2–4 wk) | Library build with AssetPins (the ratified v1 sensor set + compute + power, verified footprints); full schematic; ERC clean; LLM review packet; atopile spike verdict (D5) | ERC = 0; human review sign-off; BOM 100 % sourced (LCSC/stock) |
 | **H3 — Layout** (~3–5 wk) | Floorplan per §5.5; placement review; critical-net hand routing; Freerouting pass on grunt nets; DRC clean; thermal/EMI review; STEP export | DRC = 0 vs JLCPCB 6/8-layer rules; SI/thermal review sign-off; board envelope frozen → chassis interface freeze |
 | **H4 — Fab + bring-up** (~4–6 wk incl. lead time) | JLCPCB fab + PCBA (SMT where catalog allows, hand-finish rest); bring-up plan mirroring upstream diagnostics (per-bus smoke → per-sensor conformance → all-sensor coherence F-04 → soak R-02); deviation log continues here | Board powers, all buses enumerate, every sensor streams conformant records |
@@ -200,13 +238,15 @@ Cross-repo dependencies (upstream work, flagged not owned): USR-3 sign-off, #27 
 | Compute choice wrong (bus/power/AI headroom) | H1 trade study with bench spikes on eval kits before schematic freeze; interface-requirements doc keeps the upstream firmware port decoupled from the silicon choice |
 | Regulatory exposure (UV, laser, skin contact, health claims) | Wellness-only posture (upstream SEM-5); class-1 laser unchanged; UV interlock; materials choice at H5 |
 | Upstream contract churn mid-design | Pinned SHA + CI drift tripwire; bumps only at phase boundaries |
+| EMC failure at pre-scan (dense mixed-signal + 60 GHz + optical emitters) | Zoning §5.5; per-domain filtering; pre-certified radios; H4 pre-scan budget + one respin allowance |
+| New-silicon risk (STM32N6-class part or sensor successors) | H1 eval-kit gate; fallback parts named in D1/§5.7; DNP-friendly layout keeps options open |
 
 ## 9. Open decisions (owner/SME calls — proposed defaults)
 
 | # | Decision | Proposed default |
 |---|---|---|
-| D1 | v1 compute | **Open trade study at H1** (§5.1) — candidates incl. ESP32-S3/P4, STM32H7/N6, i.MX RT, nRF54 class; scored on bus/DMA count, timestamping hw, sentinel-domain power, on-device-AI headroom, radio/cert path, toolchain. Prototype continuity is a tie-breaker only |
-| D2 | Compute pattern | **Open with D1**: single MCU w/ low-power domain vs big-MCU + always-on companion vs SoM. The prototype's S3+nRF52840 split is one candidate, not the default |
+| D1 | v1 application MCU | **Recommended: STM32N6 class** (NPU + I3C + CSI, §5.1); fallback i.MX RT1170; cost-down ESP32-P4. H1 eval-kit spike confirms before schematic freeze |
+| D2 | Compute pattern | **Recommended: two-domain** — app MCU + pre-certified nRF54L15-class sentinel/BLE module (§5.1) — chosen on power physics + certification economics |
 | D3 | Fab/process | **JLCPCB, 6-layer through-via + POFV via-in-pad**; escalate to 8-layer not to microvia |
 | D4 | Battery | Size cell to the H1 budget (likely 2500–3500 mAh Li-ion pouch) vs relaxing R3 — needs the budget table first |
 | D5 | Schematic-as-code (atopile) | **Spike only** in H2; KiCad capture is the baseline |
@@ -217,7 +257,7 @@ Cross-repo dependencies (upstream work, flagged not owned): USR-3 sign-off, #27 
 
 ## 10. Proposed Project 3 structure (created only after this plan is ratified)
 
-Epics = H0–H6 + two cross-cutting tracks (W-PWR power budget; W-PIPE pipeline/CI). Each epic gets issues matching the phase deliverables above, with fields: Phase, Status, Blocked-by (cross-repo deps flagged), Evidence (link to ADR/artifact). The sensory-gap register drives the v2 backlog column.
+Epics = H0–H6 + three cross-cutting tracks (W-PWR power budget; W-PIPE pipeline/CI; W-CERT certification/compliance). Each epic gets issues matching the phase deliverables above, with fields: Phase, Status, Blocked-by (cross-repo deps flagged), Evidence (link to ADR/artifact). The sensory-gap register drives the v2 backlog column.
 
 ---
 *Sources: interrogator repo (read-only) — PLAN.md §2, §5–7, §10, §13; docs/architecture/{0013,unified-sensor-registry*,board-acceptance-criteria,capability-coverage,system-architecture}.md; docs/build/{deviation_log,board_a_*,phase-0-build-scope,interboard_harness}.md; shared/schemas/{sensors/*,sensor_specs.yaml}; issue #7. Tooling research: see docs/draft-review.md §3 for full source list.*

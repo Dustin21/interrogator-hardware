@@ -16,7 +16,7 @@ Hardware design repo for the [Reality Interrogator](https://github.com/Dustin21/
 
 ## Design stance
 
-**Requirements-first, clean sheet** ([`PLAN.md`](PLAN.md) §0.1): the upstream *contract* binds (registry facets, wire/command contract); the breadboard *prototype* does not (board split, modules, mux topology, pinmaps are evidence, not constraints). Firmware accommodations are the upstream project's work; this repo publishes the interface requirements.
+**Commercial hardware, clean sheet, chip-down** ([`PLAN.md`](PLAN.md) §0.1): raw sensor silicon on our own board — no breakouts, no dev modules; pre-certified modules only where commercially correct (radio, GNSS). The upstream *contract* binds (registry facets, wire/command semantics); the breadboard *prototype* does not — **interrogator adapts its firmware to this design** against the interface-requirements doc published at H1, and the backend stacks on top. Reference architecture: two-domain compute (NPU-class application MCU + always-on pre-certified BLE/sentinel module), PLAN §5.1.
 
 ## Definition of done for the v1 board
 
