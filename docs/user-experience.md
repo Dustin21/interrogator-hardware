@@ -23,3 +23,17 @@ Orientation is tactile: thumb dish = anchor; dish-under-thumb => sensor strip po
 - **Hydrophobic mesh (IP52-class) behind air hole arrays** in the aperture plate (pocket lint).
 - Explicit: contact mode and point mode share a face — arbitration is the interference
   matrix's job (touch trigger gates optical emitters).
+
+## Motion + touch interaction language (owner Q&A, zero new BOM)
+BNO086 on-chip classifiers (pickup/tap/shake/stability, uA-class, INT-driven) + IQS7222A 12ch:
+- pick-up wake · double-tap shell = quick-scan (glove-proof) · hold-steady 500ms = auto-capture
+- flick = dismiss · face-down = DND · rim swipe = cycle/dismiss · squeeze both walls = confirm/interrogate
+- grip + pocket detection => glow suppression + UV/laser interlock input · hover proximity => ring fade-in
+- dish contact-quality coaching (electrode coverage -> glow nudge -> clean PPG/ECG)
+- **motion as sensing multiplier**: pose-stamped frames => ToF/thermal super-resolution stitching by
+  hand sweep; radar micro-SAR; spectral surface painting; heading+GNSS point-to-tag (reality map).
+
+### Hardware deltas (H2)
+- Route BNO086 INT to BOTH N657 and sentinel (motion wake path from ambient).
+- Electrode budget in shell/aperture plate: dish ring (2), rim slider (3), side-squeeze (2x2),
+  back ECG-return/grip (1), reserve (2) = 12ch IQS7222A fully allocated.
