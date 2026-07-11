@@ -1,0 +1,41 @@
+# VL53L8CX -- unified sensor registry record (USR-0a).
+# Schema/spec: docs/architecture/unified-sensor-registry-usr0-usr1-spec.md  (parent: unified-sensor-registry.md)
+# Spine record: identity + asset pins + facet POINTERS (referenced) + net-new INLINE facets.
+# Referenced-facet validation-state is PROJECTED read-through by backend/sensors/registry.py -- never stored here.
+schema_version: sensor-registry-0
+sensor_type: VL53L8CX
+
+identity:
+  part_number: VL53L8CX
+  vendor: STMicroelectronics
+  wire_token: VL53L8CX
+  class: tof_imager
+  adoption_status: active
+  bus_default: { board: A, relay: mux }
+  successor: null
+
+assets:                                  # versioned PINS -- object_key/sha256/retrieved deferred (SEM-1 'archived' idiom)
+  datasheet:     { asset_id: ds-vl53l8cx,  rev: "TODO", object_key: null, sha256: null, retrieved: null }
+  cad_footprint: { asset_id: fp-vl53l8cx,  version: "TODO", object_key: null, sha256: null, retrieved: null }
+  model_3d:      { asset_id: m3d-vl53l8cx, version: "TODO", object_key: null, sha256: null, retrieved: null }
+
+facets:
+  # --- referenced (pointer only; validation PROJECTED, never stored) ---
+  semantics:         { ref: "shared/schemas/sensor_semantics.yaml#catalog.VL53L8CX" }
+  measurement_specs: { ref: "shared/schemas/sensor_specs.yaml#VL53L8CX" }
+  calibration:       { ref: "shared/schemas/sensor_calibration.yaml#calibration.VL53L8CX" }
+  command:           { ref: "backend/commands/contract.py#_SENSORS.VL53L8CX" }
+  capability_mapping: { ref: "shared/schemas/intent_catalog.yaml" }   # DERIVED reverse-index (kind: derived, state: None in USR-1)
+  # --- net-new INLINE facets (validation stored here; the registry is their source of truth) ---
+  electrical:
+    bus: i2c
+    i2c_addresses: []                    # USR-3: confirm vs datasheet pinout (R1 -- resolution, not transcription)
+    logic_level_v: 3.3
+    relay: mux
+    validation: { status: pending, evidence_tier: E0, source: null, owner: embedded-sme,
+                  needs: "USR-3: resolve canonical electrical facts (bus/address/relay) vs datasheet pinout; reconcile inventory CSV / board_a_sensor_integration.md (R1)" }
+  mechanical:
+    footprint_ref: { asset: cad_footprint }
+    dimensions_mm: null
+    validation: { status: pending, evidence_tier: E0, source: null, owner: pcb,
+                  needs: "datasheet mechanical drawing (assets.datasheet rev)" }

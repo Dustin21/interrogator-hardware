@@ -1,0 +1,41 @@
+# AMG8833 -- unified sensor registry record (USR-0a).
+# Schema/spec: docs/architecture/unified-sensor-registry-usr0-usr1-spec.md  (parent: unified-sensor-registry.md)
+# Spine record: identity + asset pins + facet POINTERS (referenced) + net-new INLINE facets.
+# Referenced-facet validation-state is PROJECTED read-through by backend/sensors/registry.py -- never stored here.
+schema_version: sensor-registry-0
+sensor_type: AMG8833
+
+identity:
+  part_number: AMG8833 (Grid-EYE)
+  vendor: Panasonic
+  wire_token: AMG8833
+  class: thermal_imager
+  adoption_status: active
+  bus_default: { board: A, relay: mux }
+  successor: null
+
+assets:                                  # versioned PINS -- object_key/sha256/retrieved deferred (SEM-1 'archived' idiom)
+  datasheet:     { asset_id: ds-amg8833,  rev: "TODO", object_key: null, sha256: null, retrieved: null }
+  cad_footprint: { asset_id: fp-amg8833,  version: "TODO", object_key: null, sha256: null, retrieved: null }
+  model_3d:      { asset_id: m3d-amg8833, version: "TODO", object_key: null, sha256: null, retrieved: null }
+
+facets:
+  # --- referenced (pointer only; validation PROJECTED, never stored) ---
+  semantics:         { ref: "shared/schemas/sensor_semantics.yaml#catalog.AMG8833" }
+  measurement_specs: { ref: "shared/schemas/sensor_specs.yaml#AMG8833" }
+  safety_limits:     { ref: "shared/schemas/sensor_safety_limits.yaml#limits.AMG8833" }
+  command:           { ref: "backend/commands/contract.py#_SENSORS.AMG8833" }
+  capability_mapping: { ref: "shared/schemas/intent_catalog.yaml" }   # DERIVED reverse-index (kind: derived, state: None in USR-1)
+  # --- net-new INLINE facets (validation stored here; the registry is their source of truth) ---
+  electrical:
+    bus: i2c
+    i2c_addresses: []                    # USR-3: confirm vs datasheet pinout (R1 -- resolution, not transcription)
+    logic_level_v: 3.3
+    relay: mux
+    validation: { status: pending, evidence_tier: E0, source: null, owner: embedded-sme,
+                  needs: "USR-3: resolve canonical electrical facts (bus/address/relay) vs datasheet pinout; reconcile inventory CSV / board_a_sensor_integration.md (R1)" }
+  mechanical:
+    footprint_ref: { asset: cad_footprint }
+    dimensions_mm: null
+    validation: { status: pending, evidence_tier: E0, source: null, owner: pcb,
+                  needs: "datasheet mechanical drawing (assets.datasheet rev)" }

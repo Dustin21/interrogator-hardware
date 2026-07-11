@@ -1,0 +1,7 @@
+{
+  "source_repo": "https://github.com/Dustin21/interrogator",
+  "pinned_commit": "881fbc1ba3e9c62c94d481077ae7dd061a07874b",
+  "pinned_paths": ["shared/schemas/sensors/"],
+  "retrieved": "2026-07-11",
+  "note": "Vendored read-only snapshot of the Unified Sensor Registry (USR-0 records). NEVER edited here - refreshed only by an explicit pin-bump commit. Single source of truth remains the interrogator repo (ADR-0013). Change flow: sensor changes are DECIDED in this repo, approved as a device rev, then shipped downstream as an ingest package for interrogator to update."
+}

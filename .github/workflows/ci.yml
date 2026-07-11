@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  contract:
+    name: Contract ingest + asset manifest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml pytest
+      - name: Ingest check (pinned USR snapshot -> IO map)
+        run: python3 contract/scripts/ingest.py --check
+      - name: Asset manifest verify (sha256)
+        run: python3 assets/manifest_tool.py verify
+      - name: Tests
+        run: pytest contract/tests -q
+
+  # Activates once boards/ contains a KiCad project (H2+): headless ERC/DRC
+  # via kicad-cli with --exit-code-violations, JSON reports as artifacts.
+  eda:
+    name: ERC/DRC (kicad-cli)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect KiCad project
+        id: detect
+        run: |
+          if ls boards/*/*.kicad_pro >/dev/null 2>&1; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "No KiCad project yet (pre-H2) — skipping ERC/DRC."
+          fi
+      - name: Run ERC/DRC
+        if: steps.detect.outputs.found == 'true'
+        uses: docker://kicad/kicad:10.0
+        with:
+          entrypoint: /bin/bash
+          args: >-
+            -c "set -e;
+            for pro in boards/*/*.kicad_pro; do d=$(dirname $pro); n=$(basename $pro .kicad_pro);
+            kicad-cli sch erc --format json --exit-code-violations -o $d/erc.json $d/$n.kicad_sch;
+            kicad-cli pcb drc --format json --exit-code-violations -o $d/drc.json $d/$n.kicad_pcb;
+            done"
+      - name: Upload reports
+        if: steps.detect.outputs.found == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: erc-drc-reports
+          path: boards/**/*.json
