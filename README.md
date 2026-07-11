@@ -11,7 +11,7 @@ Hardware design repo for the [Reality Interrogator](https://github.com/Dustin21/
 - The **Unified Sensor Registry** (`interrogator: shared/schemas/sensors/*.yaml`, ADR-0013) is the single source of truth for per-sensor identity/electrical/mechanical facts and versioned asset pins. This repo **consumes it at a pinned SHA — never forks or edits it**.
 - This repo binds read-only to the `electrical` + `mechanical` facets and `assets` pins; per-instance placement binds to the device profile view.
 - Findings that should change upstream facts are delivered as **resolution packets** (PR-ready proposals); the owner applies them upstream. Single-writer discipline is preserved.
-- Heavy binaries (footprints, 3D models, gerbers, renders) live **here via Git LFS**, referenced by `{asset_id, version, sha256}` — the same AssetPin discipline as datasheets.
+- Heavy binaries (footprints, 3D models, gerbers, renders) live **locally in-tree for now, migrating to AWS S3** (versioned bucket, S3-generic access layer), referenced by `{asset_id, version, sha256}` in a checked-in manifest — the same AssetPin discipline as datasheets. No Git LFS.
 - This repo's CI = ERC/DRC (`kicad-cli`), asset-checksum, and contract-pin drift checks. Upstream CI (pytest/contract) is untouched.
 
 ## Design stance

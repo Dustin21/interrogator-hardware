@@ -1,267 +1,228 @@
 # Interrogator Hardware — Build Plan
 
-**Status: v0.1 DRAFT — for owner review. Nothing below is executed until ratified.**
-Date: 2026-07-10 · Owner: Dustin21 · Repo: `interrogator-hardware` (this repo) · Tracker: [GitHub Project 3 — Interrogator Device Hardware Build](https://github.com/users/Dustin21/projects/3)
+**Status: v0.2 DRAFT — incorporates owner review of 2026-07-11.**
+Owner: Dustin21 · Repo: `interrogator-hardware` · Tracker: [Project 3](https://github.com/users/Dustin21/projects/3) (populated after ratification)
 
-This plan merges (a) the owner's hardware-build brief ("Closed-Loop AI EDA Pipeline for Ultra-Dense Interrogator Device"), (b) a full read-only review of the `interrogator` repo (registry, PLAN.md, build docs, deviation log, ADRs), and (c) a July-2026 state-of-the-art review of AI-EDA tooling. Corrections to the original brief are catalogued in [`docs/draft-review.md`](docs/draft-review.md) — read that alongside this plan.
+This plan merges the owner's brief ("Closed-Loop AI EDA Pipeline for Ultra-Dense Interrogator Device"), the owner's v0.1 review comments, a read-only review of the `interrogator` repo, and July-2026 AI-EDA tooling research. The v0.1 audit trail lives in [`docs/draft-review.md`](docs/draft-review.md).
 
 ---
 
-## 0. Mission and scope
+## 0. Mission
 
-Design, fabricate, and bring up the **first custom PCB ("v1 board") plus chassis** for the Reality Interrogator, closing the upstream **PCB Gate (interrogator #7)**, and stand up a **repeatable, contract-driven design pipeline** so that future sensor swaps/additions regenerate a fab-ready board revision in few cycles rather than a redesign.
+Build the **iPhone of the sensor world**: a sleek, minimalist, handheld multi-modal sensing device — a *scientist in your pocket* — whose hardware works cohesively and reliably for years, competes with top technology companies, and is patentable. Not hobby tech.
 
-**In scope here:** PCB architecture, schematic, layout, fab/assembly packages, footprint/3D asset library, enclosure co-design, bring-up plan, the EDA automation pipeline and its CI.
-**Out of scope here (lives upstream in `interrogator`):** firmware, the sensor registry and all facet YAMLs, diagnostics/conformance, backend, semantics, regulatory validation content. The hardware repo is *a consumer* of the upstream contract — never a fork of it. Firmware changes needed to accommodate this board (binary IDL, INT-driven acquisition, ESP-IDF or other port) are **upstream work owned by the separate interrogator project**; this repo publishes the interface requirements they build against.
+The device is, conceptually, a **sensor MCP**: add a sensor and the system's raw streams and interrogation capabilities expand — the agent immediately knows more about reality. The hardware's job is to make that expansion cheap (fast respins, stable chassis) and the signal path pristine.
 
-### 0.1 Design stance — commercial hardware, clean sheet, chip-down
+**P0 — Signal fidelity first.** Whatever we add, the signal of reality stays optimized and unencumbered. The device's success is measured by how accurately, sensitively, and at what range a handheld can extract information and fuse it into decisions. Every enclosure material, aperture, window, filter, gasket, keepout, and power rail is designed *from the sensing physics inward* — nothing may attenuate, distort, heat, or vibrate a signal path for the sake of convenience or cosmetics. When aesthetics and signal conflict, we engineer until they don't; signal wins any remaining tie.
 
-This is the **commercial device, designed from scratch to the owner's spec (§1)**. Raw sensor silicon on our own board — no breakouts, no dev-modules-as-components, no breadboard heritage. Modules are used only where that is the *commercially correct* engineering choice (pre-certified radio to keep the intentional-radiator cert path modular; GNSS module class where an antenna-integrated part wins on performance/cert). The plan takes positions (a recommended reference architecture, §5.1) based on independent analysis of the spec; H1 exists to *validate* those positions on eval hardware, not to reopen everything.
+### 0.1 Design stance — commercial hardware, clean sheet, silicon-on-merit
 
-**The interrogator repo's role here is narrow:** it supplies the sensor-truth contract (USR facets + AssetPins + device profile) and the data/command semantics the device must ultimately speak — and **interrogator adapts to this design**, not the reverse. Firmware accommodations (new MCU port, binary IDL, INT-driven acquisition) are the upstream project's work against the interface-requirements doc we publish at H1. The PCB Gate (#7) remains the later *integration checkpoint*, not a design constraint.
+This is the **commercial device, designed from scratch to the spec (§1)**. Solder-down silicon on our own board — **no breakout boards, no dev modules, no muxes-as-crutches, no protoboard heritage**. "Chip-down" means *chosen on engineering merit per channel*, which includes **smart sensors with integrated, vendor-validated processing** where that wins:
 
-**Explicitly non-binding:** the three-board split, XIAO/any dev modules, the PCA9548A mux topology, prototype pinmaps, its power tree, and interim size targets. Bench lessons (§2.5) carry over only where they encode physics and protocol reality (I²C lockup modes, thermal cross-talk, address collisions, pull-up budgets) — those hold for any implementation.
+- **BNO085 stays** — Bosch MEMS + CEVA SH-2 fusion on an embedded core. Years of vendor tuning and out-of-the-box validation (a regulatory asset, R10) for the everyday orientation utility. Configured to stream **raw accel/gyro/mag alongside the fused outputs** — the upstream **ADR-0014 "raw plus processed" posture**: raw substrate for discovery, fused outputs for utility, without us owning fusion.
+- The same merit test applies everywhere: integrated front-end (PPG AFEs, gas sensors with on-chip DSP) vs bare transducer is decided per channel on signal quality, validation burden, power, and cost — not ideology.
 
-## 1. Requirements (from the owner brief, reconciled with repo reality)
+Pre-certified modules are used only where that is the commercially correct choice (radio certification, GNSS antenna performance).
 
-| # | Requirement | Reconciliation with repo / research |
+**The interrogator repo's role is narrow:** it supplies the sensor-truth contract (USR facets + AssetPins + device profile) and the data/command *semantics* — and **interrogator adapts to this design**. Firmware (new MCU port, binary IDL, INT-driven acquisition, OTA) is upstream work against the interface-requirements doc we publish. The prototype hardware is **not a design input** (§2.1); this design owns its own research (§2.4).
+
+### 0.2 What "modular" means here (owner clarification)
+
+Modularity is **the speed at which we can create and ship a new device revision** when the sensor set changes — not field-upgradability of already-shipped units. A gap-filling sensor is highlighted → we turn the board around and ship ASAP: same chassis interface where possible, regenerated board, downstream ingest (§3.3, §6.3). Shipped units evolve via firmware/OTA only.
+
+## 1. Requirements (owner spec, v0.2-reconciled)
+
+| # | Requirement | Engineering reconciliation |
 |---|---|---|
-| R1 | Many orthogonal solid-state sensors (15 now → 100+ over time) | v1 starts from the 16 registered candidate types (§2.2), **re-validated and possibly upgraded at H1 (§5.7)**. Scaling past ~20 concurrent sensors is a bus-architecture problem: parallel buses with per-bus concurrency; I3C enters when the chosen MCU's support is mature (v1 if D1 allows, else v2). |
-| R2 | Solid-state, 3+ years without replacement | All sensors solid-state (BMV080 MTTF 10 y). **Exception the brief already implies:** fan, pumps, valve are electromechanical actuators — they are serviceable parts, not sensors. Design them on a replaceable sub-path. |
-| R3 | 8 h+ battery in ambient mode | **Tension:** current budget is ~400 mA passive → ~5 h on 2000 mAh (PLAN §10). Closing this needs INT-driven acquisition (already the PCB plan), per-domain power gating, a modern power tree, and/or a larger cell. Tracked as workstream W-PWR with a hard budget table. |
-| R4 | As small as feasible; north star = AirPods-case sleekness; **the chassis is defined by the PCB envelope we achieve** | Size is an *output* of the density optimization (§5.8 dynamic boundary method), not a preset. The board floor = component footprints + layout clearance multiplier, grown only when routing demands it (layers first, then 0.5 mm XY steps). Repo figures (120×70×35 mm interim, 80×45×30 mm charter) are reference points only, not targets. If the achieved envelope is phone-attachable, the camera drops (D7). |
-| R5 | Battery-powered, pocket-safe (heat) | Thermal zoning rules exist and are binding (PLAN §6.1, §13 "Rule of Zero Drift"); BMV080 self-heats ~15 K; LDO dissipation lesson from bring-up (~0.5 W) → use bucks, not LDOs, for heavy rails. |
-| R6 | Modular: sensors added/deprecated without chassis churn | Achieved via (a) the contract-driven regeneration pipeline (§6), (b) a **frozen chassis interface**: board outline + mounting + an *aperture plate* as the swappable part (§5.7), (c) reserved bus/power headroom. Full board-level plug-in modules are explicitly **not** v1 (density cost). |
-| R7 | Simultaneous parallel raw streaming, AI-controlled prioritization | Upstream contract already defines this (stream-raw-decide-downstream, PLAN §7.11; command surface §3.5). Hardware must deliver parallel buses + INT/data-ready wiring + PPS-disciplined timestamping (§5.3). |
-| R8 | Contact / air-entry / liquid-entry / internal sensor classes | Exposure classes defined per sensor in §5.6; microfluidics is **deferred upstream** (PLAN Stage 16–17) → liquid path is a chassis *provision* (port + volume reservation), not populated in v1. |
-| R9 | Right medium → right sensor; minimize interaction effects | Zoning + EMI/thermal rules from bench lessons (§5.5); data-quality flags (`motors_active` etc.) already in the record contract. |
-| R10 | Regulated posture: wellness-only claims until validated | Matches upstream: capability-coverage ratifies `body-physiological` as **wellness-only**; ship-gate #10 requires a per-modality privacy/regulatory pack (SEM-5/#54). Hardware side: laser class 1 (BMV080), UV-LED eye-safety, skin-contact material safety. |
-| R11 | MCU syncs+streams all sensors comfortably; on-device AI nice-to-have | Answered by the §5.1 reference architecture: NPU-class application MCU (STM32N6 primary candidate) gives real on-device-AI headroom + the bus/DMA/timestamping fabric; always-on sentinel domain covers ambient. H1 eval-kit spike validates before freeze (D1/D2). |
-| R12 | Pipeline regenerates ship-ready state when sensors change | §6 — but with 2026-realistic trust boundaries: automated BOM/netlist/ERC/DRC/fab-export; human-owned placement and critical routing. "Zero-touch ship-ready" is not achievable today and is not claimed. |
+| R1 | Many orthogonal solid-state sensors (15 now → 100+ future) | v1 from the candidate set (§2.2), **revised owner list incoming — the §6.3 change flow exists precisely so this lands cheaply**. Growth path: parallel buses + I3C dynamic addressing + reserved expansion segment. |
+| R2 | **All parts** 3+ years without replacement — the concept fails if a fan or pump dies | Two-layer answer: (a) **part selection first** — long-life bearing-technology blowers/pumps (50k+ h class MTTF at our duty cycle ≫ 3 y), derated drive, filtered intake path, condensation control; solid-state everything else; (b) serviceable sub-assembly as *fallback*, not excuse. Reliability budget (MTBF rollup) is an H1 deliverable per part incl. actuators. |
+| R3 | Battery: optimize toward **8 h ambient**; not set in stone — deep dives/multi-turn draw more; **must not explode size/feasibility; 5 h floor triggers owner review** | Two-mode budget: ambient (sentinel + duty-cycled acquisition) vs interrogation (deep-dive bursts). W-PWR delivers a measured table; cell sized to the smallest package meeting the ambient target; if physics forces <8 h at acceptable size, present the trade to owner at H1. |
+| R4 | As small as feasible; **iPhone-grade industrial design**; chassis is constructed around the achieved envelope; **never compromise modularity for size** | Size = output of §5.8 boundary optimization. Chassis wraps the envelope **plus deliberate buffer (§5.8–5.9)** so respins don't churn it. Design language: minimalist shell, hidden apertures, subtle glow/haptics (§5.6). |
+| R5 | Pocket-safe: heat, battery, emitters | Thermal zoning from sensing physics (§5.5); battery system to IEC 62133-class expectations; laser class 1; UV interlock (§5.10). |
+| R6 | Modular per §0.2 — respin speed | Contract-driven regeneration (§6.3) + frozen-with-buffer chassis interface (§5.9). Target: **sensor-swap respin ≤2 human-days touch time by v2** (§6.6 drives it toward near-zero HITL). |
+| R7 | Parallel raw streaming in ambient state; **AI layer controls prioritization/deep-dives**; no sweep bottleneck | **Hard requirement — the prototype's mux sweep is the anti-pattern.** True per-bus parallel acquisition, INT/DMA-driven, with the §5.2b concurrency & interference model: what runs together is governed by intent + a machine-readable compatibility matrix, not by wiring. |
+| R8 | Exposure classes: contact / air-entry / liquid-entry / internal | §5.6. **Air path: yes in v1** (fan-driven). **Microfluidics: NOT populated in v1, but buffered** — reserved port, internal volume, connector allowance inside the frozen chassis interface, so adding it later is a respin, not a chassis redesign. |
+| R9 | Right medium → right sensor; interaction effects minimized in hardware, then AI optimizes around the rest | Zoning + isolation (§5.5) + the interference matrix (§5.2b) exported as a contract artifact so the AI scheduler can avoid masking interactions. |
+| R10 | Regulated posture: wellness-only claims until validated; prefer parts with regulatory-friendly validation | Vendor-validated smart sensors favored where claims matter (BNO085 pattern); W-CERT track (§5.10); upstream SEM-5 alignment. |
+| R11 | MCU syncs+streams all comfortably; on-device AI very helpful | §5.1 reference architecture: NPU-class application MCU + always-on sentinel. |
+| R12 | Sensor change → regenerate ship-ready state in few cycles | Ratified flow (§3.3/§6.3): **decided here → PCB+device approved → firmware+interrogator ingest and update.** In place before the revised sensor list lands. |
+| R13 | **Unit economics (new):** shippable with reasonable margin, B2B + B2C | BOM cost is a first-class, tracked property of every revision: live-priced interactive BOM (LCSC/Octopart), cost column in the sensor matrix (§5.7), cost gates at H1 (architecture) and H2 (BOM freeze); DFM choices (§5.10) made with CM quoting in mind. |
+| R14 | **Wireless-first + lifecycle (new):** syncs to a mobile device/app (WebRTC-class); fast charging; regular OTA updates, security fixes, feature gating | §5.1 connectivity (BLE control + Wi-Fi high-bandwidth), §5.4 USB-C PD fast charge, §5.10 secure boot + A/B OTA + hardware crypto identity enabling future feature gates/paywalls. |
 
-## 2. Evidence base — what exists today (context and inputs, **not constraints** — see §0.1)
+## 2. Evidence base (context only — **not design inputs**)
 
-### 2.1 Prototype state
-Three-board Perma-Proto prototype, **Phase 0 closed 2026-06-29** (single-device live loop, laptop hub): Board A "Brain" (XIAO ESP32-S3 Sense; 14 I²C sensors via PCA9548A mux @400 kHz; OV5640 camera; USB-CDC telemetry; SD), Board B "Muscle" (no MCU; MT3608 boost 5.09 V + Pololu 3.38 V + motor MOSFETs), Board C "Sentry" (XIAO nRF52840; Geiger, MPR121 touch on own I²C, haptic, NeoPixel, battery monitor; UART relay to A with CRC8 framing). Definitive pinmaps: interrogator `PLAN.md §2.4–2.6`. **Warning: `archive/legacy_docs/{master_topology,fabrication_netlist}.md` are deprecated and conflict with the live pinmap — never use them as PCB input.**
+### 2.1 Prototype
+A three-board breadboard prototype exists upstream and closed its Phase 0 loop. **We do not consider what has been built** — this project has free rein to drive device hardware that competes with top technology companies and is patentable. The prototype's only exports to us are: the contract artifacts (§3), the sensing use-cases it validated, and the interrogation/alert flow it proved end-to-end (§3.5).
 
-### 2.2 Sensor candidate set (the 16 registered types, `shared/schemas/sensors/*.yaml` — re-validated at H1 per §5.7)
+### 2.2 Sensor candidate set (baseline — owner's revised list incoming; every line re-sourced as solder-down silicon, §5.7)
 
-| Sensor | Domain | Bus today (mux CH / addr) | Exposure class (§5.6) |
+| Capability | Baseline part | Class | Exposure |
 |---|---|---|---|
-| BME688 | gas/VOC/T/RH/P | CH0 / 0x77 | air |
-| SGP41 | VOC+NOx | CH0 / 0x59 | air |
-| BMV080 | PM2.5 (laser, class 1) | CH0 / 0x57 | air (needs free-air window) |
-| AMG8833 | 8×8 thermal IR | CH1 / 0x69 | optical window (8–14 µm) |
-| MAX30102 | PPG HR/SpO₂ | CH1 / 0x57 (fixed) | **contact** window |
-| VL53L8CX | 8×8 ToF depth | CH2 / 0x29 | optical window (940 nm) |
-| AS7343 | 14-ch visible spectral | CH3 / 0x39 | optical window + LED |
-| AS7331 | UVA/B/C | CH3 / 0x74 | **direct aperture** (glass kills UV-C) |
-| AS7263 | NIR spectral | CH3 / 0x49 | optical window + NIR LED |
-| BNO085 | 9-DoF IMU | CH4 / 0x4A | internal |
-| TMAG5273 | 3D Hall | CH4 / 0x22 | internal (>30 mm from motors) |
-| ADS1115 | 16-bit ADC (AD8317 RF, piezo) | CH5 / 0x48 | internal + external probes |
-| XM125 (A121) | 60 GHz radar | CH6 / 0x52 | behind radome (plastic OK) |
-| NEO-M9N | GNSS | CH7 / 0x42 | antenna window, >50 mm from MCU |
-| MPR121 | capacitive touch | Board C bus / 0x5A | **contact** (shell electrodes) |
-| MIKROE-4036 (BG51) | gamma/beta | GPIO pulse, 5 V | internal (thin window ideal for beta) |
+| Gas/VOC/T/RH/P | BME688 | env | air |
+| VOC/NOx | SGP41 | env | air |
+| PM2.5 | BMV080 | env | air window |
+| Thermal imaging 8×8 | AMG8833 | optical | IR window |
+| PPG HR/SpO₂ | MAX30102EFD | bio | contact window |
+| ToF depth 8×8 | VL53L8CX | optical | window (940 nm) |
+| Visible spectral 14-ch | AS7343 | optical | window + LED |
+| UV A/B/C | AS7331 | optical | direct/quartz aperture |
+| NIR spectral | AS7263 | optical | window + NIR LED |
+| IMU 9-DoF (fused+raw) | BNO085 | motion | internal |
+| 3D magnetics | TMAG5273 | field | internal |
+| Precision analog (RF power, piezo) | ADS1115 (re-eval) | field | internal + probes |
+| 60 GHz radar | Acconeer A121 (raw AiP) | spatial | radome |
+| GNSS | antenna-integrated module (MIA/NEO class) | location | sky window |
+| Touch | MPR121 or MCU-native | contact | shell electrodes |
+| Radiation β/γ | BG51-class solid-state | field | internal (thin window) |
+| Camera (D7) | raw sensor + FPC | optical | aperture |
 
-Plus OV5640 camera (FPC), UV/White LEDs, haptic, NeoPixel, fan, pumps, valve. Future sensors come from the ROI-ranked **sensory-gap register** (capability-coverage.md; e.g. GAP-01 AC E-field, GAP-02 selective gas, electrochemical NO for FeNO) — that register, not ad-hoc choice, is the input queue for board revisions.
+### 2.3 Integration checkpoint — interrogator #7 (joint milestone, later)
+E2e re-validated on the new device · binary IDL live (+text debug) · diagnostics no-regression · latency budget. The firmware side is upstream's work against our interface doc.
 
-### 2.3 The integration checkpoint — interrogator issue #7 (joint, not this repo's DoD)
-Exit KPIs (verbatim anchors): full local e2e loop **re-validated on PCB**; **binary IDL (ADR-0004) live with text debug mode**; **diagnostics suite re-run on a PCB capture with no regression vs the breadboard baseline** (golden-CI #37 makes this checkable); **PLAN §7.10 latency budget still met**. This is where the new board is *accepted into the system* — the firmware side of it is the upstream project's work. The hardware DoD is the §1 spec scorecard (phase H6a); #7 is the joint milestone (H6b).
+### 2.4 Upstream's prior PCB research — historical input only
+Interrogator's PLAN §7.5.3.18 (per-bus concurrency, SPI+DMA for high-rate parts, PPS-disciplined timestamping, I3C direction) is available evidence, **outdated by its own admission and superseded by our H1 research. We own the architecture; we are free to change all of it and likely will.**
 
-### 2.4 Upstream's own PCB research (PLAN §7.5.3.18) — **input evidence for the H1 trade study, not a decision**
+### 2.5 Bench observations — physics checklist candidates only
+The prototype bench logs contain *some* items that reflect physics/protocol reality rather than breadboard circumstance (I²C single-slave-wedges-bus failure mode; address-collision classes; pull-up/rise-time budgets; thermal cross-talk between hot parts and env sensors; EMI from actuators into counters/analog; sensor libraries that init but read garbage). These enter the H2/H3 review **checklists** as candidates — each is re-derived from datasheets and first principles for *our* topology, never applied as inherited rules.
 
-Upstream already researched what a PCB should change relative to the breadboard; its conclusions are strong candidate answers that H1 confirms, amends, or discards against the §1 spec:
-- Concurrency unit = **one task per bus**, not per sensor.
-- **VL53L8CX + BNO085 move to SPI+DMA, INT-driven** (they are the rate/bandwidth drivers; VL53L8CX needs a ~90 KB blob load at init).
-- Two I²C buses: **I²C-A** (AMG8833, ADS1115, TMAG5273, MAX30102), **I²C-B** with a *small* mux retained only for the address-colliding spectral chain (BME688, BMV080, AS7343/31/63, SGP41, NEO-M9N, XM125).
-- **INT/data-ready lines wired for every sensor that has one** (never wired on the breadboard — a known gap), FIFO watermark batch reads where supported.
-- **GPS-PPS-disciplined shared input-capture timer** for cross-sensor timestamping.
-- The PCA9548A leaves the critical path; I3C is the v2 successor (ESP-IDF/Zephyr driver maturity was the blocker at last check — re-verify at H1).
+## 3. Contract boundary & flows
 
-### 2.5 Bench lessons that are now PCB design rules (deviation log + PLAN §5.3/§13)
-1. **XIAO A-pin/D-pin GPIO aliasing** cost real debugging — on custom PCB, reference GPIO numbers only; pin-map is generated from the contract (§6.1).
-2. **0x57 collision (BMV080 vs MAX30102)** — without a big mux, plan address straps / XSHUT sequencing / bus assignment explicitly (they land on different buses in §2.4).
-3. **VL53L8CX carrier straps**: interface-select must be tied for the chosen mode; wrong strap = silent NACK. On-board strap resistors, not jumpers.
-4. **Spectral chain is 100 kHz-bound** (stacked breakout pull-ups → rise-time violation). On the PCB *we* own the pull-up budget: one calculated pull-up set per bus segment; design for 400 kHz (1 MHz where qualified).
-5. **A single faulty slave wedges a shared bus** (SGP41 DOA locked everything): per-segment **power gating (load switches)** + bus segmentation + PCA9548A-style isolation where retained + 9-clock SCL recovery + watchdog (currently disabled upstream — G6) are all mandatory v1 features.
-6. **MAX30102 1.8 V pull-up trap** on clone modules: on-board we control this — bare sensor + correct level domain.
-7. **Wrong-library-but-init-passes** (TMAG5273, AS7331): bring-up validates *values*, not enumeration — feeds the H6 diagnostics re-run.
-8. **Thermal**: CPU/regulator heat corrupts BME688/SGP41/AMG8833 — thermal chimney (air over gas sensors first, exhaust over CPU), ≥20 mm separation or slotting/moats, AMG8833 kept off the hot side. BMV080 self-heat budget respected.
-9. **EMI**: motor rails on a separate noisy domain, flyback diodes, ferrites at gate escapes, star/partitioned grounds (explicitly a PCB-phase constraint per DESIGN_NOTES.md), Geiger >30 mm from motors, GPS antenna >50 mm from processors, RF-silence mode retained.
-10. **Every claimed dimension gets provenance** — the 15.77 mm XIAO row-spacing miss is why: bootstrap "verified" values are suspect until datasheet/caliper-confirmed. This is exactly the AssetPin discipline (§3).
+1. **USR is the system's sensor-truth spine** (per-type records: identity/electrical/mechanical facets + AssetPins; per-instance device profile). This repo consumes it **pinned** (submodule/pinned SHA), never forked.
+2. **We bind read-only** to `electrical`, `mechanical`, `assets`; the v1 device profile is instantiated from this design.
+3. **Ratified change flow (2026-07-10): hardware originates, interrogator ingests.** Sensor change **decided here** → pipeline regenerates the board/device rev → **owner approves** → the approved delta ships downstream as an **ingest package** (USR record drafts, facets with datasheet citations, AssetPins, interface-requirements delta) → **firmware + interrogator repo ingest and update**, backend stacks on top. Single-writer preserved: we produce PR-ready packages; the owner lands them upstream.
+4. **Asset storage (owner decision): no Git LFS.** Heavy artifacts (footprints, 3D, gerbers, renders) live **locally in the repo working tree for now**, referenced by `{asset_id, version, sha256}` in a checked-in manifest; **migration target: AWS S3** (assets addressed by `object_key` = S3 key + sha256 — exactly the USR `assets` schema, which was designed for an object store). Recommendation: agree with AWS; use standard S3 + versioned buckets, keep the access layer S3-API-generic (boto-compatible), which preserves the upstream no-lock-in posture at zero extra cost and makes any later move (or a Cloudflare R2 egress-cost hedge) a config change. CI verifies checksums either way.
+5. **Cadence separation:** our CI = ERC/DRC/asset-checksum/fab-diff; upstream CI = pytest/contract.
+6. **The interrogate-reality flow extends to this device — by construction.** What the prototype proved (ambient stream → detection/intent → active-sensing commands → deep-dive → alert to operator) binds at the *semantics* level (record schema, §3.5 command surface, intent catalog), which is exactly what we consume. The new hardware implements the physical layer of that loop better than the prototype could: per-domain power/clock gating = "AI decides what runs"; INT-driven parallel acquisition = real-time granularity; sentinel domain = always-on detection; glow zones + haptics = the alert surface; touch = the invocation surface. The interface-requirements doc (H1) maps each §3.5 command class onto this hardware so upstream's agent/alert stack ports without semantic change.
 
-## 3. Contract boundary with `interrogator` (binding decisions)
+## 4. 2026 tooling verdict (unchanged from v0.1 — detail in [`docs/draft-review.md`](docs/draft-review.md))
 
-1. **The Unified Sensor Registry (USR, ADR-0013) is the single source of truth** for per-sensor identity, electrical, mechanical, and asset facts. This repo **consumes** `shared/schemas/sensors/*.yaml` — pinned, never copied. Mechanism: **git submodule pinned to a reviewed SHA** (or a vendored, checksummed snapshot with the pin recorded), bumped only by explicit PR.
-2. **What we bind to (read-only):** `facets.electrical` (bus, i2c_addresses, logic_level_v, relay), `facets.mechanical` (footprint_ref, dimensions_mm), `assets` pins (datasheet/cad_footprint/model_3d with rev + sha256). Per-instance placement (bus assignment, address, board) binds to the **device profile (#123)** view, which the PCB v1 profile will instantiate.
-3. **Change flow (ratified 2026-07-10): hardware originates, interrogator ingests.** Sensor changes are *decided in this project*; once the PCB/device rev is approved, the delta ships downstream as an **ingest package** (USR record drafts, electrical/mechanical facets with datasheet citations, AssetPins, interface-requirements delta) that firmware + the interrogator repo ingest and update. Single-writer discipline is preserved — this repo produces PR-ready packages, the owner lands them upstream; we never write into `interrogator` directly. The same mechanism resolves today's `pending`/inconsistent electrical facets (USR-3).
-4. **AssetPin discipline extends to everything heavy here:** datasheets already live in `registry_assets/<SENSOR>/{datasheet,schematics,standards}` (14 parts populated; only BMV080 has a STEP today). Footprints, symbols, 3D models, gerbers, renders live in **this repo via Git LFS**, each referenced by `{asset_id, version/rev, sha256}`. An upstream asset rev-bump reopens the citing facets and (by CI tripwire) flags the affected board areas — the anti-drift loop.
-5. **Cadence separation:** upstream CI = pytest/contract; this repo's CI = ERC/DRC/asset-checksum/fab-output checks (§6.4). The PCB is "just another registry consumer."
-6. **Firmware co-changes** (binary IDL, ESP-IDF port, INT-driven acquisition) are upstream work items; this plan flags them as cross-repo dependencies at each phase boundary rather than absorbing them.
+6–8-layer through-via + POFV via-in-pad at JLCPCB-class fabs (no blind/buried vias there; Freerouting can't route them anyway and has zero SI awareness — grunt nets only, `-inc`-protected, benchmarked v2.2.4 vs v1.9). KiCad 10 + `kicad-cli` (ERC/DRC JSON + exit codes, jobsets) is the headless loop; the IPC API is GUI-bound until KiCad 11; KiCad MCP servers are demo-grade (rjwalters/kicad-tools the most serious). Verified footprint sources (easyeda2kicad/SnapMagic/UL) + human overlay check; LLMs as second readers, never footprint authors. Optional candidate generators: Quilter free program, DeepPCB trial. MCAD: kicad-cli STEP + FreeCAD/StepUp.
 
-## 4. 2026 tooling verdict (what changed vs the draft brief)
+## 5. Target v1 architecture
 
-Full detail + sources in [`docs/draft-review.md`](docs/draft-review.md). The decision-relevant findings:
+### 5.1 Compute + connectivity — reference architecture (H1 validates on eval kits)
 
-1. **Drop the HDI blind/buried-microvia assumption.** JLCPCB standard production doesn't offer blind/buried vias; it *does* offer free resin-filled copper-capped **via-in-pad (POFV) on 6–20 layer boards**, 0.2 mm min drill, 3.5 mil trace/space. A **6–8 layer through-via board with POFV** comfortably escapes every package in our BOM (largest challenge is LGA/module-class parts, not fine-pitch BGA) at hobby-scale cost. This also makes the "can Freerouting do blind/buried vias" question moot — and the evidence says it can't anyway.
-2. **Freerouting (v2.2.4, active, headless CLI + self-hostable API)** has **no signal-integrity awareness** (no diff pairs, no length matching, no copper-pour awareness) and known convergence issues on dense boards. Verdict: usable as a *grunt-net* router with `-inc` protecting hand-routed critical nets; never for USB/RF/clock/analog.
-3. **KiCad 10 (Mar 2026) is the platform.** Headless automation = `kicad-cli` (ERC/DRC with JSON reports + exit codes, gerber/STEP/BOM export). The official IPC API (kipy) is **PCB-only and GUI-attached until KiCad 11** — so the pipeline's headless loop rests on kicad-cli + S-expression tooling, not the IPC API.
-4. **KiCad MCP servers are demo-grade.** mixelpixx/KiCAD-MCP-Server's auto_route/JLCPCB claims have **no independently verified end-to-end use**; lamaalrajih/kicad-mcp is read-only. The most technically serious agent toolkit is **rjwalters/kicad-tools** (v0.13.0 Apr 2026: format-preserving S-expression round-trip, pure-Python DRC with JLCPCB rule presets, A* router, MCP server included). Strategy: **evaluate, don't depend** — every AI edit happens on a git-versioned project and is diffed by a human.
-5. **LLM datasheet extraction of pinouts/footprints is unproven** (no public benchmark even exists). The reliable 2026 path: **verified libraries first** — `easyeda2kicad.py` (LCSC/JLCPCB catalog → KiCad symbol+footprint+STEP), SnapMagic/Ultra Librarian/SamacSys fallback, ProtoFlow-class AI generation only for stragglers — then **1:1 print/overlay + pin-1 check by a human**, with the LLM as a *second reader* (netlist vs datasheet cross-check). This slots perfectly into the repo's existing E0/E1/E2 evidence-tier discipline.
-6. **Optional accelerators:** Quilter (native KiCad output; free program exists) or DeepPCB trial as *placement/routing candidate generators* only; atopile (schematic-as-code compiling to KiCad — attractive for the regeneration goal, but pre-1.0 churn) as an H2 spike, not the baseline.
-7. **MCAD loop:** `kicad-cli pcb export step` + KiCad StepUp (FreeCAD) for bidirectional board↔enclosure sync. This is mature and free.
+**Two-domain, one board** — burst compute vs always-on vigilance are opposite power regimes; two domains also *implement* R7's "AI decides what runs" as physical power domains.
 
-**Net effect on the draft's architecture:** the five-agent flow (Ingestion → Placement → MCP Orator → Auto-Router → DRC Loop) survives as a *pipeline skeleton*, but the trust boundaries move: agents own facts-gathering, netlist generation, rule-checking loops, BOM and fab packaging; **humans own placement and critical routing**; and the "eliminates Quilter for $0" claim is replaced by "Freerouting for grunt nets only, optional Quilter free-tier candidates."
-
-## 5. Target v1 hardware architecture
-
-### 5.1 Compute — recommended reference architecture (position taken; H1 validates on eval kits)
-
-**Two-domain architecture on one board.** The spec pulls in two opposite directions — burst compute for parallel multi-sensor streaming + on-device AI (R7, R11), and week-scale always-on ambient vigilance inside an 8 h+ active budget (R3). No single 2026 MCU is best at both; a two-domain design is the honest answer, and it also cleanly implements "AI decides what runs" (R7) as hardware power domains.
-
-**Application domain — primary candidate: STM32N6 class** (Cortex-M55 ~800 MHz + Neural-ART NPU, MIPI-CSI camera pipeline, USB-HS, rich I²C/I3C/SPI+DMA set, hardware timers for input-capture timestamping). Rationale against the spec: the NPU gives real on-device AI headroom (R11) instead of "maybe later"; native I3C is the R1 growth path (dynamic addressing kills the address-collision class entirely); the integrated ISP makes the camera decision (D7) a stuff-option rather than an architecture fork. **Fallback: NXP i.MX RT1170 class** (mature, 6×I²C + 6×SPI + eDMA — the widest bus fabric in the segment) if N6 toolchain/supply disappoints at H1. **Cost-down option: ESP32-P4** (native I3C, cheap; weaker AI story, no radio). The application domain sleeps in ambient mode and is woken by the sentinel on triggers or user intent.
-
-**Sentinel + connectivity domain — pre-certified BLE module, nRF54L15 class.** Always-on at µA–mA: radiation pulse counting, capacitive touch wake, battery/fuel-gauge supervision, haptic + glow control, BLE link, RTC hold, and power-domain sequencing for everything else. Using a **pre-certified module** here is the deliberate commercial choice: the intentional-radiator (FCC/ISED/CE-RED) burden stays modular instead of forcing full radio certification of our board. Wi-Fi burst offload (if the H1 bandwidth analysis demands more than BLE + USB-C) is likewise a pre-certified companion module, added only on evidence.
-
-This is pattern (b) — big MCU + always-on companion — chosen from first principles (power physics + certification economics), not inherited. D1/D2 record the owner's ratification; H1 spikes both candidates on eval kits against the streaming + timestamping + power targets before schematic freeze.
+- **Application domain — STM32N6-class** (Cortex-M55 ~800 MHz + Neural-ART NPU, MIPI-CSI ISP, USB-HS, I²C/I3C/SPI+DMA fabric, input-capture timers). On-device AI headroom (R11), native I3C growth path (R1), camera as stuff-option (D7). Fallbacks: i.MX RT1170 (widest bus fabric), ESP32-P4 (cost-down).
+- **Sentinel domain — pre-certified BLE module, nRF54L15-class**, always-on at µA–mA: touch wake, radiation counting, fuel gauge, haptics/glow, RTC, power sequencing, secure-boot root + device identity (R14 feature gates), BLE control plane.
+- **High-bandwidth radio — pre-certified Wi-Fi module (R14):** the device syncs wirelessly to a mobile app; deep-dive streams (multi-sensor raw + camera bursts, ~0.1–1 MB/s class) exceed sensible BLE throughput. Architecture: **BLE = control/ambient telemetry; Wi-Fi (station or P2P/direct) = interrogation streams**, carrying a WebRTC-class transport terminated by firmware/app (transport protocol is upstream's choice; we budget the bandwidth, power, and antenna keepouts). Wi-Fi module is power-gated by the sentinel — zero cost in ambient mode. H1 decides one-module (combo BLE+Wi-Fi) vs two; combo (e.g., current u-blox/Murata class) is preferred if its BLE low-power floor meets the sentinel budget, else nRF54 + gated Wi-Fi.
 
 ### 5.2 Buses
-Candidate topology (from §2.4 evidence, confirmed or amended at H1): high-rate sensors on SPI+DMA with INT lines; remaining I²C split across ≥2 controllers with per-segment isolation; address-colliding parts resolved by bus assignment/straps rather than a monolithic mux; calculated pull-up budget per segment; per-segment load switches for fault isolation and power gating (this is also how "why stream fluidic if there's no fluid around" becomes hardware: the AI layer can power/clock-gate whole sensor domains). If the H1 MCU choice brings mature I3C, it may enter v1 rather than v2. Reserve: one spare expansion segment (I²C/I3C + power + INT) for future sensors (R6 headroom).
+High-rate sensors on SPI+DMA with INT lines; remaining I²C/I3C split across ≥2 controllers; address collisions solved by bus assignment/straps (no monolithic mux); calculated pull-up budgets; **per-segment load switches** (fault isolation + power gating). Reserved expansion segment (bus + power + INT) for R1 growth.
+
+### 5.2b Concurrency & interference model (R7/R9 — new, first-class)
+The prototype's serial sweep degraded granularity and frequency; that bottleneck is designed out, but **"everything always parallel" is not the goal either** — it's *orchestrated* concurrency:
+
+- **Hardware guarantee:** every sensor domain can stream simultaneously at its native rate (per-bus concurrency, DMA, FIFO watermarks, hardware-timestamped INTs). No sensor waits on another's transaction.
+- **Interference matrix (contract artifact):** a machine-readable matrix of physical incompatibilities and couplings — optical emitters (UV/white/NIR LEDs, ToF 940 nm, PPG LEDs) vs spectral/optical receivers; actuators (fan/pump/haptic) vs IMU/piezo/radiation counting; Wi-Fi bursts vs RF-power measurement and GNSS; charger switching vs precision analog. Shipped in the ingest package so the **AI scheduler avoids masking interactions by construction** (and can deliberately exploit them, e.g., active illumination).
+- **Activation classes:** always-ambient (env, IMU, sentinel) · triggered (touch-activated contact reads; presence-gated radar deep dives) · intent-driven (spectral scans w/ illumination, camera, max-rate multi-sensor fusion) · gated-off (mutually exclusive pairs per the matrix, arbitrated by firmware policy).
+- Data-quality flags (emitters/actuators/radio active) ride every record so downstream fusion can weight confidence — semantics carried over from the upstream contract.
 
 ### 5.3 Timing
-GPS PPS → MCU input-capture; all sensor INTs timestamped in hardware where the MCU allows; `utc_ms = millis() + gps_offset` contract preserved; target = the §7.10 latency budget and the T-01/T-02 skew diagnostics.
+GNSS-PPS-disciplined input-capture timestamping; per-sensor INT latching in hardware; one canonical monotonic→UTC mapping per the wire contract. Cross-sensor skew budget defined at H1 and *measured* at H4.
 
-### 5.4 Power
-Redesigned tree replacing MT3608/Pololu: Li-ion cell (capacity per D4) → charger + fuel gauge (USB-C) → high-efficiency bucks for 3V3_SENSORS (split quiet/noisy sub-rails via load switches), 3V3_MCU, 5V_ACT (actuators, gated); reverse-polarity + fuse retained; battery lockout 3.4 V. Budget table with per-sensor ambient/active currents is a deliverable of H1 and must show **≥8 h ambient** (R3) or force D4 (bigger cell / reduced ambient set).
+### 5.4 Power (+ fast charging, R14)
+Li-ion pouch (sized by W-PWR) → **USB-C PD fast-charge path**: PD sink controller + charger sized for ~1C+ charge with thermal supervision (charge thermals must not cook env sensors — zoning §5.5; fast charge only when sensing idle or thermally headroomed), fuel gauge, protection. High-efficiency bucks per domain (no heavy LDOs); per-segment load switches; battery lockout; per-domain current-shunt test points so the R3 budget is **measured**.
 
-### 5.5 Floorplan zoning (carried from PLAN §6.1 + bench EMI/thermal rules)
-Quiet Nose (camera, spectral, optical windows) — Brain Middle (MCUs, buses, IMU) — Noisy Tail (actuator drivers, battery, charger). Gas-sensor cluster at fan intake with thermal moat/slots; exhaust over CPU; AMG8833 thermally isolated; Geiger and TMAG >30 mm from motor paths; GNSS antenna corner with keepout >50 mm from MCUs; analog (PPG, AD8317, piezo) partitioned ground region; RF keepouts per module datasheets.
+### 5.5 Floorplan zoning — from sensing physics inward (P0)
+Quiet optical/analog nose (spectral, ToF, thermal IR, PPG AFE, camera) · compute midsection · "dirty" tail (actuator drivers, charger, Wi-Fi PA, battery). Gas cluster at intake with thermal moat; exhaust over compute; IR imager isolated from board heat; magnetics/radiation away from motors and switching; GNSS + Wi-Fi antennas with modeled keepouts; partitioned analog grounds; charger/PD switching isolated from precision channels. Every rule derives from a named signal path, not from prototype folklore.
 
-### 5.6 Exposure classes → chassis features (maps to the owner's sketches)
-- **Contact field**: MAX30102 window + MPR121 electrode zones on the shell ("touch and it extracts").
-- **Air path**: micro-fan-driven channel — intake over BME688/SGP41/BMV080 (BMV080 free-air window requirement), exhaust past CPU (thermal chimney). Small shell holes only.
-- **Liquid provision**: reserved port + internal volume + flex/connector allowance for the Stage 16–17 microfluidic module — **not populated in v1**.
-- **Optical apertures**: VL53L8CX + AMG8833 + spectral trio + camera + UV/White LEDs; AS7331 needs a direct (or quartz) aperture for UV-C.
-- **Radome**: XM125 behind plastic.
-- **Sky window**: GNSS antenna.
-- **Feedback**: NeoPixel light-pipe ring/zones for the "twinkling stars" per-sensor activity glow + haptic — the subtle-glow shell from sketch 2.
+### 5.6 Exposure classes → chassis features (the owner's sketches, engineered)
+Contact field (PPG window + touch electrode zones: "touch it and it extracts") · air path (micro-fan channel: intake over gas/PM, exhaust over compute — the only visible holes) · liquid provision (buffered port + volume, v1 unpopulated, R8) · optical apertures (ToF, thermal, spectral trio, camera, emitters; UV-C-transparent window for AS7331) · radar radome (behind shell) · GNSS sky window · **feedback surface: per-zone light pipes ("twinkling stars" = sensors active/amplified) + haptics** · everything else invisible under the monolithic shell (R4 design language).
 
-### 5.7 Sensor BOM — raw silicon, chip-down (breakout parts are dead)
-The 16 registered types are the **capability baseline**, not a BOM of breakouts. Every channel is re-sourced as raw silicon on our board; H1 confirms packages/successors from the datasheets in `registry_assets` (land patterns and dimensions get pinned there — no dimension is asserted here without a datasheet citation):
+### 5.7 Sensor BOM — solder-down silicon on merit; alternatives scan mandated
+Baseline = §2.2. **H1 runs a per-channel market scan** — the owner expects alternatives to be researched seriously, e.g. **ScioSense ENS161-class** parts vs BME688/SGP41 for the gas stack (noting channel shape differs: BME688 = gas+T/RH/P, ENS16x = TVOC/eCO₂ DSP outputs, SGP41 = raw VOC/NOx — the scan scores *information yield for the interrogation mission*, not spec-sheet vanity), higher-res thermal arrays vs AMG8833, current regulated-grade PPG AFEs vs MAX30102EFD, radiation detector alternatives vs BG51. Scan dimensions: **orthogonal information yield · sensitivity/range · raw-stream access (ADR-0014: raw + processed both available wherever the part allows) · vendor validation/regulatory posture · power · package · unit cost at 1k/10k (R13) · supply longevity**. Output: a scored matrix + recommended v1 BOM for owner sign-off; the owner's incoming revised list merges here via the §6.3 flow.
 
-| Capability | Chip-down part (position) | Note |
-|---|---|---|
-| Gas/T/RH/P | **BME688** (LGA) | direct solder; keep out of thermal plume |
-| VOC/NOx | **SGP41** (DFN) | co-located in air path |
-| PM2.5 | **BMV080** (solderable miniature unit) | smallest PM sensor extant; free-air window is a chassis feature |
-| Thermal imaging | **AMG8833** (SMD) | evaluate higher-res successors at H1 (32×24 class) if power/price fit |
-| PPG (HR/SpO₂) | **MAX30102EFD** (OLGA) | per the brief; evaluate current ADI/ams successors for regulated-grade optical front end (R10) |
-| ToF depth 8×8 | **VL53L8CX** (LGA) | strap interface-select in copper; SPI mode per §5.2 |
-| Visible spectral | **AS7343** (OLGA) | |
-| UV A/B/C | **AS7331** (OLGA) | direct/quartz aperture (UV-C) |
-| NIR spectral | **AS7263** (LGA) | + NIR LED |
-| IMU 9-DoF | **BNO085** (LGA) | INT wired; vibration-isolated mount zone |
-| 3D magnetics | **TMAG5273** (SOT-23) | trivially chip-down |
-| Precision analog | **re-evaluate ADS1115** | the application MCU's own ADCs may absorb this; keep an external Δ-Σ ADC only if the RF-power (AD8317) / piezo chains demand it |
-| 60 GHz radar | **Acconeer A121 (raw, antenna-in-package)** — not the XM125 module | AiP makes chip-down feasible; RF keepout + radome per datasheet |
-| GNSS | **antenna-integrated module class (u-blox MIA/NEO-M9/M10)** | module is the correct commercial choice here (RF + antenna certification/performance); exact part at H1 |
-| Touch | **MPR121 (QFN) or MCU-native cap-touch** | sentinel MCU class has capable touch peripherals — absorb if electrode count allows (fewer parts, lower ambient power) |
-| Radiation | **BG51-class solid-state detector (raw, not the carrier board)** | evaluate current solid-state alternatives at H1 |
-| Camera (if D7 = yes) | raw sensor + FPC connector into the app MCU's CSI/DVP | not a dev-board camera |
+### 5.8 Dynamic boundary co-optimization → **chassis built with buffer**
+Board floor = courtyards + tuned clearance multiplier; grow layers before XY (0.5 mm steps). The *chassis* is then constructed around the achieved envelope **plus explicit buffer** (owner-confirmed): reserved XY/Z margin, spare aperture blanks in the plate, the liquid port/volume (R8), and the expansion segment's reach — so future board revs land inside the same shell whenever physically possible. Envelope + buffer export as STEP and define the industrial design.
 
-Additions come from the gap register + market scan (the "new sensor ships → we ship" loop), following the **ratified change flow (owner decision 2026-07-10):**
+### 5.9 Modularity mechanism (R6/§0.2)
+Frozen-with-buffer chassis interface (outline, bosses, connectors, aperture-plate geometry) + contract-driven regeneration. The aperture plate is the cheap, separately-versioned part that absorbs exposed-sensor changes. Respin speed is the KPI; §6.6 is the engine that drives HITL toward the minimum.
 
-> **1. Sensor change decided** (added / removed / updated) — here, in this project · **2. PCB + device designed and approved** — the pipeline regenerates the board rev; owner approves · **3. Firmware + interrogator repo ingest and update** — the approved sensor delta ships downstream as an ingest package (USR record drafts, electrical/mechanical facets, AssetPins, interface-requirements delta), interrogator updates its registry/firmware to match, and the backend stacks on top.
+### 5.10 Commercial-grade (DFM/DFT · certification · lifecycle · IP)
+- **Certification (W-CERT):** FCC 15B/CE-EMC/ISED plan from H1, pre-scan at H4; intentional radiators inside pre-certified modules; laser class 1; IEC 62471 UV interlock; battery IEC 62133-class; RoHS/REACH BOM.
+- **DFM/DFT:** designed to the target fab/assembly class; test points on every rail/bus; per-domain current shunts; SWD/tag-connect; DNP options (camera, Wi-Fi variant) so one layout serves multiple SKUs; panelization + fiducials; **CM-quotable data from day one (R13)**.
+- **Lifecycle (R14):** secure boot rooted in the sentinel's crypto/KeyStore; **A/B (dual-slot) OTA** for regular firmware/security updates; signed images; per-unit identity/serialization at production programming; hardware hooks for **feature gating** (entitlements enforced in firmware, future paywalls/security limits) — shipped units evolve by software (§0.2).
+- **Reliability (R2):** MTBF rollup incl. actuators; long-life blower/pump selection + derating + intake filtration; connectors and flex rated for service life.
+- **IP posture:** the design rationale log doubles as an **invention-capture log** — novel mechanisms (aperture-plate modularity, interference-matrix-driven orchestration, sentinel-gated sensing domains, contract-driven respin pipeline) get flagged as patent candidates at each phase gate.
 
-Hardware originates sensor changes; the registry remains the system's single source of sensor truth by *ingesting* each approved change — it never blocks the design, and nothing here waits on upstream to decide.
+## 6. The design pipeline (closed-loop, human-gated, learning)
 
-### 5.8 Dynamic boundary co-optimization (R4 — the sizing method, from the brief)
-Board size is elastic, not preset: baseline floor area = sum of component courtyards + a layout clearance multiplier (~40 % starting point, tuned per zone — analog and RF zones need more, digital less). When placement/routing fails inside the boundary, escalate in order: **Z-axis lever** (4 → 6 → 8 layers; JLCPCB through-via + POFV keeps this cheap) before **XY lever** (grow unconstrained edges in 0.5 mm steps). The final envelope — outline, max component heights top/bottom, keepouts — exports as STEP and *defines the chassis* (§5.6 apertures wrap around it). The phone-attach question (D7) is answered by this output, not assumed.
+### 6.1 Stages & artifacts
+1. **Contract ingest** — pinned USR + device profile → IO map, bus/address plan, netlist skeleton.
+2. **Library** — verified symbol/footprint/3D per part (easyeda2kicad → SnapMagic/UL → last-resort generation), AssetPin recorded (local now → S3), human overlay-check promotes E0→E1.
+3. **Schematic** — KiCad 10 multi-sheet capture; LLM second-reader review (addresses, pull-ups, straps, INT completeness, decoupling) against `registry_assets` datasheets.
+4. **ERC/DRC loop** — `kicad-cli` JSON + exit codes in CI; agent proposes diffs; human merges.
+5. **Placement** — human-owned per §5.5 zoning encoded as keepouts; optional Quilter/DeepPCB candidates for comparison.
+6. **Routing** — critical nets by hand (USB-HS, PD, crystals, SPI, PPS, PPG/analog, antenna feeds); Freerouting `-inc` for grunt nets; SI review.
+7. **Outputs — yes to all four review artifacts (owner Q):** (a) **native KiCad project** (multi-sheet schematic + fully routed layout); (b) **interactive BOM cross-referenced to live inventory/pricing** (LCSC/Octopart — also feeds R13 cost gates); (c) **design rationale log** (ADRs: routing/layer/thermal choices + invention capture); (d) **the 3D structure for human review at every phase**: `kicad-cli` STEP + raytraced board renders (`pcb render`) at H2/H3, and at H3-freeze a **grounded prototype visual** — board envelope + chassis concept (FreeCAD/StepUp model, rendered) — for the owner and product teams to iterate the industrial design on facts, not sketches (owner-requested deliverable).
+8. **MCAD co-design** — STEP ↔ FreeCAD enclosure, collision/aperture checks, 3D-printed shells at H5.
 
-### 5.9 Modularity mechanism (R6)
-v1 modularity = **contract-driven regeneration + frozen chassis interface**: (a) board outline, mounting bosses, connector positions, and the aperture plate geometry are frozen after H5; (b) sensor churn re-enters at H2 with the pipeline regenerating schematic/layout deltas inside the frozen envelope; (c) the aperture plate (the one part that must physically change when an exposed sensor changes) is a cheap, replaceable, separately-versioned part. Physical plug-in sensor modules (mezzanine/flex) are a v2 study item (D6) — they cost density, which is the primary v1 constraint.
+### 6.2 Trust boundaries
+Automated & trusted: contract ingest, BOM/pricing, ERC/DRC loops, fab packaging, STEP/render export, checksums. AI-assisted + human gate: schematic review, placement candidates, fix diffs, datasheet cross-checks. Human-only: footprint E1 promotion, critical routing, fab release, safety (battery/laser/UV), phase gates.
 
-### 5.10 Commercial-grade requirements (new — DFM/DFT/certification/production)
+### 6.3 Regeneration = the ratified change flow
+Sensor change **decided here** → stages 1–2 regenerate the delta → 3–7 replay inside the frozen envelope → **owner approves board/device rev** → ingest package ships downstream → **firmware + interrogator update**, backend stacks on top.
 
-Because this is a product, not a lab board:
+### 6.4 CI
+ERC/DRC · asset-checksum manifest (local now, S3 later — same manifest) · contract-pin drift tripwire · fab-output regeneration diff · release tags with full provenance (contract SHA + asset checksums + toolchain versions).
 
-- **Certification path (W-CERT):** unintentional radiator EMC (FCC Part 15B / CE-EMC / ISED) planned from H1 — pre-scan at H4 on the first spin; intentional-radiator scope kept inside pre-certified radio modules (§5.1); BMV080 laser class 1 carried; UV-LED photobiological safety (IEC 62471) with hardware interlock; skin-contact materials biocompat considerations at H5; battery system to IEC 62133-class expectations (protected cell + protection circuitry + fuel gauge + thermal cutoff); RoHS/REACH-compatible BOM from the start.
-- **DFM/DFT:** design against the chosen fab/assembly class from day one (JLCPCB 6–8-layer + POFV baseline, D3); paneling with fiducials + tooling; controlled-impedance stackup documented; **test points on every rail and every bus**; a bring-up/test header (SWD/JTAG via tag-connect footprint, UART console); per-domain current-measurement shunt points (this is how the R3 power budget gets *measured*, not estimated); DNP options for camera + Wi-Fi companion so one layout serves both D7 outcomes.
-- **Production programming + identity:** flash/provision path (SWD gang or bootloader), per-unit serial + device identity (the sentinel MCU class carries crypto/KeyStore for later fleet mTLS — matches upstream's P1+ security posture without binding to it).
-- **Serviceability:** actuators (fan/pump/valve — the only wear parts, R2) on a replaceable sub-assembly path; battery replaceable without board rework.
+### 6.5 Learning loop — HIL data → less HITL each cycle (owner Q)
+Answering "how do we capture HIL data to optimize the whole e2e over time": every human intervention and every physical measurement becomes **machine-readable pipeline input for the next cycle**:
+- **Capture:** bring-up/diagnostics runs (conformance reports, skew/power/thermal measurements, EMC pre-scan results), every DRC/ERC violation + its fix diff, every hand-routing constraint, every footprint correction, every deviation — all logged as structured artifacts keyed to *(design SHA, AssetPins, part, rule)*.
+- **Compound:** validated fixes graduate into **rules-as-code** — DRC rule files, keepout/zone templates, pull-up calculators, net-class definitions, placement affinity hints, the interference matrix — versioned in this repo. The pipeline's stage 1–4 automation consumes them; nothing is re-learned twice.
+- **Converge:** v1 is human-heavy by design (first traversal writes the rulebook). By construction, a v2 sensor swap replays stages 1–7 against an accumulated rulebook where the only *novel* work is the delta sensor's physics — so HITL collapses toward: approve the BOM, eyeball the placement diff, sign the fab release. That is the near-automation the owner is targeting, and the golden-capture discipline upstream (diagnostics baselines) gives the objective no-regression check each time.
 
-## 6. The design pipeline (closed-loop, human-gated)
-
-### 6.1 Stages
-1. **Contract ingest (automated):** script reads the pinned USR records + v1 device profile → generates the sensor IO map, bus/address table, pin-budget, and netlist skeleton. Any `pending` electrical facet blocks with a named upstream ask (USR-3).
-2. **Library (automated + human gate):** for each part, fetch verified symbol/footprint/3D (easyeda2kicad → SnapMagic/UL → last-resort AI generation); record AssetPin (version, sha256, source, evidence tier); **human overlay-check** (1:1 print or render diff) promotes E0→E1.
-3. **Schematic (human-owned, AI-reviewed):** KiCad 10 capture per block (power, MCU×2, per-bus sensor clusters, actuators, analog). LLM review pass: address conflicts, pull-up budget, decoupling audit, strap resistors, INT routing completeness — against the datasheets in `registry_assets`. *(atopile spike runs in parallel as D5.)*
-4. **ERC/DRC loop (automated):** `kicad-cli sch erc` / `pcb drc` with `--format json --exit-code-violations` in CI, plus a `kicad-cli jobset run` pipeline for the full output set; agent proposes fixes as diffs; human applies/approves. Rule presets = JLCPCB 6-layer class.
-5. **Placement (human-owned, tool-advised):** floorplan per §5.5 encoded as keepout/zone rules in the board file; optional Quilter/DeepPCB candidate for comparison only.
-6. **Routing (split):** hand-route USB, crystals, SPI, PPS, PPG/analog, antennas/keepouts, power; then Freerouting headless with `-inc` for remaining slow nets; final SI sanity review.
-7. **Fab package (automated):** kicad-jlcpcb-tools → gerber/drill/BOM/CPL with LCSC part numbers; InteractiveHtmlBom; `kicad-cli` STEP export.
-8. **MCAD co-design:** STEP → FreeCAD (StepUp) enclosure; collision/aperture checks; 3D-print v0 shells.
-9. **Design rationale log:** every non-obvious choice logged as a lightweight ADR in `docs/decisions/` (the brief's "Design Rationale Log").
-
-### 6.2 Trust boundaries (explicit)
-Automated & trusted: BOM/sourcing, contract-derived netlist data, ERC/DRC loops, fab packaging, STEP export, checksum tripwires. AI-assisted with human sign-off: schematic review, placement suggestions, fix proposals, datasheet cross-checks. Human-only: footprint promotion to E1, critical-net routing, final fab release, anything touching safety (battery, laser, UV).
-
-### 6.3 Regeneration promise (R12) — implements the ratified change flow
-A sensor change is **decided here** → stages 1–2 regenerate the delta (facts, library, netlist skeleton) → stages 3–7 replay on the delta inside the frozen envelope → **owner approves the board/device rev** → the approved delta ships downstream as the ingest package (USR records, facets, AssetPins, interface delta) for **firmware + interrogator to ingest and update**. Measured goal: **sensor-swap respin in ≤2 human-days of touch time** by v2.
-
-### 6.4 CI (this repo)
-On PR: ERC/DRC (kicad-cli, JSON artifacts), AssetPin checksum verification, contract-pin drift check (fails if upstream SHA moved without a pin PR), fab-output regeneration diff, LFS integrity. Releases: tagged fab packages with full provenance (contract SHA + asset checksums + toolchain versions).
+### 6.6 Manufacturing handoff (the ultimate goal: ship the design to a company that builds it)
+The terminal artifact is a **CM-ready manufacturing data package**: gerbers + ODB++/IPC-2581, drill, stackup + impedance spec, BOM with AVL (approved vendor list + LCSC/DigiKey/Mouser alternates), CPL, assembly drawings, paneling, test specification (bed-of-nails/flying-probe points + functional bring-up script), programming/provisioning procedure, and the DFM report. Prototypes: JLCPCB-class. Production: package quoted to contract manufacturers (procurement optional per CM). H6 exits with this package released.
 
 ## 7. Phases
 
-| Phase | Content | Exit criteria |
+| Phase | Content | Exit |
 |---|---|---|
-| **H0 — Foundations** (~1–2 wk) | Repo scaffold (this PR); toolchain pin (KiCad 10.0.x, kicad-cli CI container); submodule/pin mechanism to `interrogator`; LFS; stage-1 contract-ingest script; **draft USR-3 electrical resolution packets** for the candidate set (PR-ready for upstream); kick D1–D6 decision spikes | CI green on empty board; ingest script emits the IO map from pinned records; resolution packets delivered upstream |
-| **H1 — Architecture validation** (~2–3 wk) | Eval-kit spikes validating the §5.1 reference architecture (streaming + timestamping + sentinel power); **chip-down BOM confirmation (§5.7)** incl. successor parts, from `registry_assets` datasheets; bus topology finalized; power tree + **measured-basis power budget vs R3**; block diagram; layer stack + fab class freeze (D3); battery/cell choice (D4); certification plan v0 (W-CERT); **interface-requirements doc → upstream firmware project** | Owner ratifies architecture + budget + v1 BOM; upstream electrical facets `approved` for the ratified set |
-| **H2 — Schematic** (~2–4 wk) | Library build with AssetPins (the ratified v1 sensor set + compute + power, verified footprints); full schematic; ERC clean; LLM review packet; atopile spike verdict (D5) | ERC = 0; human review sign-off; BOM 100 % sourced (LCSC/stock) |
-| **H3 — Layout** (~3–5 wk) | Floorplan per §5.5; placement review; critical-net hand routing; Freerouting pass on grunt nets; DRC clean; thermal/EMI review; STEP export | DRC = 0 vs JLCPCB 6/8-layer rules; SI/thermal review sign-off; board envelope frozen → chassis interface freeze |
-| **H4 — Fab + bring-up** (~4–6 wk incl. lead time) | JLCPCB fab + PCBA (SMT where catalog allows, hand-finish rest); bring-up plan mirroring upstream diagnostics (per-bus smoke → per-sensor conformance → all-sensor coherence F-04 → soak R-02); deviation log continues here | Board powers, all buses enumerate, every sensor streams conformant records |
-| **H5 — Chassis v0** (parallel from H3 freeze) | FreeCAD enclosure from STEP; aperture plate; fan path; contact window; light pipes; 3D-printed shells; drop/fit iteration | Assembled device; thermal chimney verified; apertures validated per exposure class |
-| **H6 — Spec sign-off + integration gate** | (a) **Hardware DoD:** R1–R12 scorecard against the built device (power budget measured, envelope recorded, exposure classes validated, modularity respin demo). (b) **Joint integration milestone with upstream** (their firmware work, our board): binary IDL live, diagnostics no-regression, latency budget — i.e. interrogator #7 | (a) Spec scorecard ratified by owner → **v1 hardware done**; (b) #7 green → board accepted into the system; v2 planning opens (gap-register sensors, further miniaturization toward the north star) |
+| **H0 — Foundations** | Repo scaffold; toolchain pin (KiCad 10.0.x CI); contract pin mechanism; asset manifest (local, S3-ready); ingest script v0; USR-3 resolution packets drafted | CI green; ingest emits IO map |
+| **H1 — Architecture validation** | Eval-kit spikes (§5.1 compute + radio); **per-channel sensor market scan (§5.7)** merged with owner's revised list; interference matrix v0; bus topology; power tree + **two-mode budget vs R3**; reliability (MTBF) rollup incl. actuators (R2); **BOM cost model v0 (R13)**; cert plan v0; layer stack + fab class; **interface-requirements doc → upstream** | Owner ratifies architecture + v1 BOM + budgets (power/cost) |
+| **H2 — Schematic** | Verified library w/ AssetPins; multi-sheet schematic; ERC=0; LLM review packet; live-priced iBOM v0; board renders | Owner design review sign-off; BOM 100 % sourced + costed |
+| **H3 — Layout** | Zoned floorplan; critical hand-routing; Freerouting grunt pass; DRC=0; SI/thermal review; **envelope freeze → STEP + grounded prototype visual (board + chassis concept) for product iteration** | Envelope + visual ratified; chassis interface frozen (with buffer) |
+| **H4 — Fab + bring-up** | JLCPCB-class proto fab/assembly; structured bring-up (per-bus → per-sensor → all-parallel coherence → soak); **measured** power/skew/thermal; EMC pre-scan; HIL capture per §6.5 | Device streams all channels in parallel, conformant; measurements logged |
+| **H5 — Chassis v0** | FreeCAD enclosure from frozen envelope+buffer; aperture plate; air path; contact/glow surfaces; 3D-printed shells; fit/thermal iteration with product teams (using the H3 visual) | Assembled device validated per exposure class |
+| **H6 — Sign-off + handoff** | (a) R1–R14 scorecard vs built device; (b) joint #7 integration (upstream firmware); (c) **CM manufacturing package (§6.6) released** | v1 done; v2 loop opens (owner's new sensor list → §6.3 flow) |
 
-Cross-repo dependencies (upstream work, flagged not owned): USR-3 sign-off, #27 datasheet bounds confirmation (conformance currently 100 % conditional), binary IDL implementation (ADR-0004), ESP-IDF port decision, watchdog re-enable (G6).
+Cross-cutting: **W-PWR** (power budget), **W-PIPE** (pipeline/CI/rules-as-code), **W-CERT** (compliance).
 
 ## 8. Risks
-
 | Risk | Mitigation |
 |---|---|
-| Power budget misses 8 h ambient (R3) | H1 hard budget gate; INT-driven duty cycling; per-segment gating; D4 cell escalation |
-| Footprint/pinout error → dead board | Verified-library-first + AssetPin + human overlay check + LLM second-reader; no raw-LLM footprints |
-| Freerouting non-convergence / bad routes (documented v2.x quality regression vs v1.9) | Critical nets hand-routed first, `-inc` protected; benchmark v2.2.4 vs v1.9.0 on our board; Freerouting scoped to grunt nets; fallback = full hand route |
-| MCP/agent tooling immaturity corrupts files | Git-versioned everything; agents produce diffs, humans merge; rjwalters/kicad-tools evaluated in a sandbox first |
-| VL53L8CX SPI unknowns (max clock, blob load) | H1 bench spike on breakout before schematic freeze |
-| Thermal cross-talk on dense board (BMV080 15 K self-heat, bucks) | Zoning + moats/slots; thermal review at H3; measured at H4 soak |
-| I²C lockup in the field | Per-segment power gating + SCL recovery + watchdog + retained mux isolation on spectral chain |
-| Compute choice wrong (bus/power/AI headroom) | H1 trade study with bench spikes on eval kits before schematic freeze; interface-requirements doc keeps the upstream firmware port decoupled from the silicon choice |
-| Regulatory exposure (UV, laser, skin contact, health claims) | Wellness-only posture (upstream SEM-5); class-1 laser unchanged; UV interlock; materials choice at H5 |
-| Upstream contract churn mid-design | Pinned SHA + CI drift tripwire; bumps only at phase boundaries |
-| EMC failure at pre-scan (dense mixed-signal + 60 GHz + optical emitters) | Zoning §5.5; per-domain filtering; pre-certified radios; H4 pre-scan budget + one respin allowance |
-| New-silicon risk (STM32N6-class part or sensor successors) | H1 eval-kit gate; fallback parts named in D1/§5.7; DNP-friendly layout keeps options open |
+| Power: ambient target vs size (R3 explicitly flexible, floor 5 h) | Two-mode budget; sentinel-first architecture; owner trade review at H1 |
+| Actuator longevity breaks R2 | Long-life part selection + derating + filtration; MTBF rollup; serviceable fallback path |
+| Footprint/pinout error | Verified-library-first + AssetPins + human overlay + LLM second reader |
+| Freerouting v2.x quality regression | Hand-route critical; `-inc`; benchmark vs v1.9; full hand-route fallback |
+| New-silicon risk (N6-class, sensor successors) | H1 eval gate; named fallbacks; DNP-friendly layout |
+| EMC failure (dense mixed-signal + 60 GHz + emitters + Wi-Fi) | Physics-first zoning; pre-certified radios; H4 pre-scan + respin allowance |
+| Interference matrix incomplete → masked signals in field | Matrix seeded from datasheets at H1, *measured* at H4 (pairwise activation tests), shipped as versioned contract artifact |
+| BOM cost misses margin (R13) | Live-priced iBOM + cost gates at H1/H2; alternates in AVL |
+| Wi-Fi power breaks ambient budget | Wi-Fi hard-gated by sentinel; BLE-only ambient; measured duty costs |
+| Upstream contract churn | Pinned SHA + drift tripwire; bumps at phase boundaries |
 
-## 9. Open decisions (owner/SME calls — proposed defaults)
-
-| # | Decision | Proposed default |
+## 9. Open decisions (proposed defaults)
+| # | Decision | Proposed |
 |---|---|---|
-| D1 | v1 application MCU | **Recommended: STM32N6 class** (NPU + I3C + CSI, §5.1); fallback i.MX RT1170; cost-down ESP32-P4. H1 eval-kit spike confirms before schematic freeze |
-| D2 | Compute pattern | **Recommended: two-domain** — app MCU + pre-certified nRF54L15-class sentinel/BLE module (§5.1) — chosen on power physics + certification economics |
-| D3 | Fab/process | **JLCPCB, 6-layer through-via + POFV via-in-pad**; escalate to 8-layer not to microvia |
-| D4 | Battery | Size cell to the H1 budget (likely 2500–3500 mAh Li-ion pouch) vs relaxing R3 — needs the budget table first |
-| D5 | Schematic-as-code (atopile) | **Spike only** in H2; KiCad capture is the baseline |
-| D6 | Physical sensor-module system (mezzanine/flex) | **Defer to v2 study**; v1 modularity = §5.9 |
-| D7 | Camera on v1 | **Conditional on the achieved envelope (§5.8)**: if the device lands phone-attachable, no camera (per the brief); otherwise a camera goes in. Decide at H3 when the envelope is real; schematic carries the camera interface either way so the layout answer, not the schematic, decides |
-| D8 | UV LED | Swap 400 nm → **365 nm** (biofluorescence, per upstream PLAN §9) with eye-safety interlock |
-| D9 | Fluidics | **Chassis provision only** in v1 (port + volume + connector reservation) |
+| D1 | Application MCU | STM32N6-class; fallbacks RT1170 / ESP32-P4 (H1 gate) |
+| D2 | Compute pattern | Two-domain: app MCU + pre-certified sentinel/BLE module |
+| D3 | Fab class | JLCPCB 6-layer through-via + POFV; 8-layer before microvia; CM re-quote at production |
+| D4 | Cell | Sized by H1 two-mode budget; fast-charge 1C+ capable (R14) |
+| D5 | Schematic-as-code (atopile) | Spike only; KiCad capture baseline |
+| D6 | Mezzanine/flex sensor modules | v2 study; v1 = §5.9 |
+| D7 | Camera | Conditional on achieved envelope (phone-attachable → no camera); interface designed in, DNP decides |
+| D8 | UV emitter | 365 nm + IEC 62471 interlock |
+| D9 | Fluidics | Buffered provision only in v1 (R8) |
+| D10 | Asset object store | **AWS S3** (versioned bucket, S3-generic access layer); local manifest until H1 |
+| D11 | Radio topology | Combo BLE+Wi-Fi module if its LP floor meets sentinel budget, else nRF54-class + gated Wi-Fi module (H1) |
+| D12 | Gas stack composition | BME688 vs ENS161-class vs SGP41 mix — settled by the H1 market-scan matrix on information yield + cost |
 
-## 10. Proposed Project 3 structure (created only after this plan is ratified)
-
-Epics = H0–H6 + three cross-cutting tracks (W-PWR power budget; W-PIPE pipeline/CI; W-CERT certification/compliance). Each epic gets issues matching the phase deliverables above, with fields: Phase, Status, Blocked-by (cross-repo deps flagged), Evidence (link to ADR/artifact). The sensory-gap register drives the v2 backlog column.
+## 10. Project 3 structure (on owner go)
+Epics H0–H6 + W-PWR/W-PIPE/W-CERT; issues per phase deliverable with Phase/Status/Blocked-by/Evidence fields; v2 backlog column fed by the gap register + owner's market feedback.
 
 ---
-*Sources: interrogator repo (read-only) — PLAN.md §2, §5–7, §10, §13; docs/architecture/{0013,unified-sensor-registry*,board-acceptance-criteria,capability-coverage,system-architecture}.md; docs/build/{deviation_log,board_a_*,phase-0-build-scope,interboard_harness}.md; shared/schemas/{sensors/*,sensor_specs.yaml}; issue #7. Tooling research: see docs/draft-review.md §3 for full source list.*
+*v0.2 changelog (owner review 2026-07-11): silicon-on-merit incl. BNO085 raw+fused (ADR-0014); interrogate/alert flow continuity §3.6; concurrency & interference model §5.2b; R2 extended to actuators; R3 made flexible (5 h floor); chassis buffer confirmed §5.8; R13 unit economics; R14 wireless-first + fast charge + OTA/feature gates; Git LFS dropped → local + AWS S3 (D10); sensor market scan mandated §5.7 (ENS161 example, D12); §2.4/2.5 demoted to historical/checklist; sensor-MCP mission framing; learning loop §6.5; CM handoff §6.6; grounded prototype visual committed at H3.*
