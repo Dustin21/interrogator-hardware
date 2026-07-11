@@ -1,6 +1,8 @@
 # Interference matrix v1 (seeded from physics/datasheets; MEASURED pairwise at H4).
 # Consumed by the AI scheduler: avoid masking interactions; state flags ride every record.
-# rule verbs: mutex | tdm (time-division) | stagger | gate(<state>) | flag(<name>) | zoning | cal
+# rule verbs: mutex | tdm | stagger | gate(<state>) | flag(<name>) | zoning | cal | material_exclusion | light_tight_cavity | dedicated_aperture | spread_spectrum | shield | keepout
+# enforcement_tier per rule: 'firmware' (reflex, sub-100ms) | 'edge' (active-sensing policy) | 'factory'/'mech'/'material' (design-time)
+# Ships downstream via the ingest package, referenced by the device profile (single-sourced; firmware/edge LOAD it, never hardcode).
 pairs:
   # 1 optical crosstalk
   - {src: UV_LED_365,      victims: [TCS3448, AS7331, MAX30102, AS7058, camera], effect: optical_saturation, rule: tdm}
@@ -36,3 +38,19 @@ activation_classes:
   intent_driven:  [MLX90642_highfps, VL53L8CH, TCS3448, AS7331, camera, GNSS_cont, WIFI_bulk]
   gated_off_default: [UV_LED_365, WHITE_NIR_LED, FAN_BLOWER, HAPTIC_LRA]
 state_flags: [motors_active, haptic_active, wifi_active, charging, docked, leds_active, uv_active]
+
+# --- downstream routing (interrogator consumes; hardware is the single source) ---
+enforcement_routing:
+  firmware_reflex:   # real-time, deterministic — MUST be firmware
+    verbs: [tdm, mutex, stagger, gate]
+    examples: [UV_LED_365->TCS3448 tdm, HAPTIC_LRA->BNO086 mutex, MMC_SETRESET->TMAG5273 stagger, WIFI_TX->MIA_M10Q gate(gnss_rawx)]
+  edge_policy:       # active-sensing agent — scheduling + confidence weighting
+    verbs: [flag, zoning-aware scheduling, cal-aware weighting]
+  design_time:       # not runtime — HW/materials/factory own these
+    verbs: [material_exclusion, light_tight_cavity, dedicated_aperture, spread_spectrum, shield, keepout, zoning, cal]
+consumers:
+  - {who: interrogator_firmware, loads: [firmware_reflex rules, state_flags emit], via: device_profile_ref}
+  - {who: interrogator_edge_policy, loads: [edge_policy rules, matrix for active-sensing], via: device_profile_ref}
+# state-flag SCHEMA DELTA owned by interrogator (ADR-0001 record contract):
+#   existing (prototype): motors_active, wifi_active, leds_active, valve_active
+#   NEW for v1 (we specify, they add): charging, docked, haptic_active, uv_active
