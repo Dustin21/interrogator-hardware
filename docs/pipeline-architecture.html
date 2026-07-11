@@ -1,0 +1,150 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Interrogator — pipeline & architecture</title>
+<style>body{margin:0;background:#0f1419;font-family:-apple-system,Helvetica}.w{max-width:1080px;margin:0 auto;padding:24px}svg{width:100%;height:auto;border-radius:14px;margin:10px 0}</style>
+</head><body><div class="w"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 780" font-family="Helvetica,Arial">
+<defs><marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="#5b6a78"/></marker></defs>
+<rect width="1040" height="780" fill="#0f1419"/>
+<text x="24" y="34" fill="#fff" font-size="19" font-weight="bold">Closed-loop design pipeline — what ran vs what's next</text>
+<text x="24" y="54" fill="#7fd1c0" font-size="12">green = executed this session · amber = H2/H3 (KiCad enters here) · indigo = armed in CI, fires automatically</text>
+
+<g transform="translate(24,80)">
+<rect width="300" height="86" rx="10" fill="#171e26" stroke="#0F766E" stroke-width="1.6"/>
+<text x="12" y="22" fill="#fff" font-size="13" font-weight="bold">1 · Contract ingest</text>
+<text x="12" y="40" fill="#9aa5b1" font-size="11">contract/scripts/ingest.py · pinned USR @881fbc1</text>
+<text x="12" y="56" fill="#9aa5b1" font-size="11">→ io_map.json/md · 16 sensors, pending flagged</text>
+<rect x="214" y="8" width="78" height="17" rx="8" fill="#0F766E"/>
+<text x="253" y="20" fill="#fff" font-size="9" text-anchor="middle">DONE</text></g>
+<g transform="translate(370,80)">
+<rect width="300" height="86" rx="10" fill="#171e26" stroke="#0F766E" stroke-width="1.6"/>
+<text x="12" y="22" fill="#fff" font-size="13" font-weight="bold">2 · Market scan + verification</text>
+<text x="12" y="40" fill="#9aa5b1" font-size="11">WebSearch agents · Digi-Key/Mouser/LCSC</text>
+<text x="12" y="56" fill="#9aa5b1" font-size="11">→ docs/research/bom-v1.md · 8 substitutions</text>
+<rect x="214" y="8" width="78" height="17" rx="8" fill="#0F766E"/>
+<text x="253" y="20" fill="#fff" font-size="9" text-anchor="middle">DONE</text></g>
+<g transform="translate(716,80)">
+<rect width="300" height="86" rx="10" fill="#171e26" stroke="#0F766E" stroke-width="1.6"/>
+<text x="12" y="22" fill="#fff" font-size="13" font-weight="bold">3 · Datasheet fact extraction</text>
+<text x="12" y="40" fill="#9aa5b1" font-size="11">pdftotext vs registry_assets PDFs</text>
+<text x="12" y="56" fill="#9aa5b1" font-size="11">→ dims/currents w/ provenance DS/RS/EST</text>
+<rect x="214" y="8" width="78" height="17" rx="8" fill="#0F766E"/>
+<text x="253" y="20" fill="#fff" font-size="9" text-anchor="middle">DONE</text></g>
+<g transform="translate(24,210)">
+<rect width="300" height="86" rx="10" fill="#171e26" stroke="#0F766E" stroke-width="1.6"/>
+<text x="12" y="22" fill="#fff" font-size="13" font-weight="bold">4 · Floorplan + envelope</text>
+<text x="12" y="40" fill="#9aa5b1" font-size="11">boards/v1/design_v1.py · collision-checked</text>
+<text x="12" y="56" fill="#9aa5b1" font-size="11">→ 54×40mm zones · envelope.json · SVGs</text>
+<rect x="214" y="8" width="78" height="17" rx="8" fill="#0F766E"/>
+<text x="253" y="20" fill="#fff" font-size="9" text-anchor="middle">DONE</text></g>
+<g transform="translate(370,210)">
+<rect width="300" height="86" rx="10" fill="#171e26" stroke="#0F766E" stroke-width="1.6"/>
+<text x="12" y="22" fill="#fff" font-size="13" font-weight="bold">5 · Power + interference models</text>
+<text x="12" y="40" fill="#9aa5b1" font-size="11">two-mode budget · interference-matrix.yaml</text>
+<text x="12" y="56" fill="#9aa5b1" font-size="11">→ 19.8mA ambient / 434mA deep-dive</text>
+<rect x="214" y="8" width="78" height="17" rx="8" fill="#0F766E"/>
+<text x="253" y="20" fill="#fff" font-size="9" text-anchor="middle">DONE</text></g>
+<g transform="translate(716,210)">
+<rect width="300" height="86" rx="10" fill="#171e26" stroke="#0F766E" stroke-width="1.6"/>
+<text x="12" y="22" fill="#fff" font-size="13" font-weight="bold">6 · Chassis concept CAD</text>
+<text x="12" y="40" fill="#9aa5b1" font-size="11">enclosure/chassis_v0.py · CadQuery (not KiCad)</text>
+<text x="12" y="56" fill="#9aa5b1" font-size="11">→ chassis_v0.step + 4 views · 62×47×17</text>
+<rect x="214" y="8" width="78" height="17" rx="8" fill="#0F766E"/>
+<text x="253" y="20" fill="#fff" font-size="9" text-anchor="middle">DONE</text></g>
+<g transform="translate(24,340)">
+<rect width="300" height="86" rx="10" fill="#171e26" stroke="#B45309" stroke-width="1.6"/>
+<text x="12" y="22" fill="#fff" font-size="13" font-weight="bold">7 · Verified library build</text>
+<text x="12" y="40" fill="#9aa5b1" font-size="11">easyeda2kicad → SnapMagic/UL · AssetPins</text>
+<text x="12" y="56" fill="#9aa5b1" font-size="11">→ symbols/footprints/3D, human overlay E0→E1</text>
+<rect x="214" y="8" width="78" height="17" rx="8" fill="#B45309"/>
+<text x="253" y="20" fill="#fff" font-size="9" text-anchor="middle">NEXT (H2/H3)</text></g>
+<g transform="translate(370,340)">
+<rect width="300" height="86" rx="10" fill="#171e26" stroke="#B45309" stroke-width="1.6"/>
+<text x="12" y="22" fill="#fff" font-size="13" font-weight="bold">8 · Schematic capture</text>
+<text x="12" y="40" fill="#9aa5b1" font-size="11">KiCad 10 · multi-sheet · LLM second-reader</text>
+<text x="12" y="56" fill="#9aa5b1" font-size="11">→ boards/v1/v1.kicad_sch · ERC=0</text>
+<rect x="214" y="8" width="78" height="17" rx="8" fill="#B45309"/>
+<text x="253" y="20" fill="#fff" font-size="9" text-anchor="middle">NEXT (H2/H3)</text></g>
+<g transform="translate(716,340)">
+<rect width="300" height="86" rx="10" fill="#171e26" stroke="#B45309" stroke-width="1.6"/>
+<text x="12" y="22" fill="#fff" font-size="13" font-weight="bold">9 · Layout + routing</text>
+<text x="12" y="40" fill="#9aa5b1" font-size="11">KiCad 10 · hand critical + Freerouting -inc</text>
+<text x="12" y="56" fill="#9aa5b1" font-size="11">→ v1.kicad_pcb inside floorplan · DRC=0</text>
+<rect x="214" y="8" width="78" height="17" rx="8" fill="#B45309"/>
+<text x="253" y="20" fill="#fff" font-size="9" text-anchor="middle">NEXT (H2/H3)</text></g>
+<g transform="translate(24,470)">
+<rect width="300" height="86" rx="10" fill="#171e26" stroke="#4F46E5" stroke-width="1.6"/>
+<text x="12" y="22" fill="#fff" font-size="13" font-weight="bold">10 · ERC/DRC loop</text>
+<text x="12" y="40" fill="#9aa5b1" font-size="11">kicad-cli · --format json --exit-code-violations</text>
+<text x="12" y="56" fill="#9aa5b1" font-size="11">→ .github/workflows/ci.yml (auto-activates)</text>
+<rect x="214" y="8" width="78" height="17" rx="8" fill="#4F46E5"/>
+<text x="253" y="20" fill="#fff" font-size="9" text-anchor="middle">CI-ARMED</text></g>
+<g transform="translate(370,470)">
+<rect width="300" height="86" rx="10" fill="#171e26" stroke="#B45309" stroke-width="1.6"/>
+<text x="12" y="22" fill="#fff" font-size="13" font-weight="bold">11 · Fab package</text>
+<text x="12" y="40" fill="#9aa5b1" font-size="11">kicad-jlcpcb-tools · iBOM · kicad-cli STEP</text>
+<text x="12" y="56" fill="#9aa5b1" font-size="11">→ gerbers/BOM/CPL → CM handoff §6.6</text>
+<rect x="214" y="8" width="78" height="17" rx="8" fill="#B45309"/>
+<text x="253" y="20" fill="#fff" font-size="9" text-anchor="middle">NEXT (H2/H3)</text></g>
+<g transform="translate(716,470)">
+<rect width="300" height="86" rx="10" fill="#171e26" stroke="#B45309" stroke-width="1.6"/>
+<text x="12" y="22" fill="#fff" font-size="13" font-weight="bold">12 · Bring-up + HIL learning</text>
+<text x="12" y="40" fill="#9aa5b1" font-size="11">per-domain shunts · golden captures</text>
+<text x="12" y="56" fill="#9aa5b1" font-size="11">→ measurements → rules-as-code (less HITL)</text>
+<rect x="214" y="8" width="78" height="17" rx="8" fill="#B45309"/>
+<text x="253" y="20" fill="#fff" font-size="9" text-anchor="middle">NEXT (H2/H3)</text></g>
+<path d="M324 123 L370 123" stroke="#5b6a78" stroke-width="2" marker-end="url(#a)"/><path d="M670 123 L716 123" stroke="#5b6a78" stroke-width="2" marker-end="url(#a)"/><path d="M866 166 L174 210" stroke="#5b6a78" stroke-width="2" marker-end="url(#a)"/>
+<path d="M324 253 L370 253" stroke="#5b6a78" stroke-width="2" marker-end="url(#a)"/><path d="M670 253 L716 253" stroke="#5b6a78" stroke-width="2" marker-end="url(#a)"/><path d="M174 296 L174 340" stroke="#5b6a78" stroke-width="2" marker-end="url(#a)"/>
+<path d="M324 383 L370 383" stroke="#5b6a78" stroke-width="2" marker-end="url(#a)"/><path d="M670 383 L716 383" stroke="#5b6a78" stroke-width="2" marker-end="url(#a)"/><path d="M866 426 L174 470" stroke="#5b6a78" stroke-width="2" marker-end="url(#a)"/>
+<path d="M324 513 L370 513" stroke="#5b6a78" stroke-width="2" marker-end="url(#a)"/><path d="M670 513 L716 513" stroke="#5b6a78" stroke-width="2" marker-end="url(#a)"/>
+<path d="M866 556 C980 620 520 660 174 600 C120 590 100 560 120 540" stroke="#0F766E" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#a)"/>
+<text x="330" y="648" fill="#7fd1c0" font-size="12">regeneration loop: sensor change decided here → stages 1–11 replay on the delta → owner approves → interrogator ingests</text>
+<rect x="24" y="690" width="992" height="66" rx="10" fill="#171e26" stroke="#253039"/>
+<text x="40" y="716" fill="#fff" font-size="12" font-weight="bold">Trust boundaries</text>
+<text x="40" y="736" fill="#9aa5b1" font-size="11">automated+trusted: ingest · pricing · ERC/DRC · fab export · checksums&#160;&#160;|&#160;&#160;AI-assisted, human-gated: schematic review · placement diffs&#160;&#160;|&#160;&#160;human-only: footprint E1 promotion · critical routing · fab release · safety</text>
+</svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 560" font-family="Helvetica,Arial">
+<defs><marker id="b" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto"><path d="M0 0 L8 3.5 L0 7 z" fill="#5b6a78"/></marker></defs>
+<rect width="1040" height="560" fill="#0f1419"/>
+<text x="24" y="34" fill="#fff" font-size="19" font-weight="bold">Device architecture — two domains, gated sensor power, raw streams</text>
+<rect x="24" y="60" width="380" height="210" rx="12" fill="#13202b" stroke="#0F766E" stroke-width="1.6"/>
+<text x="40" y="84" fill="#7fd1c0" font-size="13" font-weight="bold">SENTINEL DOMAIN · always-on (µA–mA)</text>
+<text x="40" y="106" fill="#e8e6e3" font-size="12">BL54L15 (nRF54L15, pre-certified BLE)</text>
+<text x="40" y="126" fill="#9aa5b1" font-size="11">touch wake (IQS7222A) · BG51 radiation counts · fuel gauge</text>
+<text x="40" y="143" fill="#9aa5b1" font-size="11">glow ring + haptics · RTC · secure boot + device identity</text>
+<text x="40" y="160" fill="#9aa5b1" font-size="11">BLE control plane to phone · POWER SEQUENCER for all domains</text>
+<rect x="40" y="180" width="330" height="70" rx="8" fill="#1d2833"/>
+<text x="52" y="200" fill="#e8b84a" font-size="11" font-weight="bold">per-domain load switches ("AI decides what runs")</text>
+<text x="52" y="218" fill="#9aa5b1" font-size="11">OPTICAL · AIR(+fan) · CONTACT · RADAR · GNSS · WIFI</text>
+<text x="52" y="236" fill="#9aa5b1" font-size="11">ambient = sentinel + duty-cycled N657 → 19.8 mA</text>
+<rect x="440" y="60" width="380" height="210" rx="12" fill="#13202b" stroke="#B45309" stroke-width="1.6"/>
+<text x="456" y="84" fill="#e8b84a" font-size="13" font-weight="bold">APPLICATION DOMAIN · burst (wake on intent/trigger)</text>
+<text x="456" y="106" fill="#e8e6e3" font-size="12">STM32N657 · M55 800MHz + NPU 600 GOPS + octal NOR</text>
+<text x="456" y="126" fill="#9aa5b1" font-size="11">SPI+DMA+INT: VL53L8CH · BNO086 · ADS131M04</text>
+<text x="456" y="143" fill="#9aa5b1" font-size="11">I²C-A: MLX90642 · MAX30102 · AS7058&#160;&#160;·&#160;&#160;I²C-B: BME688 · SGP41</text>
+<text x="456" y="160" fill="#9aa5b1" font-size="11">· BMV080 · TCS3448 · AS7331 · MMC5983 · TMAG5273 (I3C-ready)</text>
+<text x="456" y="177" fill="#9aa5b1" font-size="11">A121 radar (SPI) · MIPI-CSI camera (DNP) · USB-HS</text>
+<text x="456" y="194" fill="#9aa5b1" font-size="11">GNSS UART + PPS → input-capture (hw timestamps, all sensors)</text>
+<text x="456" y="211" fill="#9aa5b1" font-size="11">on-device AI headroom · deep-dive = 434 mA</text>
+<rect x="856" y="60" width="160" height="210" rx="12" fill="#13202b" stroke="#4F46E5" stroke-width="1.6"/>
+<text x="872" y="84" fill="#a5b4fc" font-size="13" font-weight="bold">BULK RADIO</text>
+<text x="872" y="106" fill="#e8e6e3" font-size="12">ESP32-C6-MINI-1</text>
+<text x="872" y="124" fill="#9aa5b1" font-size="11">SDIO · 53 Mbps</text>
+<text x="872" y="141" fill="#9aa5b1" font-size="11">hard-gated off</text>
+<text x="872" y="158" fill="#9aa5b1" font-size="11">in ambient</text>
+<rect x="24" y="300" width="500" height="110" rx="12" fill="#171e26" stroke="#253039"/>
+<text x="40" y="324" fill="#fff" font-size="12" font-weight="bold">POWER: 1200 mAh 1S → USB-C PD · BQ25620 ~1C fast charge · BQ27427 gauge</text>
+<text x="40" y="344" fill="#9aa5b1" font-size="11">TPS62840 60nA sentinel rail · TPS62823 core · TLV62568 1V8 · BQ29700 protect</text>
+<text x="40" y="362" fill="#9aa5b1" font-size="11">ambient ~61 h · continuous interrogation ~2.8 h · shunts on every domain (measured at H4)</text>
+<text x="40" y="392" fill="#7fd1c0" font-size="11">interference-matrix.yaml → scheduler avoids masking interactions (emitters vs receivers, fan vs IMU, WiFi vs analog)</text>
+<rect x="556" y="300" width="460" height="110" rx="12" fill="#171e26" stroke="#253039"/>
+<text x="572" y="324" fill="#fff" font-size="12" font-weight="bold">DATA PATH (contract preserved → interrogator adapts)</text>
+<text x="572" y="344" fill="#9aa5b1" font-size="11">raw + processed streams (ADR-0014) · binary IDL target + text debug</text>
+<text x="572" y="362" fill="#9aa5b1" font-size="11">BLE = control/ambient telemetry · Wi-Fi = deep-dive bulk (WebRTC-class) → phone app</text>
+<text x="572" y="380" fill="#9aa5b1" font-size="11">→ interrogator backend stacks on top: fusion · twin · intent agent · alerts</text>
+
+<path d="M404 165 L440 165" stroke="#5b6a78" stroke-width="2" marker-end="url(#b)"/>
+<path d="M820 165 L856 165" stroke="#5b6a78" stroke-width="2" marker-end="url(#b)"/>
+<path d="M630 270 L630 300" stroke="#5b6a78" stroke-width="2" marker-end="url(#b)"/>
+<path d="M214 270 L214 300" stroke="#5b6a78" stroke-width="2" marker-end="url(#b)"/>
+<rect x="24" y="440" width="992" height="90" rx="12" fill="#171e26" stroke="#253039"/>
+<text x="40" y="466" fill="#fff" font-size="12" font-weight="bold">CHASSIS (62×47×17) wraps the envelope + buffer</text>
+<text x="40" y="486" fill="#9aa5b1" font-size="11">window strip (optical) · contact dish (PPG/ECG + touch electrodes) · air in/out micro-holes + Sunon blower duct · radome · GNSS sky corner</text>
+<text x="40" y="504" fill="#9aa5b1" font-size="11">glow-ring light pipe ("twinkling stars") · USB-C slot · buffered liquid port (v1 unpopulated) · aperture plate = the swappable part</text>
+</svg></div></body></html>
