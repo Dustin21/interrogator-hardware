@@ -32,3 +32,28 @@ Full agent research in session transcript; per-claim URLs verified at Digi-Key/M
 
 ## Open verifications (H2 gates)
 STM32N6 DS14791 power tables · TCS3448 lifecycle/MOQ · MIA-M10Q-01B orderability · BG51 quote+dims · BNO08x current tables · Sunon L10 · C6 module cert grant list.
+
+## Replacement trade-off ledger (owner review 2026-07-11)
+| Swap | LOSE | GAIN |
+|---|---|---|
+| AMG8833→MLX90642 | 6x active draw (28 vs 4.5mA); tallest part on face (TO-39+lens 5.1mm); young silicon, no 1k break; AMG field history | 12x raw px; raw-or-cal selectable; 2uA sleep => lower AVERAGE power duty-cycled; FOV options; MLX90641 fallback |
+| VL53L8CX→CH | +$0.18; heavier frames on bus (budgeted, SPI+DMA); less community mileage on CNH | raw per-zone photon histograms (material/translucency/multi-target; permanent substrate) |
+| AS7343→TCS3448 | AS7343 lib ecosystem; 10k-MOQ/lifecycle ambiguity (OPEN); driver work | channel survives (AS7343 EOL); same 14ch/pkg/power; half price; raw FIFO |
+| BNO085→BNO086 | ~nothing (+$0.25) | 3x stock; lower idle; 14-bit accel fusion; firmware carries over |
+| NEO-M9N→MIA-M10Q-01B | nav rate ~25->~10Hz class; no SPI/USB; less forgiving RF layout; -01B orderability UNCONFIRMED (most likely swap to revert; MAX-M10S fallback) | only RAWX (raw pseudorange/carrier phase); 1/4 power; 4.5mm SiP; -$4; SAW+LNA integrated |
+| MPR121→IQS7222A | prototype touch firmware + hobbyist lore; Azoteq GUI tooling | part is ALIVE (MPR121 EOL); 3.5x cheaper; 6.7uA ULP; raw counts; wake features enabling gesture language |
+| ADS1115→ADS131M04 | I2C simplicity (SPI-only, DMA lane); 10x active power (duty-cycled); wide direct FSR (M04 +/-1.2V needs attenuators) | 4ch simultaneous 24-bit/64kSPS (~300x raw bits/$); true waveform capture; spare precision channels; AD8317 absorbed by N657 ADC |
+
+Pattern: losses are OPERATIONAL (mA, drivers, supply risk — all fenced: sleep/duty architecture, H2
+one-time driver work, named fallbacks + DNP pads). Gains are INFORMATIONAL (histograms, carrier phase,
+resolution, simultaneity) — permanent, compounding through every future model. Forced swaps: MPR121,
+AS7343. Watch-item: MIA-M10Q-01B orderability.
+
+## Candidate ADDS from owner review (pending owner call)
+- SHT41 (~$1.50, 1.5mm DFN): unheated reference-grade T/RH anchor away from self-heating; improves MOX
+  humidity compensation. Recommend ADD.
+- SCD41 (~$8-12, 10x10x6.5): TRUE CO2 (photoacoustic NDIR) — the one real hole in the air stack
+  (BME688 eCO2 is a VOC proxy). Strong for buildings/facilities vertical. Recommend ADD if envelope allows.
+- ENS161: REJECTED (black-box DSP outputs vs ADR-0014 raw-first; same MOX class = no orthogonal info;
+  1.8V rail; patchy supply). SGP41 was never replaced — BME688+SGP41 are complements (different MOX
+  platforms; SGP41 has the NOx pixel).
