@@ -39,3 +39,22 @@ NEW capability → new intents/fusions the SME should author:
 The HW ingest package for each of the 9 ADDs carries the E0 draft (USR + specs bounds + channel
 structure/units from the H1 datasheet extraction); the SME authors the meaning. This is the
 "sensor MCP" loop: HW defines the physical capability, the semantic layer turns raw → understanding.
+
+## Flags & verbs → upstream placeholders (verified vs interrogator repo, 2026-07-11)
+Placeholders CONFIRMED upstream: PLAN §5.3 "Cross-Signal Interference Matrix" (our matrix v1 is its
+successor for the new board); record_schema.md field-8 `activeFlags` bitfield (0x01 motors · 0x02 wifi ·
+0x04 LEDs · 0x08 valve — "Class A data-quality flags", fusion weights confidence);
+sensor_semantics.yaml top-level `flags:` section + actuator-state channels (NIR-LED pattern:
+"when on, reading is active-illumination, not environmental").
+
+Routing corrections (supersedes the looser wording above):
+1. **Bit assignments** extending the existing bitfield (no collisions; 0x08 valve stays reserved for
+   v2 fluidics): `0x10 charging · 0x20 docked · 0x40 haptic_active · 0x80 uv_active`.
+2. **Flags feed sensor_semantics.yaml too** — each new flag gets a semantics entry (what it MEANS,
+   e.g. docked = mounted/placed-monitor/magnetometers gated), and each victim channel gets a confound
+   description in the existing NIR-LED style (e.g. "AS7058 ECG during `charging`: switching-noise risk,
+   weight down"). This is how the AI interprets flagged data, not just filters it.
+3. **Verbs do NOT enter semantics** — tdm/mutex/stagger/gate are scheduler policy only (firmware
+   reflex + edge policy via device-profile ref, §8 of interface-requirements.md).
+4. **Upstream reconcile ask**: PLAN §7 lists `uncalibrated|error` flags that record_schema.md's 4-bit
+   field doesn't define — upstream should reconcile schema↔PLAN before extending the bitfield.
