@@ -1,18 +1,38 @@
-# Interference matrix v0 (seeded from datasheets/physics; MEASURED at H4 pairwise tests)
-# consumed by the AI scheduler: avoid masking interactions; flags ride every record.
+# Interference matrix v1 (seeded from physics/datasheets; MEASURED pairwise at H4).
+# Consumed by the AI scheduler: avoid masking interactions; state flags ride every record.
+# rule verbs: mutex | tdm (time-division) | stagger | gate(<state>) | flag(<name>) | zoning | cal
 pairs:
-  - {a: UV_LED_365, b: [TCS3448, AS7331, MAX30102, AS7058, VD66GY], effect: optical_saturation, rule: mutex_or_flag}
-  - {a: WHITE_NIR_LED, b: [TCS3448, AS7331, VL53L8CH], effect: optical_bias, rule: mutex_or_flag}
-  - {a: VL53L8CH_940nm, b: [MAX30102, AS7058], effect: ir_crosstalk, rule: stagger_or_flag}
-  - {a: FAN_BLOWER, b: [BNO086, ADS131M04_piezo, BG51], effect: vibration_emi, rule: flag_motors_active}
-  - {a: HAPTIC_LRA, b: [BNO086, ADS131M04_piezo], effect: vibration, rule: mutex}
-  - {a: WIFI_TX, b: [ADS131M04, MIA_M10Q, A121], effect: rf_desense, rule: stagger_or_flag}
-  - {a: BQ25620_charging, b: [ADS131M04, MMC5983MA, AS7058_ECG], effect: switching_noise_bfield, rule: flag_charging}
-  - {a: N657_selfheat, b: [BME688, SGP41, MLX90642], effect: thermal_drift, rule: zoning_plus_flag}
-  - {a: BMV080_selfheat, b: [BME688, SGP41], effect: local_heating, rule: spacing_duty}
-  - {a: MMC5983MA_setreset, b: [TMAG5273], effect: pulse_bfield, rule: stagger}
+  # 1 optical crosstalk
+  - {src: UV_LED_365,      victims: [TCS3448, AS7331, MAX30102, AS7058, camera], effect: optical_saturation, rule: tdm}
+  - {src: WHITE_NIR_LED,   victims: [TCS3448, AS7331, VL53L8CH, camera],         effect: optical_bias,       rule: tdm}
+  - {src: VL53L8CH_940nm,  victims: [MAX30102, AS7058, TCS3448, camera],         effect: ir_crosstalk,       rule: tdm}
+  - {src: PPG_LEDS,        victims: [TCS3448, VL53L8CH, camera],                 effect: optical_crosstalk,  rule: tdm}
+  # 2 thermal
+  - {src: BMV080_selfheat, victims: [BME688, SGP41, MLX90642],                   effect: thermal_drift,      rule: [zoning, flag(motors_active)]}
+  - {src: N657_WIFI_CHG_heat, victims: [BME688, SGP41, MLX90642],               effect: thermal_drift,      rule: [zoning, cal]}
+  # 3 chemical
+  - {src: SILICONE_OUTGAS, victims: [BME688, SGP41], effect: siloxane_poisoning, rule: material_exclusion, note: no silicone/siloxane near air path; bake-out}
+  # 4 magnetic
+  - {src: CURRENT_LOOPS_LED_CHG_FAN, victims: [MMC5983MA, TMAG5273], effect: dc_field, rule: [zoning, cal]}
+  - {src: MMC_SETRESET,    victims: [TMAG5273], effect: pulse_field, rule: stagger}
+  - {src: FERROUS_TARGET,  victims: [MMC5983MA, TMAG5273], effect: soft_iron, rule: cal}
+  - {src: DOCK_MAGNET,     victims: [MMC5983MA, TMAG5273], effect: dc_field, rule: gate(docked)}
+  - {src: HAPTIC_LRA_MAGNET, victims: [MMC5983MA], effect: dc_field, rule: [zoning, mutex]}
+  # 5 RF desense
+  - {src: WIFI_TX,         victims: [MIA_M10Q, ADS131M04, A121], effect: rf_desense, rule: [gate(gnss_rawx), flag(wifi_active)]}
+  - {src: BUCK_USB_MIPI_CLOCKS, victims: [MIA_M10Q], effect: rf_desense, rule: [spread_spectrum, shield, keepout]}
+  # 6 vibration
+  - {src: FAN_BLOWER,      victims: [BNO086, ADS131M04_piezo, BG51], effect: vibration, rule: flag(motors_active)}
+  - {src: HAPTIC_LRA,      victims: [BNO086, ADS131M04_piezo],       effect: vibration, rule: mutex}
+  # 7 switching noise
+  - {src: BQ25620_CHARGING, victims: [AS7058_ECG, ADS131M04, MMC5983MA, IQS7222A], effect: switching_noise, rule: [gate(charging), flag(charging)]}
+  # 8 light into radiation
+  - {src: AMBIENT_EMITTER_LIGHT, victims: [BG51], effect: photocurrent, rule: light_tight_cavity}
+  # 9 PM vs mesh
+  - {src: LINT_MESH,       victims: [BMV080], effect: pm_attenuation, rule: [dedicated_aperture, cal], note: pore passes PM2.5 blocks lint}
 activation_classes:
   always_ambient: [BME688, SGP41, BNO086, MMC5983MA, TMAG5273, BG51, sentinel_touch]
-  triggered: [MAX30102, AS7058, IQS7222A_read, A121_presence, BMV080_duty]
-  intent_driven: [MLX90642_highfps, VL53L8CH, TCS3448, AS7331, VD66GY, GNSS_cont, WIFI_bulk]
-  gated_off_default: [UV_LED_365, FAN_BLOWER, HAPTIC_LRA]
+  triggered:      [MAX30102, AS7058, IQS7222A_read, A121_presence, BMV080_duty]
+  intent_driven:  [MLX90642_highfps, VL53L8CH, TCS3448, AS7331, camera, GNSS_cont, WIFI_bulk]
+  gated_off_default: [UV_LED_365, WHITE_NIR_LED, FAN_BLOWER, HAPTIC_LRA]
+state_flags: [motors_active, haptic_active, wifi_active, charging, docked, leds_active, uv_active]
