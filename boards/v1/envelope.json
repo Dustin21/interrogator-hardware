@@ -1,0 +1,20 @@
+{
+ "board_w_mm": 54.0,
+ "board_h_mm": 40.0,
+ "board_t_mm": 1.6,
+ "max_comp_top_mm": 5.1,
+ "max_comp_bot_mm": 3.2,
+ "stack_note": "board+comps ~9.9 mm; +battery 5.2 under bottom; +shell 2x1.4 + gaps",
+ "device_target_mm": [
+  62,
+  47,
+  17
+ ],
+ "chassis_buffer_mm": {
+  "xy": 2.0,
+  "z": 1.0,
+  "spare_apertures": 2
+ },
+ "layers": 6,
+ "process": "JLCPCB 6L through-via + POFV via-in-pad"
+}
