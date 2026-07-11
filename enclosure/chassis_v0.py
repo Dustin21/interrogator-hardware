@@ -53,6 +53,12 @@ def features(s):
     s = s.cut(outer.cut(inner))
     # liquid-port blank (buffered): 3mm dimple on left wall, NOT through
     s = s.faces("<X").workplane().center(6, 2).circle(1.5).cutBlind(-0.8)
+    # ferrous target recess on BACK face (ADR-0001): 22mm dia x 0.5mm seat for steel disc,
+    # centered offset toward bottom-right = diagonally opposite the magnetometer quiet zone
+    s = s.faces("<Z").workplane().center(12, -6).circle(11.0).cutBlind(-0.5)
+    # lanyard hole (non-magnetic mount) through a corner boss
+    s = (s.faces(">Z").workplane(centerOption="CenterOfBoundBox").center(L/2 - 5, -W/2 + 5)
+         .circle(1.6).cutThruAll())
     return s
 
 def main():

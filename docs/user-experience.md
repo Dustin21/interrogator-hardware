@@ -37,3 +37,10 @@ BNO086 on-chip classifiers (pickup/tap/shake/stability, uA-class, INT-driven) + 
 - Route BNO086 INT to BOTH N657 and sentinel (motion wake path from ambient).
 - Electrode budget in shell/aperture plate: dish ring (2), rim slider (3), side-squeeze (2x2),
   back ECG-return/grip (1), reserve (2) = 12ch IQS7222A fully allocated.
+
+## Mounting / placed-monitor mode (ADR-0001)
+Ferrous steel target in device (passive, no field) + magnets in accessories (puck/vent-clip/
+dock). Dock magnet detected by TMAG5273 => auto placed-monitor mode (continuous fan, free
+airflow, magnetometer gated). Non-magnetic mounts (clip/lanyard/tripod) for precision-mag
+work. Optional pogo dock charging => indefinite always-on room monitoring. Fixes weak
+in-pocket air sensing: mount on vent/wall/hood/dash/strap for the device's best air posture.
