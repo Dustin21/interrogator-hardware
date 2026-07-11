@@ -13,6 +13,8 @@ Build the **iPhone of the sensor world**: a sleek, minimalist, handheld multi-mo
 
 The device is, conceptually, a **sensor MCP**: add a sensor and the system's raw streams and interrogation capabilities expand — the agent immediately knows more about reality. The hardware's job is to make that expansion cheap (fast respins, stable chassis) and the signal path pristine.
 
+**Target markets (owner, 2026-07-11)** — near-term reachable, many out of the box: home & consumer · building & facilities · health & wellness · public safety · environmental · industrial & resources · agriculture & food · transportation · government & defense. One hardware platform, many intent catalogs: the H1 sensor market scan (§5.7) scores parts by *cross-vertical* information yield, and the SKU levers (DNP variants, feature gating §5.10) let one board family serve B2C and B2B without forking the design.
+
 **P0 — Signal fidelity first.** Whatever we add, the signal of reality stays optimized and unencumbered. The device's success is measured by how accurately, sensitively, and at what range a handheld can extract information and fuse it into decisions. Every enclosure material, aperture, window, filter, gasket, keepout, and power rail is designed *from the sensing physics inward* — nothing may attenuate, distort, heat, or vibrate a signal path for the sake of convenience or cosmetics. When aesthetics and signal conflict, we engineer until they don't; signal wins any remaining tie.
 
 ### 0.1 Design stance — commercial hardware, clean sheet, silicon-on-merit
