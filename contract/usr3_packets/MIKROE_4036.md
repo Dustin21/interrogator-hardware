@@ -1,0 +1,31 @@
+# USR-3 electrical resolution packet — MIKROE_4036
+
+> DRAFT proposal for `facets.electrical` of `shared/schemas/sensors/MIKROE_4036.yaml`
+> (upstream single source of truth; this packet is the ingest-package input, never applied directly).
+> Contract pin: `881fbc1ba3e9c62c94d481077ae7dd061a07874b` · current upstream status: **pending** (E0)
+
+| field | candidate value (pinned record) | to confirm against |
+|---|---|---|
+| part_number | MIKROE-4036 | vendor ordering info |
+| vendor | MikroElektronika | — |
+| wire_token | MIKROE_4036 | upstream command contract |
+| bus (as recorded) | digital_pulse | datasheet interface section — **the new design may reassign (SPI/I3C per PLAN §5.2); record ALL supported interfaces** |
+| i2c_addresses | *none recorded upstream — enumerate from datasheet* | datasheet address table + strap pins |
+| logic_level_v | 3.3 | datasheet supply/IO spec |
+| datasheet (AssetPin) | TODO | `registry_assets/MIKROE-4036/datasheet/` |
+
+Upstream `needs`: USR-3: confirm Board-C relay wiring + digital-pulse interface (R1)
+
+## Verification checklist (embedded-SME / H1 bench)
+
+- [ ] Bus + interface options confirmed against datasheet pinout (I2C/I3C/SPI/UART modes, max clock per mode)
+- [ ] All selectable I2C addresses enumerated (straps/jumpers), default address confirmed
+- [ ] Interface-select / address straps documented (tie level, silent-failure modes)
+- [ ] Supply range + logic-level domain confirmed (core vs IO rails if split)
+- [ ] INT / data-ready line(s): polarity, drive type (push-pull/OD), timing
+- [ ] FIFO / watermark batch-read support: yes/no, depth
+- [ ] Power states + typical/max currents per state (feeds W-PWR model)
+- [ ] Land pattern / package confirmed vs mechanical drawing (feeds mechanical facet)
+- [ ] Keepout / placement constraints (RF, optical window, thermal, magnetic)
+
+**Sign-off:** pending → approved by: ______ · date: ______ · evidence tier: E1

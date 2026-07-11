@@ -110,3 +110,14 @@ def test_manifest_catches_corruption(tmp_path, monkeypatch):
     assert mt.cmd_verify(None) == 0
     victim.write_text("ISO-10303-21; TAMPERED")
     assert mt.cmd_verify(None) == 1
+
+
+def test_usr3_packets_cover_all_sensors():
+    io_map = json.loads((REPO / "contract" / "io_map.json").read_text())
+    pdir = REPO / "contract" / "usr3_packets"
+    packets = {p.stem for p in pdir.glob("*.md")}
+    expected = {e["sensor_type"] for e in io_map["sensors"]}
+    assert packets == expected, f"missing packets: {expected - packets}; stale: {packets - expected}"
+    for p in pdir.glob("*.md"):
+        text = p.read_text()
+        assert "Verification checklist" in text and io_map["contract_pin"] in text

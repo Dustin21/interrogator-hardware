@@ -28,11 +28,16 @@ Hardware design repo for the [Reality Interrogator](https://github.com/Dustin21/
 |---|---|
 | `PLAN.md` | The hardware build plan (source of truth for this repo). |
 | `docs/draft-review.md` | Audit: original brief vs interrogator repo + July-2026 EDA tooling research. |
-| `docs/decisions/` | Lightweight ADRs — the design rationale log. *(to come)* |
-| `contract/` | Pinned upstream registry consumption + ingest scripts. *(to come, H0)* |
-| `library/` | Verified symbols/footprints/3D with AssetPins (LFS). *(to come, H2)* |
-| `boards/v1/` | KiCad project, fab packages, bring-up docs. *(to come, H2+)* |
-| `enclosure/` | FreeCAD/STEP chassis, aperture plate. *(to come, H5)* |
+| `docs/MISSING_VENDOR_ASSETS.md` | Proxy-blocked vendor files with exact URLs for manual retrieval. |
+| `docs/decisions/` | Lightweight ADRs — the design rationale + invention-capture log. |
+| `contract/upstream/` | Pinned, read-only USR snapshot (`PIN.json` records the interrogator commit). |
+| `contract/scripts/` | Stage-1 pipeline: `ingest.py` (→ `io_map.{json,md}`), `gen_usr3_packets.py`. |
+| `contract/usr3_packets/` | Per-sensor electrical resolution packet drafts (the ingest-package input). |
+| `contract/tests/` | Pytest suite — the CI gate. |
+| `assets/` | AssetPin manifest + tool (sha256 ledger; local/device now → AWS S3, D10). |
+| `library/` | Verified symbols/footprints/3D with AssetPins. *(H2)* |
+| `boards/v1/` | KiCad project, fab packages, bring-up docs. *(H2+; CI ERC/DRC auto-activates)* |
+| `enclosure/` | FreeCAD/STEP chassis, aperture plate. *(H5)* |
 
 ## Toolchain (pinned at H0)
 
