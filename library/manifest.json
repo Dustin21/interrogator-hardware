@@ -316,7 +316,7 @@
    "verify_notes": "BQ29700 DSE-6-class on WSON-6 1.5x1.5 (verify); dual FET on WSON-6 2x2 (Package_SON.pretty/WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm.kicad_mod)."
   },
   {
-   "components_json_name": "Load switches x6",
+   "components_json_name": "Load switches x7",
    "part": "TPS22916 x7 (6 domains + accessory stage-1 add)",
    "symbol_source": "skidl-custom",
    "footprint_source": "TO-GENERATE",

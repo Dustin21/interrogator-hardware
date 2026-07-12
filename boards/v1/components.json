@@ -442,16 +442,16 @@
   "new": true
  },
  {
-  "name": "Load switches x6",
+  "name": "Load switches x7",
   "side": "bot",
   "x_mm": 2.8,
   "y_mm": 5.2,
-  "w_mm": 8.0,
+  "w_mm": 9.5,
   "h_mm": 2.0,
   "z_mm": 0.5,
   "zone": "power",
   "provenance": "RS WCSP",
-  "note": "per-segment gating",
+  "note": "6 domains + accessory port (H2 ratified)",
   "new": false
  },
  {

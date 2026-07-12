@@ -80,7 +80,7 @@ PARTS = [
     ("TPS62823 core buck",      1.6, 2.1, 0.6, "power",   "RS SOT583", ""),
     ("TLV62568 1V8 buck",       1.6, 2.9, 0.6, "power",   "RS SOT23-5", ""),
     ("BQ29700+FET protect",     4.0, 3.0, 0.6, "power",   "RS SON6", ""),
-    ("Load switches x6",        8.0, 2.0, 0.5, "power",   "RS WCSP", "per-segment gating"),
+    ("Load switches x7",        9.5, 2.0, 0.5, "power",   "RS WCSP", "6 domains + accessory port (H2 ratified)"),
 ]
 
 def pack():
@@ -148,7 +148,7 @@ def svg(side, placed, fname):
 AMBIENT={"BL54L15 sentinel":0.6,"STM32N657 avg (batch+stop)":12.0,"BME688 ULP":0.09,"SGP41 duty":0.3,
  "ENS161 duty":0.2,"BMV080 1-min duty":2.6,"MLX90642 1fps":1.5,"MLX90632 spot":0.05,"SHT41 duty":0.01,
  "BNO086 low-rate":1.5,"MMC+TMAG":0.3,"mic (VAD)":0.3,"A121 hibernate":0.011,"GNSS duty":0.4,
- "PIN+ADC leak":0.3,"SCD41 gated OFF":0.0,"SGX-CO bias":0.1,"misc/regs":1.2}
+ "PIN+ADC leak":0.3,"SCD41 gated OFF":0.0,"SGX-CO bias":0.1,"misc/regs":1.35}  # incl. 3V3_SYS buck IQ
 INTERROGATE={"STM32N657 full+NPU":150.0,"WiFi C6 stream":120.0,"VL53L8CH 15Hz":45.0,"A121 duty":20.0,
  "MLX90642 8fps":25.0,"spectral+UV+NIR+PPGx2+LEDs":34.0,"SCD41 active":18.0,"GNSS cont":9.0,
  "blower 50%":19.0,"env sensors":9.0,"sentinel+haptic+glow":8.0}

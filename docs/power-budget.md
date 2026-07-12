@@ -23,8 +23,8 @@ Cell: **LP503450-class 1200 mAh (50x34x5.2mm) 1S LiPo + protection**; USB-C PD ~
 | PIN+ADC leak | 0.30 |
 | SCD41 gated OFF | 0.00 |
 | SGX-CO bias | 0.10 |
-| misc/regs | 1.20 |
-| **total** | **21.5** |
+| misc/regs | 1.35 |
+| **total** | **21.6** |
 
 **Ambient runtime ≈ 56 h** — clears 8h target ~7×.
 
