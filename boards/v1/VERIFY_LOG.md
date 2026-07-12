@@ -1,10 +1,16 @@
-# VERIFY closure log — H2 stage-2
+# VERIFY closure log — H2 stage-2 (+ H2.5 round 2)
 
-**Date:** 2026-07-12 · Method: `pdftotext` over the STAGED datasheet PDFs in
+**Date:** 2026-07-12 · Method: `pdftotext` (+ `pdftoppm` page renders for
+drawing figures) over the STAGED datasheet PDFs in
 `registry_assets/<PART>/datasheet/` (the only vendor documents reachable in
 this environment). Every closure below is annotated in the circuit source as
 `VERIFIED-DS <doc> p<page>`. Items that need a missing PDF are listed at the
 bottom with the exact file the owner should drop in.
+
+**H2.5 round 2 (items 12+):** the 2026-07-12 PDF drop closed 11 of the open
+items and opportunistically re-verified 8 more parts. 9 footprints promoted
+to `generated-E1` (real vendor land patterns); ERC still 0/0, 19/19 tests
+green after all circuit fixes below.
 
 ## Closed (datasheet-verified)
 
@@ -25,23 +31,36 @@ bottom with the exact file the owner should drop in.
 Bonus extractions used for footprints: A121 full 50-ball named map (DS p8-9)
 → `generated/A121_fcCSP50`; VL53L8 pad-name grid → `generated/ST_VL53L8_LGA16`.
 
-## Still open — exact PDFs needed in `registry_assets/<PART>/datasheet/`
+## Closed — H2.5 round 2 (2026-07-12 PDF drop)
 
-| Item | Needed file |
-|------|-------------|
-| AS7058 addr 0x30 + WLCSP42 ball map | `AS7058/datasheet/AS7058_DS001573*.pdf` (ams-osram) |
-| AS7421 addr 0x64 + OLGA10 land pattern | `AS7421/datasheet/AS7421_DS000913*.pdf` (ams-osram) |
-| TCS3448 addr + package (close the 0x39 anchor) | `TCS3448/datasheet/TCS3448_DS*.pdf` (ams-osram) |
-| MLX90632 pinout + SFN land pattern | `MLX90632/datasheet/MLX90632-Datasheet-Melexis.pdf` |
-| MLX90642 TO-39 pin circle orientation | `MLX90642/datasheet/MLX90642-Datasheet-Melexis.pdf` |
-| ESP32-C6 SDIO GPIO map | `ESP32-C6/datasheet/esp32-c6_datasheet_en.pdf` + `esp32-c6-mini-1_datasheet_en.pdf` |
-| BQ27427 sense topology + DSBGA ball map | `BQ27427/datasheet/bq27427.pdf` (TI) |
-| CYPD3177 strap resistor values | `CYPD3177/datasheet/Infineon-CYPD3177*.pdf` |
-| STM32N657 VFBGA142 ball map (blocks routing!) | `STM32N657/datasheet/DS14791 stm32n657x0.pdf` (ST) |
-| BL54L15 pad map + antenna keepout | `BL54L15/datasheet/BL54L15 module datasheet.pdf` (Ezurio) |
-| MIA-M10Q pad map + RF keepout | `MIA-M10Q/datasheet/MIA-M10Q_IntegrationManual_UBX*.pdf` |
-| ENS161 LGA-9 pinout/land pattern | `ENS161/datasheet/SC-001224-DS-*-ENS16x.pdf` (ScioSense) |
-| SGX-4CO cell drawing (pin circle) | `SGX-4CO/datasheet/SGX-4CO*.pdf` (SGX Sensortech / Amphenol) |
-| IQS7222A QFN-20 pad map | `IQS7222A/datasheet/IQS7222A_Datasheet.pdf` (Azoteq) |
-| TPS22916 WCSP ball order | `TPS22916/datasheet/tps22916.pdf` (TI) |
-| LMP91000 pin map (footprint already official WSON-14) | `LMP91000/datasheet/lmp91000.pdf` (TI) |
+| # | Item | Verdict | Evidence | Circuit action |
+|---|------|---------|----------|----------------|
+| 12 | TCS3448 addr + package | **0x39 anchor REFUTED — addr is 0x59** (fixed). Part is 1.8V-only: VDD abs-max 1.98V AND SCL/SDA abs-max 1.98V; INT/GPIO 3.6V-tol. Pin map: 1 VDD 2 SCL 3 GND 4 LDR 5 PGND 6 GPIO 7 INT 8 SDA; GPIO must not float (bus-voltage select at startup) | TCS3448_DS001121 v2-00 p19 (Table 8), p9 (Table 3), p8 (Table 2), p21 (§9.6), p51 (Fig 11 land) | **3 bugs fixed**: moved to I2C-A (0x59 collided with SGP41 on I2C-B), VDD rewired 3V3_OPTICAL→1V8, GPIO strap to 1V8 added (was absent = float). ECO-H3: 1.8V level-shift segment on I2C-A. Footprint → E1 (pads 0.488×0.575, pitch 0.8, row c-c 1.276) |
+| 13 | AS7421 addr + OLGA10 land | **0x64 confirmed**. Package is **6.6×6.0×2.21** (not 3.5×3.5): 2×5 pads 0.6×0.5 @1.25, rows ±2.6, two large center pads (GND / LEDA). **The 4 NIR LEDs (760/830/950/1040nm) are INTEGRATED** — there is no external-LED sink pin; LEDA is their anode supply (abs-max 3.6V) | AS7421_DS000667 p23 (Fig 21), p6-7 (Fig 3/4), p8, p10, p20 (§7.6), p45-46 (Fig 60/61) | **Bug fixed**: deleted the phantom external 970nm LED + 22R chain driven from a nonexistent "LED0" pin; LEDA+EP→3V3_OPTICAL with 10µF pulse bulk; RST/GPIO strapped to GND. Footprint → E1 (real outline) |
+| 14 | MLX90632 pinout + SFN land | Pin map 1 SDA 2 VDD 3 GND 4 SCL **5 ADDR (was missing — must be strapped: GND → 0x3A)**; land = 5 pads 0.30×0.25 @0.5 single column + 2.10×2.55 thermal w/ 8 PTH; order code -000 = 3.3V I2C level | MLX90632-Datasheet rev13 p8 (Table 5), p10 (Table 6), p28, p46-47 (Fig 25/26) | ADDR pin added + strapped to GND; EP→GND; footprint replaced `MLX90632_SFN8_3x3` (placeholder DFN-8) → `MLX90632_SFN5_3x3` E1 |
+| 15 | MLX90642 package + pin circle | Package IS TO-39 ("SF") **but** pin circle is Ø5.84 with the 4 leads in two **45°-spaced pairs** — the generic KiCad TO-39-4 (90°, Ø5.08) does NOT fit. **Model had pins 2/3 SWAPPED** (2=VDD, 3=GND per DS). **Default addr is 0x66**, not 0x33 (0x33 only if EEPROM SA written to 0x00) | MLX90642-Datasheet rev003 p4 (Table 2 + Fig 1), p16 (Table 19), p6 (NOTE 2), p31 (Fig 34) | **2 bugs fixed**: VDD/GND swap corrected; bus table addr 0x33→0x66. Custom footprint `generated/MLX90642_TO39` E1 replaces TO-39-4 |
+| 16 | ESP32-C6 SDIO GPIO map | **Confirmed exactly as wired**: pad 24 IO18=SDIO_CMD, 25 IO19=SDIO_CLK, 26-29 IO20-23=DATA0-3; TXD0=pad 31 (GPIO16), RXD0=pad 30 (GPIO17); GPIO9 boot strap ok | esp32-c6-mini-1 DS v1.5 p10-11 (Table 3-1) | Comment closed (compute.py); no wiring change |
+| 17 | BQ27427 sense topology + ball map | Ball map A1 GPOUT A2 SDA A3 SCL B1 BIN B2 VSS B3 VDD C1 VSS C2 SRX C3 BAT (matches official DSBGA-9 footprint). Sense is **HIGH-side** (internal 7mΩ BAT→SRX, "between battery pack and system rail"); **VDD is the 1.8V LDO OUTPUT**; **BIN needs 10k to VSS** (never to a rail); VPU for SDA/SCL/GPOUT 1.62-3.6V; addr 0x55 | bq27427 SLUSEB5B p3 (Table 4-1, Fig 4-1), p4 (§5.3), p16 (§8.5.1.5) | **3 bugs fixed**: SRX was strapped to GND (would short the sense terminal) → now PACKP(BAT)→VBAT(SRX) split; VDD was fed 3V3_AON → now 2.2µF-only LDO out; BIN was tied to VBAT → now 10k to GND. Symbol remapped to real balls; waiver W4 added |
+| 18 | CYPD3177 strap values | Straps are **resistor dividers from VDDD** (internal 3.3V LDO, pin 23), not single Rs to GND. 5V min = pin to GND; 9V max = 5.1k/1k; 3A coarse = 5.1k/5.1k; +0 fine = GND. VDDD needs 1µF+2×100nF, VCCD 1µF. FAULT is driven HIGH on fault (not OD-low). QFN-24 4×4 P0.5, EP 2.75 typ | CYPD3177_002-25383 p8 (Tables 2-4), p5-6 (Table 1), p20 (Fig 4) | **Bug fixed**: old 10k/24k/13k/16.9k single-R straps replaced with the DS divider network; VDDD/VCCD pins + caps added; FAULT_N→FAULT (pullup removed); symbol remapped to real QFN-24 pins |
+| 19 | MIA-M10Q pad map + RF keepout | Package is **M-LGA53**: 53 pads Ø0.27 on a sparse 9×9 grid @0.5, body 4.5×4.5; land 1:1 copper, NSMD mask Ø0.37, paste=copper. **V_IO (J4) is a required supply that was missing**; VIO_SEL open → 3.3V; RTC_O to GND if unused; D2-E2 tie; F9/G7 0R-to-GND; RF_IN corner B9 | MIA-M10Q DS UBX-22015849 p9-11 (Fig 2/Table 10), p19 (Fig 4); IM UBX-21028173 p83 (§4.5.1) | **Bug fixed**: V_IO wired to 3V3_GNSS; VIO_SEL/RESET_N open; RTC_O/F9/G7 grounded; D2-E2 joined. Footprint: castellated 20-pad placeholder replaced by real 53-pad named map (E1) |
+| 20 | ENS161 pinout/land + addr | LGA-9 is a **3×3 pad GRID** (pitch 1.05, leads 0.7 sq, +0.05 land), not a U-perimeter; pin map row-wise 1 8 7 / 2 9 6 / 3 4 5; addr 0x53 (ADDR high) confirmed; VDD 1.71-1.98V (1V8 rail correct); SDA/SCL 3.6V-tol | ENS161-Datasheet v1.1 p5 (Table 1/Fig 2), p7 (Table 2), p41-42 (Table 40/Fig 19) | Wiring confirmed; symbol remapped to real pins (GND=8+9); footprint → E1 3×3 grid |
+| 21 | IQS7222A pad map + addr | **0x44 confirmed but only for order code ...001** (code 102 = 0x57) — order IQS7222Axxx001. QFN20 3×3 P0.4 matches official footprint; real pin map extracted; each VREG pin (VREGD 2, VREGA 4) needs its own 2.2µF; MCLR has internal 200k pullup; TAB→VSS. **QFN20 has only 9 sensor pins (CRx0-7+CTx8)** vs our 12-electrode flex | IQS7222A_Datasheet v1.7 p6-7 (Tables 2.2-2.4), p45 (§12.1.2), §9.2 (addr) | Symbol remapped to real pins; VREG caps 1µF×1 → 2.2µF×2; EP→GND. **Real finding**: E9-E11 grounded as guards + ECO-H3 to rework flex to mutual-cap matrix (or 9 electrodes) |
+| 22 | TPS22916 WCSP ball order | A1 VOUT, A2 VIN, B1 GND, B2 ON; body 0.78×0.78, 0.4 pitch (numeric-placeholder order was wrong: it had pad1=VIN at the ON corner) | tps22916 SLVSDO5F p3 (Fig 5-1, Table 5-1) | Footprint pads renamed to real balls + symbol remapped (E1) |
+| 23 | BQ25620 package + pinout (opportunistic) | **Package is WQFN-18 "RYK" 2.5×3.0 — the footprint in use (WQFN-16 RTE 3×3) was the wrong package.** Real pin map extracted; REGN cap is 4.7µF (had 1µF); CE must not float (ok, 10k down); QON has internal pullup; STAT/PG float ok; D+/D- float (PD contract sets current); addr 0x6B confirmed | bq25620 SLUSEG2D p5-6 (Table 6-1), p37/39 (0x6B), p85-86 (RYK0018A outline + land) | **Bug fixed**: footprint replaced with `generated/BQ25620_WQFN18_RYK` (E1, HR pads approximated — overlay-verify); symbol remapped; REGN 4.7µF; PGND phantom pin removed |
+| 24 | TPS62840 pin map (opportunistic) | DLC SON-8: 1 GND 2 VIN 3 MODE 4 EN 5 VSET 6 STOP 7 SW 8 VOS. **VSET was missing from the model — output voltage was undefined**; 3.3V needs RSET=267k. MODE "must be terminated" (was ok, GND) | tps62840 SLVSEC6D p4-5 (Pin Functions), p22 (Table 1) | **Bug fixed**: VSET 267k→GND + STOP→GND added; symbol remapped to real pins |
+| 25 | TPS62823 / TLV62568 / DRV2605L / BQ29700 pin maps (opportunistic) | TPS62823: **no MODE pin exists** (model had a phantom one, tied to GND); real map 1 EN 2 FB 3 AGND 4 NC 5 PGND 6 SW 7 VIN 8 PG. TLV62568 SOT-23-5: **3=SW 4=VIN 5=FB** (model had 3=VIN 4=FB 5=SW). DRV2605L VSSOP-10: **REG (pin 1) 1µF was missing**; pin 6 VDD/NC→VDD. BQ29700 DSE: 1 NC 2 COUT 3 DOUT 4 VSS 5 BAT 6 V-; 330R VDD RC confirmed | tps62823 SLVSDV6C p3; tlv62568 SLVSD89B p3; drv2605l SLOS854D p5; bq2970_family p3+p14 | **4 symbol pin-map bugs fixed**; DRV2605L REG cap added; TPS62823 MODE ties removed (PG/NC float per DS) |
+| 26 | SHT41 / SCD41 / BNO086 addr re-check (opportunistic) | SHT41: 0x44 belongs to the **SHT41-AD1B** ordering code (0x45/0x46 exist) — BOM must call out AD1B. SCD41: 0x62 confirmed. BNO086: BNO08x DS is the same doc already used to close #6 (PS1/PS0 straps, SPI) — no change | SHT4x DS v7.1 p2/p7; SCD4x DS p9 (§3.4); BNO08x-Datasheet | Bus-table comments updated; ordering note in sensors_i2c.py docstring |
+
+## Still open — with reasons (updated 2026-07-12, round 2)
+
+| Item | Status / needed file |
+|------|----------------------|
+| STM32N657 VFBGA142 ball map (**blocks routing**) | DS14791 still pending (ST browser download queued) → `STM32N657/datasheet/DS14791*.pdf` |
+| AS7058 ball-SIGNAL map + I2C addr (0x30 unconfirmed) | Short DS DS001085 verified the A1..G6 grid geometry (footprint now E1) but **lacks the ball map and the address — full DS DS001573 is NDA-gated, FAE contact queued** |
+| BL54L15 pad map + antenna keepout | Staged `BL54L15_DS.pdf` is an **HTML page saved with a .pdf name, not a PDF** — re-fetch the real Ezurio datasheet PDF |
+| SGX-4CO cell drawing (pin circle) | Staged file is 0 bytes — re-fetch `SGX-4CO/datasheet/SGX-4CO*.pdf` |
+| LMP91000 pin map (footprint already official WSON-14) | Not fetched yet → `LMP91000/datasheet/lmp91000.pdf` (TI) |
+| VL53L8CH exact DS | Still anchored on the VL53L8CX DS14161 (pads/straps verified there); VL53L8CH-specific DS nice-to-have |
+| VD66GY | DNP in v1 — no action |
+| CYPD3177 EP size | Minor: official footprint EP 2.6 vs DS 2.75 typ (2.65 min) — H3 footprint touch-up note |
+| BQ25620 RYK land pattern | E1 approximation (HR pads rectangularized) — overlay-verify against TI 4226526/A at H3 |

@@ -53,9 +53,24 @@ def build_sensors_misc():
     radar["ENABLE"] += v_radar   # enabled whenever RADAR domain is powered
 
     # ---------------- MIA-M10Q GNSS ---------------------------------------
+    # VERIFIED-DS UBX-22015849 p9-11: M-LGA53 pad map (footprint rebuilt —
+    # old 20-pad castellated placeholder was wrong). Required wiring fixes:
+    # V_IO (J4) supply added (was missing), VIO_SEL (J6) left OPEN -> 3.3V
+    # V_IO, RTC_O (A5) grounded when unused, reserved D2-E2 tied together,
+    # F9/G7 to GND (DS fn17/18 recommend 0R — H3 decides), RESET_N /
+    # SAFEBOOT_N / EXTINT / RTC_I / SDA / SCL left open per DS.
     gnss = MIA_M10Q(ref="U_GNSS", footprint="generated:UBLOX_MIA_M10Q")
     gnss["VCC"] += v_gnss
-    gnss["GND"] += GND
+    gnss["V_IO"] += v_gnss           # IO supply input  VERIFIED-DS p10
+    gnss["VIO_SEL"] += NC            # open = 3.3V V_IO  VERIFIED-DS p11
+    gnss["RESET_N"] += NC            # unused (>=1ms low to reset)
+    gnss["RTC_O"] += GND             # "connect to GND if not used" (p9)
+    join("GNSS_RSVD_D2E2", gnss["RSVD_D2"], gnss["RSVD_E2"])  # p10: tie D2-E2
+    gnss["RSVD_F9"] += GND           # p10 fn17
+    gnss["RSVD_G7"] += GND           # p10 fn18
+    for p in gnss.pins:
+        if p.name.startswith("GND_"):
+            p += GND
     decouple(v_gnss, n=1, bulk_uF=10)
     # backup supply from always-on rail via diode (hot-start ephemeris)
     dbk = SCHOTTKY("BAT54")

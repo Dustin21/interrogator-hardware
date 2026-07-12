@@ -28,8 +28,9 @@ F = lambda v: f"{v:.6g}"
 class FP:
     """Minimal .kicad_mod S-expression builder (KiCad 7 syntax)."""
 
-    def __init__(self, name, descr, source, smd=True):
+    def __init__(self, name, descr, source, smd=True, tier="E0"):
         self.name, self.descr, self.source, self.smd = name, descr, source, smd
+        self.tier = tier
         self.items = []
 
     def pad(self, num, x, y, w, h, shape="roundrect", kind="smd",
@@ -73,7 +74,7 @@ class FP:
         hdr = (f'(footprint "{self.name}" (version 20221018) (generator gen_footprints)\n'
                f'  (layer "F.Cu")\n'
                f'  (descr "{self.descr} | dims: {self.source} | '
-               f'E0 -- overlay-verify against vendor land-pattern drawing before fab")\n'
+               f'{self.tier} -- overlay-verify against vendor land-pattern drawing before fab")\n'
                f'  (attr {attr})\n'
                f'  (fp_text reference "REF**" (at 0 -1) (layer "F.SilkS") '
                f'(effects (font (size 0.5 0.5) (thickness 0.1))))\n'
@@ -84,9 +85,10 @@ class FP:
         return self.name
 
 
-def ball_grid(name, descr, source, body_w, body_h, pitch, balls, pad_dia):
+def ball_grid(name, descr, source, body_w, body_h, pitch, balls, pad_dia,
+              tier="E0"):
     """balls = list of (num, col_idx, row_idx) with idx 0-based from top-left."""
-    fp = FP(name, descr, source)
+    fp = FP(name, descr, source, tier=tier)
     cols = max(b[1] for b in balls) + 1
     rows = max(b[2] for b in balls) + 1
     x0, y0 = -(cols - 1) * pitch / 2, -(rows - 1) * pitch / 2
@@ -98,10 +100,10 @@ def ball_grid(name, descr, source, body_w, body_h, pitch, balls, pad_dia):
 
 
 def dual_row(name, descr, source, body_w, body_h, pitch, n_per_row, row_span,
-             pad_w, pad_h, ep=None):
+             pad_w, pad_h, ep=None, tier="E0"):
     """DFN/OLGA dual-row: pins 1..n down the left column (top->bottom),
     n+1..2n up the right column (bottom->top), counterclockwise."""
-    fp = FP(name, descr, source)
+    fp = FP(name, descr, source, tier=tier)
     y0 = -(n_per_row - 1) * pitch / 2
     for i in range(n_per_row):
         fp.pad(i + 1, -row_span / 2, y0 + i * pitch, pad_w, pad_h)
@@ -198,24 +200,48 @@ generated.append(dual_row(
     "AS7331 DS p7/p65: body 3.65x2.61x1.0; 16 pads dual-row E0-est pitch 0.4",
     3.65, 2.61, 0.4, 8, 2.4, 0.6, 0.22))
 
-# 4. TCS3448 — AS7343 successor, same OLGA-8 class 3.1x2.0x1.0
-#    (AS7343 DS p3/p5 staged; TCS3448 DS unavailable -> reuse family pattern).
+# 4. TCS3448 OLGA-8 — REAL land pattern from TCS3448 DS001121 v2-00 p51
+#    Fig 11: 2 rows of 4, pitch 0.8 (centers ±0.4/±1.2), row c-c 1.276
+#    (2x 0.638), pads 0.488 x 0.575, pin-1 chamfered. Body 3.1x2.0x1.0 (p5).
+#    Drawn as dual COLUMNS (pins 1-4 down the left = VDD,SCL,GND,LDR per
+#    p8 Fig 2; 5-8 up the right), i.e. the p51 drawing rotated 90°.
 generated.append(dual_row(
-    "TCS3448_OLGA8", "ams TCS3448 14ch VIS spectral (AS7343-family OLGA-8)",
-    "AS7343 DS p3 body 3.1x2.0x1.0, OLGA-8 p5; pitch 0.65 E0; TCS3448 DS unavailable",
-    3.1, 2.0, 0.65, 4, 1.9, 0.7, 0.3))
+    "TCS3448_OLGA8", "ams TCS3448 14ch VIS spectral, OLGA-8",
+    "TCS3448 DS001121 p51 Fig 11: pitch 0.8, row c-c 1.276, pads 0.488x0.575; body 3.1x2.0 p5",
+    2.0, 3.1, 0.8, 4, 1.276, 0.575, 0.488, tier="E1"))
 
-# 5. AS7421 OLGA-10 3.5x3.5 (RS/bom-v1.md E0-unverified; no DS available).
-generated.append(dual_row(
-    "AS7421_OLGA10", "ams AS7421 64ch NIR spectral, OLGA-10 class",
-    "RS bom-v1.md E0-unverified: 3.5x3.5x1.8 OLGA10; pitch 0.6 E0",
-    3.5, 3.5, 0.6, 5, 2.8, 0.6, 0.28))
+# 5. AS7421 OLGA-10 — REAL outline from AS7421 DS000667 p45-46 Fig 60/61:
+#    body 6.60 x 6.0 x 2.21 (NOT 3.5x3.5 as the old E0 guess); two rows of
+#    5 pads (0.6x0.5, pitch 1.25, rows at ±2.6), two large center pads
+#    (GND=11 left, LEDA=12 right, ~2.8x3.0 at ±1.65 c-c 3.30). Top view:
+#    pins 1-5 along the BOTTOM edge left->right (p6 Fig 3), 6-10 along the
+#    top edge right->left, matching the bottom-view drawing mirrored.
+fp = FP("AS7421_OLGA10", "ams AS7421 64ch NIR spectral + 4 NIR LEDs, OLGA-10",
+        "AS7421 DS000667 p45-46: body 6.6x6.0; pads 0.6x0.5 pitch 1.25 rows +/-2.6; "
+        "EPs ~2.8x3.0 at +/-1.65 (window c-c 3.30 p45)", tier="E1")
+for i in range(5):                       # pins 1-5, bottom edge, left->right
+    fp.pad(i + 1, -2.5 + i * 1.25, 2.6, 0.65, 0.55)
+for i in range(5):                       # pins 6-10, top edge, right->left
+    fp.pad(6 + i, 2.5 - i * 1.25, -2.6, 0.65, 0.55)
+fp.pad(11, -1.65, 0, 2.8, 3.0)           # exposed pad GND
+fp.pad(12, 1.65, 0, 2.8, 3.0)            # exposed pad LEDA
+fp.body(6.6, 6.0)
+fp.pin1_dot(-3.6, 2.6)
+generated.append(fp.write())
 
-# 6. MLX90632 SFN 3x3 (RS E0-unverified; no DS). Pad-count placeholder DFN-8.
-generated.append(dual_row(
-    "MLX90632_SFN8_3x3", "Melexis MLX90632 spot FIR, SFN/QFN 3x3 class",
-    "RS bom-v1.md E0-unverified: 3x3x1.0 SFN; DFN-8 P0.65 PLACEHOLDER pad count",
-    3.0, 3.0, 0.65, 4, 2.9, 0.75, 0.3))
+# 6. MLX90632 SFN 3x3 — REAL footprint from MLX90632 DS rev13 p47 Fig 26:
+#    5 pads 0.30x0.25 in one column at left edge (pitch 0.5, e1 p46 Table 17),
+#    pin 1 top; central thermal copper 2.10 x 2.55 (8x 0.2mm PTH, tented) ->
+#    pad 6. Body 3.0x3.0 (DD=EE, p46).
+fp = FP("MLX90632_SFN5_3x3", "Melexis MLX90632 spot FIR, SFN 3x3 (5 pads + thermal)",
+        "MLX90632 DS rev13 p47 Fig 26: 5x 0.30x0.25 @0.5 left column; "
+        "thermal 2.10x2.55; body 3.0 p46", tier="E1")
+for i in range(5):                       # pins 1-5 top->bottom (p8 Table 5)
+    fp.pad(i + 1, -1.25, -1.0 + i * 0.5, 0.30, 0.25)
+fp.pad(6, 0.1, 0, 2.10, 2.55)            # thermal pad (vias at layout stage)
+fp.body(3.0, 3.0)
+fp.pin1_dot(-1.8, -1.0)
+generated.append(fp.write())
 
 # 7. SGP41 DFN-6 — Sensirion SGP41 DS p18 (staged): 2.44x2.44x0.85, pitch 0.8,
 #    central die pad (GND).  6 perimeter pads dual-row + EP.
@@ -224,17 +250,20 @@ generated.append(dual_row(
     "SGP41 DS p1/p18: body 2.44x2.44x0.85, terminal pitch 0.8 (die pad GND)",
     2.44, 2.44, 0.8, 3, 2.2, 0.7, 0.35, ep=(1.0, 1.6)))
 
-# 8. ENS161 LGA-9 3x3 (RS E0-unverified). 3+3+3 U-perimeter placeholder.
-fp = FP("ENS161_LGA9", "ScioSense ENS161 4-el MOX, LGA-9 3x3",
-        "RS bom-v1.md E0-unverified: LGA-9 3x3x0.9; U-perimeter 3/3/3 pitch 0.85 E0")
-for i in range(3):
-    fp.pad(i + 1, -1.35, -0.85 + i * 0.85, 0.7, 0.4)          # left 1-3
-for i in range(3):
-    fp.pad(4 + i, -0.85 + i * 0.85, 1.35, 0.4, 0.7)           # bottom 4-6
-for i in range(3):
-    fp.pad(7 + i, 1.35, 0.85 - i * 0.85, 0.7, 0.4)            # right 7-9
+# 8. ENS161 LGA-9 — REAL pattern from ENS161 DS v1.1 p41-42: 3x3 pad GRID
+#    (not U-perimeter!), pitch 1.05, leads 0.7 sq, land +0.05/side -> 0.8 sq;
+#    body 3.0x3.0x0.9. Numbering (top view, p5 Fig 2): row1: 1 8 7 /
+#    row2: 2 9 6 / row3: 3 4 5; pin 1 top-left.
+fp = FP("ENS161_LGA9", "ScioSense ENS161 4-el MOX, LGA-9 3x3 grid",
+        "ENS161 DS v1.1 p41 Table 40 (pitch 1.05, lead 0.7+0.05 land) + p5 pin grid",
+        tier="E1")
+ENS_GRID = [(1, 0, 0), (8, 1, 0), (7, 2, 0),
+            (2, 0, 1), (9, 1, 1), (6, 2, 1),
+            (3, 0, 2), (4, 1, 2), (5, 2, 2)]
+for num, c, r in ENS_GRID:
+    fp.pad(num, -1.05 + c * 1.05, -1.05 + r * 1.05, 0.8, 0.8)
 fp.body(3.0, 3.0)
-fp.pin1_dot(-1.9, -0.85)
+fp.pin1_dot(-1.7, -1.05)
 generated.append(fp.write())
 
 # 9. BMV080 host interface = Molex 503566-1302 ZIF (13 ckt, 0.30 mm pitch) —
@@ -250,13 +279,17 @@ fp.body(6.0, 3.4)
 fp.pin1_dot(-1.8, -2.3)
 generated.append(fp.write())
 
-# 10. AS7058 WLCSP42 2.82x2.55 (RS E0-unverified). 7x6 grid, 0.4 pitch,
-#     NUMERIC ball numbering 1..42 (real A1..G6 map needs ams DS).
-balls = [(str(r * 7 + c + 1), c, r) for r in range(6) for c in range(7)]
+# 10. AS7058 WLCSP42 — GRID GEOMETRY verified from AS7058_DS001085_short p9
+#     Fig 2: rows A-G x cols 1-6 (42 balls), 0.4 pitch, die 2.545 x 2.815
+#     ±0.02, A1 top-left (top through view). Ball NAMES are real; the
+#     ball->SIGNAL map is still pending the NDA-gated full DS (DS001573).
+balls = [(f"{r}{c + 1}", c, ri)
+         for ri, r in enumerate("ABCDEFG") for c in range(6)]
 generated.append(ball_grid(
     "AS7058_WLCSP42", "ams AS7058 PPG/ECG/BioZ AFE, WLCSP42",
-    "RS bom-v1.md E0-unverified: 2.82x2.55 WLCSP42; 7x6@0.4 NUMERIC-PLACEHOLDER map",
-    2.82, 2.55, 0.4, balls, 0.23))
+    "AS7058 short DS DS001085 p9: A1..G6 grid @0.4, die 2.545x2.815; "
+    "ball-signal map pending full DS (NDA)",
+    2.545, 2.815, 0.4, balls, 0.23, tier="E1"))
 
 # 11. STM32N657 VFBGA142 (DS14791 unavailable here). 0.5 mm pitch;
 #     PLACEHOLDER 12x12 serpentine fill of 142 numeric balls — REPLACE with
@@ -282,19 +315,35 @@ generated.append(castellated(
     "antenna keepout at top edge per module manual (get Ezurio DS)",
     10.0, 14.0, 12, 4, 12, 4, 1.1))
 
-# 14. MIA-M10Q 4.5x4.5 SiP LGA (u-blox integration manual unavailable).
-generated.append(castellated(
-    "UBLOX_MIA_M10Q", "u-blox MIA-M10Q GNSS SiP, LGA 4.5x4.5",
-    "RS bom-v1.md E0-unverified: 4.5x4.5x1.0 SiP; 20-pad perimeter 5/5/5/5 "
-    "NUMERIC-PLACEHOLDER pitch 0.8; RF corner keepout (get u-blox manual)",
-    4.5, 4.5, 5, 5, 5, 5, 0.8, pad_w=0.4, pad_l=0.5))
+# 14. MIA-M10Q — REAL M-LGA53 map from MIA-M10Q DS UBX-22015849 p9 Fig 2 +
+#     p19 Fig 4: body 4.5x4.5x1.0, 53 pads Ø0.27 on a sparse 9x9 grid,
+#     pitch 0.5, A1 top-left (top view). Land = 1:1 copper, NSMD, mask
+#     opening Ø0.37, paste = copper (IM UBX-21028173 p83). Keep the RF_IN
+#     corner (B9/A8-A9) clear of noisy routing; GND stitch under the SiP.
+fp = FP("UBLOX_MIA_M10Q", "u-blox MIA-M10Q GNSS SiP, M-LGA53 4.5x4.5",
+        "MIA-M10Q DS p9/p19 (53 pads O0.27 @0.5, sparse 9x9); IM p83 land 1:1, mask 0.37",
+        tier="E1")
+MIA_ROWS = {  # row letter -> populated columns (from DS p9 Fig 2)
+    "A": (1, 2, 3, 4, 5, 6, 7, 8, 9), "B": (1, 2, 8, 9),
+    "C": (1, 3, 4, 5, 6, 7, 9), "D": (1, 2, 9), "E": (1, 2, 3, 4, 7, 9),
+    "F": (1, 3, 4, 7, 9), "G": (1, 3, 4, 5, 6, 7, 9), "H": (1, 8, 9),
+    "J": (1, 2, 3, 4, 5, 6, 7, 8, 9)}
+for ri, (row, cols) in enumerate(MIA_ROWS.items()):
+    for cnum in cols:
+        fp.circle_pad(f"{row}{cnum}", -2.0 + (cnum - 1) * 0.5,
+                      -2.0 + ri * 0.5, 0.27)
+fp.body(4.5, 4.5)
+fp.pin1_dot(-2.6, -2.0)
+generated.append(fp.write())
 
-# 15. TPS22916 CSP-4 (TI YFP 0.76x0.76, 0.4 pitch — RS E0). Numeric 2x2.
-balls = [("1", 0, 0), ("2", 0, 1), ("3", 1, 1), ("4", 1, 0)]  # A1,B1,B2,A2 order E0
+# 15. TPS22916 YFP WCSP-4 — REAL ball map from TPS22916 DS SLVSDO5F p3
+#     Fig 5-1/Table 5-1: A1 VOUT, A2 VIN, B1 GND, B2 ON; 0.78x0.78 body,
+#     0.4 pitch. Top (marking) view: col 2 left / col 1 right, row B top.
+balls = [("B2", 0, 0), ("B1", 1, 0), ("A2", 0, 1), ("A1", 1, 1)]
 generated.append(ball_grid(
-    "TPS22916_CSP4", "TI TPS22916 load switch, 4-ball WCSP",
-    "RS bom-v1.md E0-unverified: 0.76x0.76 YFP, 0.4mm pitch; ball order E0",
-    0.76, 0.76, 0.4, balls, 0.23))
+    "TPS22916_CSP4", "TI TPS22916 load switch, 4-ball WCSP (YFP)",
+    "TPS22916 DS p3: A1 VOUT/A2 VIN/B1 GND/B2 ON; 0.78x0.78, 0.4 pitch",
+    0.78, 0.78, 0.4, balls, 0.23, tier="E1"))
 
 # 16. AD8317 LFCSP-8 2x3 (ADI CP-8-13 class; DS unavailable here). E0.
 generated.append(dual_row(
@@ -377,6 +426,56 @@ fp = FP("GNSS_CHIP_ANT_3216", "GNSS L1 chip antenna, 3216-class 2-pad",
 fp.pad(1, -1.4, 0, 0.9, 1.8)
 fp.pad(2, 1.4, 0, 0.9, 1.8)
 fp.body(3.2, 1.6)
+generated.append(fp.write())
+
+# 25. MLX90642 TO-39 — REAL pin circle from MLX90642 DS rev003 p31 Fig 34:
+#     can Ø9.14 (cap Ø9.3), pins Ø0.45 (glass seal Ø1.12) on a Ø5.84 circle
+#     in two 45°-spaced pairs; index tab between the SDA/SCL pair. Pin map
+#     p4 Fig 1 (bottom view, tab up): SCL left / SDA right near tab, GND /
+#     VDD opposite -> TOP view (tab up, -Y here): 1 SDA upper-left,
+#     4 SCL upper-right, 2 VDD lower-left, 3 GND lower-right.
+fp = FP("MLX90642_TO39", "Melexis MLX90642 32x24 FIR, TO-39 4-lead (45deg pairs)",
+        "MLX90642 DS p31 Fig 34: pin circle O5.84, pins O0.45 in 45deg pairs, "
+        "can O9.14/9.3; pin map p4 Fig 1", smd=False, tier="E1")
+_r = 2.92
+for num, ang in ((1, 112.5), (4, 67.5), (2, 247.5), (3, 292.5)):
+    fp.circle_pad(num, _r * math.cos(math.radians(ang)),
+                  -_r * math.sin(math.radians(ang)), 1.5,
+                  kind="thru_hole", layers='"*.Cu" "*.Mask"', drill=0.8)
+fp.fp_circle(0, 0, 4.65, "F.SilkS", 0.15)     # cap Ø9.3
+fp.fp_circle(0, 0, 4.9, "F.CrtYd", 0.05)
+# index tab marker (silk triangle-ish tick at tab position, -Y)
+fp.items.append('  (fp_line (start -0.4 -4.65) (end 0.4 -4.65) '
+                '(stroke (width 0.25) (type solid)) (layer "F.SilkS"))')
+fp.pin1_dot(-1.6, -3.2)
+generated.append(fp.write())
+
+# 26. BQ25620 WQFN-18 "RYK" 2.5x3.0 — pins from SLUSEG2D p5 Fig 6-1; land
+#     pattern approximated from the RYK0018A LAND PATTERN EXAMPLE (DS p86,
+#     4226526/A): 22X 0.2-wide package pads -> 0.25-wide lands; left/right
+#     signal rows at y = +0.85/+0.393/-0.007/-0.407/-0.85 (pins 1-5 left
+#     top->bottom, 10-14 right bottom->top); bottom pads 6,7 (TS/QON) short,
+#     8,9 (BAT/SYS) long power pads; top pads 18..15 (VBUS/PMID/SW/GND)
+#     long power pads. HR pad shapes simplified to rectangles —
+#     OVERLAY-VERIFY against TI drawing 4226526/A before fab.
+fp = FP("BQ25620_WQFN18_RYK", "TI BQ25620 charger, WQFN-HR 18 (RYK) 2.5x3.0",
+        "SLUSEG2D p85-86 RYK0018A land pattern example (HR pads approximated "
+        "to rectangles)", tier="E1")
+_ys = (0.85, 0.393, -0.007, -0.407, -0.85)
+for i, y in enumerate(_ys):                    # pins 1-5, left, top->bottom
+    fp.pad(i + 1, -1.2, -y, 0.4, 0.25)
+for i, y in enumerate(_ys):                    # pins 10-14, right, bottom->top
+    fp.pad(10 + i, 1.2, -_ys[len(_ys) - 1 - i], 0.4, 0.25)
+fp.pad(6, -0.625, 0.8, 0.25, 0.7)              # TS
+fp.pad(7, -0.225, 0.8, 0.25, 0.7)              # QON
+fp.pad(8, 0.175, 0.625, 0.25, 1.05)            # BAT (long HR pad)
+fp.pad(9, 0.575, 0.625, 0.25, 1.05)            # SYS (long HR pad)
+fp.pad(15, 0.575, -0.57, 0.25, 1.14)           # GND (long)
+fp.pad(16, 0.175, -0.57, 0.25, 1.14)           # SW (long)
+fp.pad(17, -0.225, -0.57, 0.25, 1.14)          # PMID (long)
+fp.pad(18, -0.625, -0.57, 0.25, 1.14)          # VBUS (long)
+fp.body(2.5, 3.0)
+fp.pin1_dot(-1.7, -0.85)
 generated.append(fp.write())
 
 if __name__ == "__main__":

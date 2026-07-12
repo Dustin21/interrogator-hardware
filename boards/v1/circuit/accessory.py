@@ -28,13 +28,25 @@ def build_accessory():
     # ---------------- IQS7222A touch — SENTINEL_I2C 0x44 -------------------
     # Deliberately on the sentinel bus: (a) resolves the 0x44 collision with
     # SHT41 on I2C-B, (b) touch is the always-on wake source (RDY -> sentinel).
+    # VERIFIED-DS IQS7222A v1.7 p6-7: QFN20 real pin map; addr 0x44 requires
+    # ORDER CODE IQS7222Axxx001 (code 102 would be 0x57). Each VREG pin needs
+    # its own 2.2uF (p45 §12.1.2); MCLR has an internal 200k pullup (ext. 10k
+    # kept). TAB (pad 21) to VSS per p6 note.
+    # NOTE-ECO(H3): QFN20 exposes only NINE sensor pins (CRx0-7 + CTx8) —
+    # the 12-electrode flex cannot be driven pad-per-pin. E0-E8 are wired;
+    # E9-E11 are grounded as guards until the flex is reworked to a
+    # mutual-cap Rx/Tx matrix (or the electrode count drops to 9).
     touch = IQS7222A(ref="U_TOUCH", footprint="Package_DFN_QFN:QFN-20-1EP_3x3mm_P0.4mm_EP1.65x1.65mm")
     touch["VDDHI"] += aon
     touch["GND"] += GND
+    touch["EP"] += GND               # thermal TAB -> VSS (DS p6)
     decouple(aon, n=1, bulk_uF=1)
-    creg = C("1uF")
-    touch["VREG"] += creg[1]
-    GND += creg[2]
+    cregd = C("2.2uF")               # VREGD cap  VERIFIED-DS p45
+    touch["VREGD"] += cregd[1]
+    GND += cregd[2]
+    crega = C("2.2uF")               # VREGA cap  VERIFIED-DS p45
+    touch["VREGA"] += crega[1]
+    GND += crega[2]
     touch["SDA"] += sent_sda
     touch["SCL"] += sent_scl
     rdy = Net.fetch("TOUCH_RDY_N")
@@ -43,21 +55,33 @@ def build_accessory():
     mclr = Net.fetch("TOUCH_MCLR_N")
     touch["MCLR_N"] += mclr
     pullup(mclr, aon, "10k")
-    # 12 shell electrodes out on a flex connector (engraved-face field)
+    touch["OUTA"] += NC              # configurable output, unused
+    touch["NC1"] += NC
+    touch["NC2"] += NC
+    # shell electrodes on the flex connector (engraved-face field)
     jt = J_TOUCH_FPC(ref="J_TOUCH", footprint="Connector_FFC-FPC:Hirose_FH12-13S-0.5SH_1x13-1MP_P0.50mm_Horizontal")
-    for i in range(12):
+    for i in range(9):               # CRx0-7 + CTx8 -> E0..E8
         join(f"TOUCH_E{i}", touch[f"E{i}"], jt[f"E{i}"])
+    for i in range(9, 12):           # unused electrodes grounded as guards
+        jt[f"E{i}"] += GND           # (ECO-H3: mutual-cap matrix rework)
     jt["GND"] += GND
 
     # ---------------- DRV2605L haptic — SENTINEL_I2C 0x5A ------------------
+    # VERIFIED-DS SLOS854D p5 (DGS/VSSOP-10 pin map): REG (pin 1, 1.8V LDO
+    # out) needs 1uF — was missing; pin 6 VDD/NC tied to VDD per DS;
+    # IN/TRIG to GND when unused — matches.
     hap = DRV2605L(ref="U_HAP", footprint="Package_SO:VSSOP-10_3x3mm_P0.5mm")
     hap["VDD"] += aon
+    hap["VDD_NC"] += aon             # pin 6: tie to VDD or float (DS p5)
     hap["GND"] += GND
     decouple(aon, n=1, bulk_uF=1)
+    creg_h = C("1uF")                # REG LDO cap  VERIFIED-DS p5
+    hap["REG"] += creg_h[1]
+    GND += creg_h[2]
     hap["SDA"] += sent_sda
     hap["SCL"] += sent_scl
     hap["EN"] += Net.fetch("EN_HAPTIC")
-    hap["IN_TRIG"] += GND            # I2C-triggered playback only in v1
+    hap["IN_TRIG"] += GND            # I2C-triggered playback only in v1  VERIFIED-DS p5
     lra = J_LRA(ref="J_LRA", footprint="generated:LRA_PADS")
     join("LRA_P", hap["OUT_P"], lra["OUT+"])
     join("LRA_N", hap["OUT_N"], lra["OUT-"])

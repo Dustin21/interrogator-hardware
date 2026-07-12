@@ -52,18 +52,38 @@ def build_power():
     pd = CYPD3177(ref="U_PD", footprint="Package_DFN_QFN:HVQFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm")
     pd["VBUS"] += vbus
     pd["GND"] += GND
+    pd["VSS"] += GND
+    pd["EP"] += GND
     pd["CC1"] += cc1
     pd["CC2"] += cc2
-    # Resistor straps: request 5V-min/9V-max window at 3A (values E0 — set from
-    # CYPD3177 DS strap tables at stage-2; ~1C fast charge needs >=15W input).
-    for pin, val in (("VBUS_MIN", "10k"), ("VBUS_MAX", "24k"),
-                     ("ISNK_COARSE", "13k"), ("ISNK_FINE", "16.9k")):
-        r = R(val)
-        pd[pin] += r[1]
-        GND += r[2]
-    flt = Net.fetch("PD_FAULT_N")
-    flt += pd["FAULT_N"]
+    # Straps — VERIFIED-DS 002-25383 p8 Tables 2/3/4: each strap is a
+    # resistor DIVIDER from VDDD (internal 3.3V LDO, pin 23), not a single
+    # R to GND (old stage-1 values replaced). Request: 5V min (pin to GND),
+    # 9V max (5.1k up / 1k down), 3A coarse (5.1k/5.1k), +0mA fine (GND).
+    vddd = Net.fetch("PD_VDDD")
+    vddd += pd["VDDD"]
+    for cval in ("1uF", "100nF", "100nF"):   # VDDD needs 1uF + 2x100nF (p6)
+        c = C(cval)
+        vddd += c[1]
+        GND += c[2]
+    cvccd = C("1uF")                          # VCCD needs 1uF (p6)
+    pd["VCCD"] += cvccd[1]
+    GND += cvccd[2]
+    pd["VBUS_MIN"] += GND                     # 5V min  (ratio 0/6, Table 2)
+    pd["ISNK_FINE"] += GND                    # +0 mA   (ratio 0/6, Table 4)
+    for pin, rup, rdn in (("VBUS_MAX", "5.1k", "1k"),      # 9V max, Table 2
+                          ("ISNK_COARSE", "5.1k", "5.1k")):  # 3A, Table 3
+        ru, rd = R(rup), R(rdn)
+        vddd += ru[1]
+        pd[pin] += ru[2], rd[1]
+        GND += rd[2]
+    # FAULT is driven HIGH on fault (p8 — push, not OD-low): testpoint only,
+    # no pullup (old PD_FAULT_N pullup removed in compute.py).
+    flt = Net.fetch("PD_FAULT")
+    flt += pd["FAULT"]
     tp(flt)
+    # FLIP: OD; no pull-up fitted -> UFP VDO reports data-capable (p6) — OK,
+    # USB data goes to the N657.
     pd["FLIP"] += Net.fetch("PD_FLIP")
     tp(Net.fetch("PD_FLIP"))
     decouple(vbus, n=1, bulk_uF=10)
@@ -71,11 +91,19 @@ def build_power():
     # ---------------- battery + protection ------------------------------
     jbat = J_BATT(ref="J_BATT",
                   footprint="Connector_JST:JST_ACH_BM03B-ACHSS-GAN-ETF_1x03-1MP_P1.20mm_Vertical")
-    vbat = Net.fetch("VBAT")          # protected cell positive
-    vbat.drive = POWER                # driven by the cell itself
+    # PACKP = cell positive at the connector; VBAT = system-side battery node.
+    # The BQ27427's INTERNAL 7mΩ high-side sense resistor sits between them
+    # (PACKP -> BAT ... SRX -> VBAT). VERIFIED-DS bq27427 p3 Table 4-1: "SRX —
+    # integrated high-side sense resistor ... between battery pack and system
+    # power rail". The old low-side "SRX->GND" wiring was a real bug (it
+    # would have shorted the sense terminal to ground).
+    packp = Net.fetch("PACKP")
+    packp.drive = POWER               # the cell's + terminal
+    vbat = Net.fetch("VBAT")          # system-side node, fed through the 7mΩ
+    vbat.drive = POWER                # ERC waiver W4: sourced via gauge 7mΩ
+    packp += jbat["BATT+"]
     cell_n = Net.fetch("CELL_N")      # cell negative, ahead of protection FETs
     cell_n.drive = POWER              # ERC waiver W2: this IS the cell's - terminal
-    vbat += jbat["BATT+"]
     cell_n += jbat["BATT-"]
     ntc = Net.fetch("BATT_NTC")
     ntc += jbat["NTC"]
@@ -90,8 +118,8 @@ def build_power():
     q["S2"] += GND
     q["G1"] += prot["DOUT"]
     q["G2"] += prot["COUT"]
-    rv = R("330R")   # VDD RC filter per BQ297xx DS
-    vbat += rv[1]
+    rv = R("330R")   # VDD RC filter per BQ297xx DS (330Ω VERIFIED-DS p14)
+    packp += rv[1]   # protector monitors the true cell terminal (ahead of gauge 7mΩ)
     prot_vdd = Net.fetch("PROT_VDD")
     prot_vdd.drive = POWER   # ERC waiver W1: VDD fed from VBAT via 330R RC (DS topology)
     prot_vdd += rv[2], prot["VDD"]
@@ -104,28 +132,54 @@ def build_power():
     GND += rvm[2]
 
     # ---------------- fuel gauge (SENTINEL_I2C) -------------------------
-    # BQ27427 integrated low-side sense # VERIFY exact sense topology at stage-2
+    # BQ27427 — VERIFIED-DS SLUSEB5B p3 Table 4-1 (three stage-1 bugs fixed):
+    #  * HIGH-side sense: BAT (C3) -> PACKP Kelvin, SRX (C2) -> VBAT system
+    #    node (old wiring shorted SRX to GND).
+    #  * VDD (B3) is the internal 1.8V LDO OUTPUT — 2.2µF to VSS only (old
+    #    wiring back-drove it from 3V3_AON).
+    #  * BIN (B1) is battery-insertion detect — 10kΩ to VSS for an embedded
+    #    pack, never tied to a rail (old wiring tied it to VBAT).
+    # SDA/SCL/GPOUT are OD, VPU 1.62-3.6V (p4) -> AON-rail pullups legal.
     gauge = BQ27427(ref="U_GAUGE", footprint="Package_BGA:Texas_DSBGA-9_1.62mmx1.58mm_Layout3x3_P0.5mm")
     sent_sda, sent_scl = Net.fetch("SENT_SDA"), Net.fetch("SENT_SCL")
-    gauge["VDD"] += Net.fetch("3V3_AON")
-    gauge["BIN"] += vbat
-    gauge["SRX"] += GND     # internal 7mR to VSS # pinout E0 — verify
+    gauge["BAT"] += packp
+    cbat = C("1uF")                  # BAT-VSS cap per DS p3
+    packp += cbat[1]
+    GND += cbat[2]
+    gauge["SRX"] += vbat             # system side of internal 7mΩ
+    gauge_vdd = Net.fetch("GAUGE_VDD")
+    gauge_vdd += gauge["VDD"]        # PWROUT pin drives the net (internal LDO)
+    cldo = C("2.2uF")                # CLDO18 per DS p4
+    gauge_vdd += cldo[1]
+    GND += cldo[2]
+    rbin = R("10k")                  # embedded-pack BIN pulldown (DS p3)
+    gauge["BIN"] += rbin[1]
+    GND += rbin[2]
     gauge["VSS"] += GND
+    gauge["VSS2"] += GND
     gauge["SDA"] += sent_sda
     gauge["SCL"] += sent_scl
     gauge["GPOUT"] += Net.fetch("GAUGE_INT_N")
-    decouple(Net.fetch("3V3_AON"), n=1)
 
     # ---------------- charger / power path ------------------------------
-    chg = BQ25620(ref="U_CHG", footprint="Package_DFN_QFN:Texas_RTE_WQFN-16-1EP_3x3mm_P0.5mm_EP1.2x0.8mm")
+    # BQ25620 — VERIFIED-DS SLUSEG2D p5-6 Table 6-1: package is WQFN-18
+    # "RYK" 2.5x3.0 (footprint replaced — the stage-1 WQFN-16 RTE was the
+    # wrong package). REGN cap corrected 1uF -> 4.7uF (p5). D+/D- (BC1.2
+    # detect) left open: input current comes from the PD contract via I2C.
+    # PG/STAT open-drain, floating allowed (p5-6).
+    chg = BQ25620(ref="U_CHG", footprint="generated:BQ25620_WQFN18_RYK")
     vsys = Net.fetch("VSYS")
     chg["VBUS"] += vbus
     cpmid = C("10uF", bulk=True)
     chg["PMID"] += cpmid[1]
     GND += cpmid[2]
-    cregn = C("1uF")
+    cregn = C("4.7uF")               # REGN cap 4.7uF VERIFIED-DS p5
     chg["REGN"] += cregn[1]
     GND += cregn[2]
+    chg["DP"] += NC
+    chg["DM"] += NC
+    chg["PG_N"] += NC                # unused OD status, float per DS
+    chg["STAT"] += NC                # "leave floating if unused" (p5)
     # buck: SW -> L -> VSYS
     lchg = L("1uH")
     chg["SW"] += lchg[1]
@@ -149,18 +203,25 @@ def build_power():
     chg["REGN"] += rts1[1]
     chg["TS"] += rts1[2], rts2[1], ntc
     GND += rts2[2]
-    chg["GND"] += GND
-    chg["PGND"] += GND
+    chg["GND"] += GND                # single GND pin on RYK (15) + thermal
     decouple(vsys, n=2, bulk_uF=22)
     decouple(vbat, n=1, bulk_uF=10)
 
     # ---------------- regulators -----------------------------------------
     aon = Net.fetch("3V3_AON")
     aon.drive = POWER   # rail sourced via L from TPS62840 SW (drive set: L/C output)
+    # TPS62840 — VERIFIED-DS SLVSEC6D p4-5: VSET resistor added (267k ->
+    # VOUT 3.3V, Table 1 p22 — the stage-1 model had NO VSET, leaving the
+    # rail voltage undefined); STOP tied low (normal switching); MODE low =
+    # power-save (must be terminated, p5).
     u_aon = TPS62840(ref="U_AON", footprint="Package_TO_SOT_SMD:SOT-583-8")
     u_aon["VIN"] += vsys
     u_aon["EN"] += vsys            # always on
     u_aon["MODE"] += GND
+    u_aon["STOP"] += GND
+    rset = R("267k")               # VOUT = 3.3V  VERIFIED-DS Table 1 p22
+    u_aon["VSET"] += rset[1]
+    GND += rset[2]
     l_aon = L("2.2uH")
     u_aon["SW"] += l_aon[1]
     aon += l_aon[2]
@@ -175,10 +236,13 @@ def build_power():
 
     vcore = Net.fetch("VDD_CORE_N6")
     vcore.drive = POWER  # L/C buck output
+    # TPS62823 — VERIFIED-DS SLVSDV6C p3: no MODE pin exists (stage-1 model
+    # had a phantom one); AGND+PGND to GND, PG/NC left floating per DS.
     u_core = TPS62823(ref="U_CORE", footprint="Package_TO_SOT_SMD:SOT-583-8")
     u_core["VIN"] += vsys
     u_core["EN"] += en_n6
-    u_core["MODE"] += GND
+    u_core["PG"] += NC
+    u_core["NC"] += NC
     l_core = L("470nH")
     u_core["SW"] += l_core[1]
     vcore += l_core[2]
@@ -186,7 +250,8 @@ def build_power():
     vcore += rfb1[1]
     u_core["FB"] += rfb1[2], rfb2[1]
     GND += rfb2[2]
-    u_core["GND"] += GND
+    u_core["AGND"] += GND
+    u_core["PGND"] += GND
     cin2 = C("10uF", bulk=True)
     u_core["VIN"] += cin2[1]
     GND += cin2[2]
@@ -198,7 +263,8 @@ def build_power():
     u_sys = TPS62823(ref="U_SYS3V3", footprint="Package_TO_SOT_SMD:SOT-583-8")
     u_sys["VIN"] += vsys
     u_sys["EN"] += en_n6
-    u_sys["MODE"] += GND
+    u_sys["PG"] += NC              # VERIFIED-DS SLVSDV6C p3 (no MODE pin)
+    u_sys["NC"] += NC
     l_sys = L("470nH")
     u_sys["SW"] += l_sys[1]
     v3sys += l_sys[2]
@@ -206,7 +272,8 @@ def build_power():
     v3sys += rfa[1]
     u_sys["FB"] += rfa[2], rfb[1]
     GND += rfb[2]
-    u_sys["GND"] += GND
+    u_sys["AGND"] += GND
+    u_sys["PGND"] += GND
     cin3 = C("10uF", bulk=True)
     u_sys["VIN"] += cin3[1]
     GND += cin3[2]

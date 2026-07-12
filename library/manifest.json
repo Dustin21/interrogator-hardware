@@ -1,24 +1,25 @@
 {
  "generated": "2026-07-12",
- "stage": "H2 stage-2",
- "note": "Footprint provenance: 'kicad-official' files are from KiCad 7.0.11 official libraries (Ubuntu archive package \u2014 the GitHub mirrors KiCad/kicad-footprints and KiCad/kicad-symbols are stale 2020 snapshots because KiCad development moved to GitLab, which is unreachable from this environment); 'espressif' from github.com/espressif/kicad-libraries (shallow clone). SnapEDA/easyeda2kicad/vendor portals blocked -> TO-GENERATE list is deliberate and substantial. | Stage-2: 18 TO-GENERATE closed \u2014 16 parametric E0 footprints in library/footprints/generated/ (gen_footprints.py;per-file header carries dim source + overlay-verify rule) and 2 remapped to official (ADS131M04 -> generic QFN-20, camera FPC -> Hirose FH12-24). Extra officials harvested: WSON-14 (LMP91000), MSOP-8 (OPA381), FH12-13/24 FPC, Antenova SR4G013 GNSS antenna.",
+ "stage": "H2 stage-2 + H2.5 verify round 2",
+ "note": "Footprint provenance: 'kicad-official' files are from KiCad 7.0.11 official libraries (Ubuntu archive package \u2014 the GitHub mirrors KiCad/kicad-footprints and KiCad/kicad-symbols are stale 2020 snapshots because KiCad development moved to GitLab, which is unreachable from this environment); 'espressif' from github.com/espressif/kicad-libraries (shallow clone). SnapEDA/easyeda2kicad/vendor portals blocked -> TO-GENERATE list is deliberate and substantial. | Stage-2: 18 TO-GENERATE closed \u2014 16 parametric E0 footprints in library/footprints/generated/ (gen_footprints.py;per-file header carries dim source + overlay-verify rule) and 2 remapped to official (ADS131M04 -> generic QFN-20, camera FPC -> Hirose FH12-24). Extra officials harvested: WSON-14 (LMP91000), MSOP-8 (OPA381), FH12-13/24 FPC, Antenova SR4G013 GNSS antenna. | H2.5 (2026-07-12): 9 footprints promoted to generated-E1 from real vendor land patterns (TCS3448, AS7421, MLX90632->SFN5, MLX90642->custom TO39, ENS161 3x3 grid, AS7058 named-grid, MIA-M10Q M-LGA53, TPS22916 named balls, BQ25620 WQFN18-RYK replacing wrong RTE16); symbols remapped to real pins for BQ27427/TPS62840/TPS62823/TLV62568/DRV2605L/IQS7222A/BQ29700/CYPD3177.",
  "symbol_note": "All non-generic symbols are SKiDL programmatic templates in boards/v1/circuit/lib_parts.py (tier E0 pin maps).",
  "coverage": {
   "components_json_parts": 38,
-  "footprint_harvested": 22,
-  "footprint_generated_E0": 16,
+  "footprint_harvested": 20,
+  "footprint_generated_E0": 9,
   "footprint_to_generate": 0,
-  "coverage": "38/38"
+  "coverage": "38/38",
+  "footprint_generated_E1": 9
  },
  "parts": [
   {
    "components_json_name": "MLX90642 thermal 32x24",
    "part": "MLX90642",
    "symbol_source": "skidl-custom",
-   "footprint_source": "kicad-official",
-   "footprint_file": "Package_TO_SOT_THT.pretty/TO-39-4.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "Generic TO-39-4; verify MLX lens-cap variant + pin-circle orientation vs MLX90642 DS."
+   "footprint_source": "generated-E1",
+   "footprint_file": "generated/MLX90642_TO39.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "VERIFIED-DS MLX90642 DS rev003 p31 Fig 34: TO-39 with pin circle O5.84 and 45-deg-paired leads \u2014 generic TO-39-4 (90deg, O5.08) did NOT fit; custom footprint generated. Pin map p4 (1 SDA/2 VDD/3 GND/4 SCL, model 2/3 swap fixed); default addr 0x66 (p16)."
   },
   {
    "components_json_name": "VL53L8CH ToF 8x8 raw",
@@ -33,10 +34,10 @@
    "components_json_name": "TCS3448 14ch VIS",
    "part": "TCS3448",
    "symbol_source": "skidl-custom",
-   "footprint_source": "generated-E0",
+   "footprint_source": "generated-E1",
    "footprint_file": "generated/TCS3448_OLGA8.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "AS7343-family OLGA-8 3.1x2.0 (AS7343 DS p3/p5 staged); TCS3448 DS unavailable \u2014 overlay-verify when vendor DS lands."
+   "evidence_tier": "E1",
+   "verify_notes": "VERIFIED-DS TCS3448 DS001121 p51 Fig 11: pads 0.488x0.575, pitch 0.8, row c-c 1.276; body 3.1x2.0 p5. Addr 0x59 (p19) \u2014 0x39 anchor refuted; moved to I2C-A; 1.8V-only VDD/SCL/SDA (p9) \u2014 H3 level-shift ECO."
   },
   {
    "components_json_name": "AS7331 UV A/B/C",
@@ -51,19 +52,19 @@
    "components_json_name": "AS7421 64ch NIR +",
    "part": "AS7421",
    "symbol_source": "skidl-custom",
-   "footprint_source": "generated-E0",
+   "footprint_source": "generated-E1",
    "footprint_file": "generated/AS7421_OLGA10.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "OLGA10 3.5x3.5 from bom-v1.md (E0-unverified, no DS). Addr 0x64 still VERIFY."
+   "evidence_tier": "E1",
+   "verify_notes": "VERIFIED-DS AS7421 DS000667 p45-46: OLGA10 is 6.6x6.0 (old 3.5x3.5 guess replaced); 2x5 pads 0.6x0.5 @1.25 rows +/-2.6, 2 center EPs (GND/LEDA). Addr 0x64 (p23). 4 NIR LEDs are INTEGRATED (p10/p20) \u2014 external LED chain deleted."
   },
   {
    "components_json_name": "MLX90632 spot FIR +",
    "part": "MLX90632",
    "symbol_source": "skidl-custom",
-   "footprint_source": "generated-E0",
-   "footprint_file": "generated/MLX90632_SFN8_3x3.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "SFN 3x3 class from bom-v1.md; pad count is a PLACEHOLDER (no Melexis DS) \u2014 replace when DS lands."
+   "footprint_source": "generated-E1",
+   "footprint_file": "generated/MLX90632_SFN5_3x3.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "VERIFIED-DS MLX90632 DS rev13 p47 Fig 26: 5 pads 0.30x0.25 @0.5 single column + 2.10x2.55 thermal (8x0.2 PTH); body 3.0 (p46). ADDR pin added to symbol (GND -> 0x3A, p10). Order -000 = 3.3V I2C level."
   },
   {
    "components_json_name": "VD66GY camera (DNP)",
@@ -96,10 +97,10 @@
    "components_json_name": "ENS161 4-el MOX +",
    "part": "ENS161",
    "symbol_source": "skidl-custom",
-   "footprint_source": "generated-E0",
+   "footprint_source": "generated-E1",
    "footprint_file": "generated/ENS161_LGA9.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "LGA-9 3x3 from bom-v1.md (E0-unverified, no ScioSense DS); U-perimeter pad grid placeholder."
+   "evidence_tier": "E1",
+   "verify_notes": "VERIFIED-DS ENS161 DS v1.1 p41 Table 40: LGA-9 is a 3x3 GRID (pitch 1.05, lead 0.7 sq, land +0.05) \u2014 U-perimeter placeholder replaced. Pin map p5; addr 0x53 ADDR-high confirmed; VDD 1.71-1.98V."
   },
   {
    "components_json_name": "SCD41 true CO2 +",
@@ -108,7 +109,7 @@
    "footprint_source": "kicad-official",
    "footprint_file": "Sensor.pretty/Sensirion_SCD4x-1EP_10.1x10.1mm_P1.25mm_EP4.8x4.8mm.kicad_mod",
    "evidence_tier": "E0",
-   "verify_notes": "Official SCD4x footprint \u2014 direct match."
+   "verify_notes": "Official SCD4x footprint \u2014 direct match. VERIFIED-DS SCD4x DS p9: I2C 0x62 confirmed."
   },
   {
    "components_json_name": "SHT41 ref T/RH +",
@@ -117,7 +118,7 @@
    "footprint_source": "kicad-official",
    "footprint_file": "Sensor_Humidity.pretty/Sensirion_DFN-4_1.5x1.5mm_P0.8mm_SHT4x_NoCentralPad.kicad_mod",
    "evidence_tier": "E0",
-   "verify_notes": "Official SHT4x footprint \u2014 direct match."
+   "verify_notes": "Official SHT4x footprint \u2014 direct match. VERIFIED-DS SHT4x DS v7.1 p2: 0x44 requires the SHT41-AD1B ordering code."
   },
   {
    "components_json_name": "BMV080 PM2.5",
@@ -141,10 +142,10 @@
    "components_json_name": "AS7058 PPG/ECG/BioZ",
    "part": "AS7058",
    "symbol_source": "skidl-custom",
-   "footprint_source": "generated-E0",
+   "footprint_source": "generated-E1",
    "footprint_file": "generated/AS7058_WLCSP42.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "WLCSP42 2.82x2.55 from bom-v1.md; 7x6@0.4 NUMERIC ball map placeholder (no ams DS). Addr 0x30 still VERIFY."
+   "evidence_tier": "E1",
+   "verify_notes": "GRID VERIFIED (short DS DS001085 p9): A1..G6 named balls @0.4, die 2.545x2.815. Ball-SIGNAL map + I2C addr still open \u2014 full DS DS001573 is NDA-gated, FAE contact queued."
   },
   {
    "components_json_name": "A121 60GHz radar",
@@ -207,7 +208,7 @@
    "footprint_source": "espressif",
    "footprint_file": "Espressif.pretty/ESP32-C6-MINI-1.kicad_mod",
    "evidence_tier": "E0",
-   "verify_notes": "Symbol+footprint from espressif/kicad-libraries (github). SDIO GPIO map VERIFY vs C6 DS."
+   "verify_notes": "VERIFIED-DS esp32-c6-mini-1 DS v1.5 p10-11 Table 3-1: SDIO map GPIO18=CMD/19=CLK/20-23=DATA0-3 and TXD0=31/RXD0=30 confirmed exactly as wired; module pad map matches espressif footprint."
   },
   {
    "components_json_name": "BNO086 IMU raw+fused",
@@ -261,16 +262,16 @@
    "footprint_source": "kicad-official",
    "footprint_file": "Package_DFN_QFN.pretty/HVQFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm.kicad_mod",
    "evidence_tier": "E0",
-   "verify_notes": "Generic QFN-24 4x4; verify vs Infineon QFN24 drawing + strap resistor values E0."
+   "verify_notes": "VERIFIED-DS 002-25383 p5-6/p20: QFN-24 4x4 P0.5 matches; DS EP is 2.75 typ (2.65 min) vs footprint 2.6 \u2014 slightly small, acceptable, note for H3. Straps corrected to VDDD dividers (Tables 2-4 p8)."
   },
   {
    "components_json_name": "BQ25620 charger 3.5A",
    "part": "BQ25620",
    "symbol_source": "skidl-custom",
-   "footprint_source": "kicad-official",
-   "footprint_file": "Package_DFN_QFN.pretty/Texas_RTE_WQFN-16-1EP_3x3mm_P0.5mm_EP1.2x0.8mm.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "Class placeholder \u2014 confirm BQ25620 package code (WQFN) + pad map vs TI DS."
+   "footprint_source": "generated-E1",
+   "footprint_file": "generated/BQ25620_WQFN18_RYK.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "VERIFIED-DS SLUSEG2D p5/p85-86: package is WQFN-18 RYK 2.5x3.0 (old WQFN-16 RTE 3x3 was the WRONG package). HR land pattern approximated to rectangles from 4226526/A \u2014 overlay-verify before fab. Addr 0x6B confirmed."
   },
   {
    "components_json_name": "BQ27427 gauge",
@@ -279,7 +280,7 @@
    "footprint_source": "kicad-official",
    "footprint_file": "Package_BGA.pretty/Texas_DSBGA-9_1.62mmx1.58mm_Layout3x3_P0.5mm.kicad_mod",
    "evidence_tier": "E0",
-   "verify_notes": "Official TI DSBGA-9; verify BQ27427 YZF ball map + integrated-sense topology."
+   "verify_notes": "VERIFIED-DS SLUSEB5B p3 Fig 4-1: ball map A1 GPOUT..C3 BAT matches official DSBGA-9 footprint; symbol remapped to real balls. HIGH-side internal 7mOhm (BAT->SRX) \u2014 circuit topology fixed (PACKP/VBAT split, VDD=LDO out, BIN 10k pulldown). Addr 0x55 (p16)."
   },
   {
    "components_json_name": "TPS62840 sentinel buck",
@@ -288,7 +289,7 @@
    "footprint_source": "kicad-official",
    "footprint_file": "Package_TO_SOT_SMD.pretty/SOT-583-8.kicad_mod",
    "evidence_tier": "E0",
-   "verify_notes": "Official SOT-583-8; verify TPS62840 pin order (pinout E0 in circuit)."
+   "verify_notes": "VERIFIED-DS SLVSEC6D p4-5: DLC SON-8 1.5x2.0 P0.5 (SOT-583 land compatible \u2014 overlay-check at H3). Symbol remapped to real pins; VSET 267k (3.3V, Table 1 p22) + STOP added to circuit."
   },
   {
    "components_json_name": "TPS62823 core buck",
@@ -306,7 +307,7 @@
    "footprint_source": "kicad-official",
    "footprint_file": "Package_TO_SOT_SMD.pretty/SOT-23-5.kicad_mod",
    "evidence_tier": "E0",
-   "verify_notes": "Official SOT-23-5; verify pin order."
+   "verify_notes": "VERIFIED-DS SLVSD89B p3: SOT23-5 1 EN/2 GND/3 SW/4 VIN/5 FB \u2014 symbol pin order fixed (3/4/5 were wrong)."
   },
   {
    "components_json_name": "BQ29700+FET protect",
@@ -315,16 +316,16 @@
    "footprint_source": "kicad-official",
    "footprint_file": "Package_SON.pretty/WSON-6_1.5x1.5mm_P0.5mm.kicad_mod",
    "evidence_tier": "E0",
-   "verify_notes": "BQ29700 DSE-6-class on WSON-6 1.5x1.5 (verify); dual FET on WSON-6 2x2 (Package_SON.pretty/WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm.kicad_mod)."
+   "verify_notes": "VERIFIED-DS bq2970_family p3: DSE WSON-6 1 NC/2 COUT/3 DOUT/4 VSS/5 BAT/6 V- \u2014 symbol remapped; 330R VDD RC confirmed (p14)."
   },
   {
    "components_json_name": "Load switches x7",
    "part": "TPS22916 x7 (6 domains + accessory stage-1 add)",
    "symbol_source": "skidl-custom",
-   "footprint_source": "generated-E0",
+   "footprint_source": "generated-E1",
    "footprint_file": "generated/TPS22916_CSP4.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "4-ball WCSP 0.76x0.76@0.4 E0; ball order vs TI YFP drawing VERIFY."
+   "evidence_tier": "E1",
+   "verify_notes": "VERIFIED-DS SLVSDO5F p3: YFP WCSP-4 0.78x0.78 @0.4, balls A1 VOUT/A2 VIN/B1 GND/B2 ON \u2014 footprint renamed to real ball names, symbol remapped."
   },
   {
    "components_json_name": "IQS7222A touch",
@@ -333,7 +334,7 @@
    "footprint_source": "kicad-official",
    "footprint_file": "Package_DFN_QFN.pretty/QFN-20-1EP_3x3mm_P0.4mm_EP1.65x1.65mm.kicad_mod",
    "evidence_tier": "E0",
-   "verify_notes": "Generic QFN-20 3x3 P0.4; verify vs Azoteq DS. On SENTINEL_I2C @0x44 (collision-avoid, wake source)."
+   "verify_notes": "VERIFIED-DS IQS7222A v1.7 p6: QFN20 3x3 P0.4 matches official footprint; symbol remapped to real pins; addr 0x44 = order code 001 (102 would be 0x57). Only 9 sensor pins \u2014 12-electrode flex flagged ECO-H3."
   },
   {
    "components_json_name": "DRV2605L haptic",
@@ -342,16 +343,16 @@
    "footprint_source": "kicad-official",
    "footprint_file": "Package_SO.pretty/VSSOP-10_3x3mm_P0.5mm.kicad_mod",
    "evidence_tier": "E0",
-   "verify_notes": "Official VSSOP-10 (DGS) \u2014 direct match."
+   "verify_notes": "VERIFIED-DS SLOS854D p5: DGS VSSOP-10 pin map; symbol remapped, REG 1uF added, pin 6 VDD/NC tied to VDD."
   },
   {
    "components_json_name": "MIA-M10Q GNSS RAWX",
    "part": "MIA-M10Q-01B",
    "symbol_source": "skidl-custom",
-   "footprint_source": "generated-E0",
+   "footprint_source": "generated-E1",
    "footprint_file": "generated/UBLOX_MIA_M10Q.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "4.5x4.5 SiP; 20-pad perimeter NUMERIC placeholder (u-blox integration manual unavailable). -01B orderability still OPEN."
+   "evidence_tier": "E1",
+   "verify_notes": "VERIFIED-DS UBX-22015849 p9/p19 + IM UBX-21028173 p83: M-LGA53 53x O0.27 pads @0.5 sparse 9x9 (named A1..J9), land 1:1 copper/mask 0.37 \u2014 castellated 20-pad placeholder replaced. V_IO supply pin added to circuit; keep RF corner (B9) quiet."
   }
  ],
  "supporting_parts": [

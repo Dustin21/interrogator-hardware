@@ -198,14 +198,24 @@ A121 = mkpart("A121", "U", _seq([
 # SENSORS — I2C-A (contact/thermal, 1 MHz capable)
 # ============================================================================
 
+# VERIFIED-DS MLX90642-Datasheet (DOC#3901090642 rev003) p4 Table 2:
+# 1=SDA, 2=VDD, 3=GND, 4=SCL (old model had 2/3 SWAPPED — power-reversal bug).
+# p16 Table 19: default slave address = 0x66 (EEPROM 0x11FE); 0x33 only if
+# EEPROM SA is written to 0x00 (p6 NOTE 2). Package = TO-39 ("SF"), pin circle
+# Ø5.84 with pins in two 45°-spaced pairs (p31 Fig 34) — generic TO-39-4
+# footprint (90°, Ø5.08) does NOT fit -> generated/MLX90642_TO39.
 MLX90642 = mkpart("MLX90642", "U", [
-    (1, "SDA", BI), (2, "GND", PWR), (3, "VDD", PWR), (4, "SCL", BI),
-    # TO-39 4-lead; pin circle order # pinout E0 — verify vs MLX90642 DS
-], description="Melexis MLX90642 32x24 FIR array, TO-39, I2C-A 0x33")
+    (1, "SDA", BI), (2, "VDD", PWR), (3, "GND", PWR), (4, "SCL", BI),
+], description="Melexis MLX90642 32x24 FIR array, TO-39, I2C-A 0x66 (VERIFIED-DS p16)")
 
-MLX90632 = mkpart("MLX90632", "U", _seq([
-    ("VDD", PWR), ("GND", PWR), ("SDA", BI), ("SCL", BI),
-]), description="Melexis MLX90632 medical spot FIR, I2C-A 0x3A")  # pinout E0
+# VERIFIED-DS MLX90632-Datasheet (DOC#3901090632 rev13) p8 Table 5:
+# 1=SDA, 2=VDD, 3=GND, 4=SCL, 5=ADDR (LSB of addr; grounded -> 0x3A, p10
+# Table 6 + p28). Order option code ...-000 (3.3V I2C level, p5). Pad 6 =
+# central thermal pad (PCB footprint p47: 2.10x2.55 copper, 8 PTH vias) -> GND.
+MLX90632 = mkpart("MLX90632", "U", [
+    (1, "SDA", BI), (2, "VDD", PWR), (3, "GND", PWR), (4, "SCL", BI),
+    (5, "ADDR", IN), (6, "EP", PWR),
+], description="Melexis MLX90632 medical spot FIR, SFN 3x3, I2C-A 0x3A (ADDR=GND, VERIFIED-DS p10)")
 
 MAX30102 = mkpart("MAX30102", "U", _seq([
     ("VDD", PWR),        # 1.8V analog supply
@@ -222,8 +232,12 @@ AS7058 = mkpart("AS7058", "U", _seq([
     ("VDD", PWR), ("VDDIO", PWR), ("GND", PWR),
     ("SCL", BI), ("SDA", BI), ("INT", OUT),
     ("ECG_INP", IN), ("ECG_INN", IN), ("ECG_REF", OUT),
-]), description="ams AS7058 PPG/ECG/BioZ AFE, I2C-A 0x30 # VERIFY addr")
-# pinout E0 (WLCSP42 subset)
+]), description="ams AS7058 PPG/ECG/BioZ AFE, I2C-A 0x30 # VERIFY addr (short DS silent)")
+# pinout E0 (WLCSP42 subset). PARTIAL-DS AS7058_DS001085_short p9 Fig 2:
+# WLCSP42 grid confirmed = rows A-G x cols 1-6, 0.4 mm pitch, die 2.545x2.815
+# (footprint geometry now E1) — but the SHORT DS carries NO ball-signal map
+# and NO I2C address. Full DS (DS001573) is NDA-gated; FAE contact queued.
+# Digital pins are VIOVDD-referred (short DS p10 abs-max) -> 3.3V bus OK.
 
 
 # ============================================================================
@@ -241,22 +255,36 @@ SGP41 = mkpart("SGP41", "U", _seq([
     ("VDD", PWR), ("GND", PWR), ("SDA", BI), ("SCL", BI),
 ]), description="Sensirion SGP41 VOC/NOx, I2C-B 0x59 (fixed)")  # pinout E0
 
-ENS161 = mkpart("ENS161", "U", _seq([
-    ("VDD", PWR),      # 1.8V core supply per DS
-    ("VDDIO", PWR),    # IO supply (3V3 domain)
-    ("GND", PWR),
-    ("SDA", BI), ("SCL", BI),
-    ("ADDR", IN),      # strap HIGH -> 0x53
-    ("INT_N", OUT), ("CS_N", IN),  # CS high = I2C mode
-]), description="ScioSense ENS161 4-el MOX, I2C-B 0x53; VDD=1V8")  # pinout E0
+# VERIFIED-DS ENS161-Datasheet v1.1 p5 Table 1: 1 MOSI/SDA, 2 SCLK/SCL,
+# 3 MISO/ADDR (high -> 0x53, low -> 0x52), 4 VDD, 5 VDDIO, 6 INTn, 7 CSn
+# (high = I2C), 8+9 VSS. Abs-max p7: VDD 1.98V (1V8 rail correct), VDDIO 3.6V,
+# SDA/SCL 3.6V-tolerant, ADDR/INTn/CSn VDDIO+0.3. LGA-9 = 3x3 GRID, pitch
+# 1.05, pads 0.7 sq (p41 Table 40) -> generated/ENS161_LGA9 (E1).
+ENS161 = mkpart("ENS161", "U", [
+    (1, "SDA", BI), (2, "SCL", BI),
+    (3, "ADDR", IN),      # strap HIGH -> 0x53  VERIFIED-DS p5
+    (4, "VDD", PWR),      # 1.71-1.98V core     VERIFIED-DS p7
+    (5, "VDDIO", PWR),    # IO supply (3V3 domain, <=3.6V)
+    (6, "INT_N", OUT), (7, "CS_N", IN),
+    (8, "GND", PWR), (9, "GND2", PWR),
+], description="ScioSense ENS161 4-el MOX, I2C-B 0x53 (VERIFIED-DS p5); VDD=1V8")
 
 SCD41 = mkpart("SCD41", "U", _seq([
     ("VDD", PWR), ("GND", PWR), ("SDA", BI), ("SCL", BI),
 ]), description="Sensirion SCD41 photoacoustic CO2, I2C-B 0x62 (fixed)")  # pinout E0
 
-TCS3448 = mkpart("TCS3448", "U", _seq([
-    ("VDD", PWR), ("GND", PWR), ("SDA", BI), ("SCL", BI), ("INT_N", OC),
-]), description="ams TCS3448 14ch VIS spectral, I2C-B 0x39 # VERIFY addr")  # pinout E0
+# VERIFIED-DS TCS3448 DS001121 v2-00: addr = 0x59 (Table 8 p19) — the AS7343
+# family anchor 0x39 is REFUTED. 0x59 collides with SGP41 (fixed 0x59) on
+# I2C-B -> device moved to I2C-A. Abs-max (Table 3 p9): VDD max 1.98 V and
+# SCL/SDA max 1.98 V (1.2/1.8 V bus only!); INT and GPIO are 3.6 V tolerant.
+# Pin map (Table 2 p8): 1 VDD, 2 SCL, 3 GND, 4 LDR (leave open if unused),
+# 5 PGND, 6 GPIO (I2C bus-voltage select: >1.5V at startup -> 1.8V I/O; must
+# NOT float, p21), 7 INT (OD, pull to 1.8V rec.), 8 SDA. OLGA8 3.1x2.0x1.0,
+# land pattern Fig 11 p51 -> generated/TCS3448_OLGA8 (E1).
+TCS3448 = mkpart("TCS3448", "U", [
+    (1, "VDD", PWR), (2, "SCL", BI), (3, "GND", PWR), (4, "LDR", NCP),
+    (5, "PGND", PWR), (6, "GPIO", IN), (7, "INT_N", OC), (8, "SDA", BI),
+], description="ams TCS3448 14ch VIS spectral, I2C-A 0x59 (VERIFIED-DS p19); 1.8V-only part")
 
 AS7331 = mkpart("AS7331", "U", _seq([
     ("VDD", PWR), ("GND", PWR), ("SDA", BI), ("SCL", BI),
@@ -264,10 +292,19 @@ AS7331 = mkpart("AS7331", "U", _seq([
     ("READY", OUT), ("SYN", IN),
 ]), description="ams AS7331 UV A/B/C, I2C-B 0x74 (A1A0=00)")  # pinout E0
 
-AS7421 = mkpart("AS7421", "U", _seq([
-    ("VDD", PWR), ("GND", PWR), ("SDA", BI), ("SCL", BI),
-    ("INT", OC), ("LED0", OC),   # integrated LED driver -> 970nm NIR LED
-]), description="ams AS7421 64ch NIR, I2C-B 0x64 # VERIFY addr")  # pinout E0
+# VERIFIED-DS AS7421 DS000667 v2-00: addr 0x64 CONFIRMED (Fig 21 p23).
+# Pin map (Fig 3/4 p6-7): 1 INT (OD, pull to 1.8 or 3.3V), 2 VDD, 3 GND,
+# 4/5 PGND, 6 LEDA (anode supply for the FOUR INTEGRATED NIR LEDs —
+# 760/830/950/1040 nm, p10; there is NO external-LED sink pin), 7 RST
+# (active-high, internal pulldown), 8 GPIO, 9 SDA, 10 SCL, 11 EP=GND,
+# 12 EP=LEDA. Abs-max p8: VDD/LEDA 3.6V; SCL/SDA VDD+0.3 -> 3.3V bus OK.
+# OLGA10 is 6.60 x 6.0 x 2.21 mm (p45-46) — NOT 3.5x3.5 as previously guessed.
+AS7421 = mkpart("AS7421", "U", [
+    (1, "INT", OC), (2, "VDD", PWR), (3, "GND", PWR),
+    (4, "PGND1", PWR), (5, "PGND2", PWR), (6, "LEDA", PWR),
+    (7, "RST", IN), (8, "GPIO", IN), (9, "SDA", BI), (10, "SCL", BI),
+    (11, "EP_GND", PWR), (12, "EP_LEDA", PWR),
+], description="ams AS7421 64ch NIR + 4 integrated NIR LEDs, I2C-B 0x64 (VERIFIED-DS p23)")
 
 SHT41 = mkpart("SHT41", "U", _seq([
     ("VDD", PWR), ("GND", PWR), ("SDA", BI), ("SCL", BI),
@@ -331,12 +368,25 @@ PDM_MIC = mkpart("PDM_MIC", "MK", _seq([
     ("VDD", PWR), ("GND", PWR), ("CLK", IN), ("DATA", TRI), ("SEL", IN),
 ]), description="MEMS PDM mic, bottom port (heart/lung + acoustic)")
 
-# u-blox MIA-M10Q GNSS SiP # pinout E0
-MIA_M10Q = mkpart("MIA_M10Q", "U", _seq([
-    ("VCC", PWR), ("V_BCKP", PWR), ("GND", PWR),
-    ("TXD", OUT), ("RXD", IN), ("TIMEPULSE", OUT),
-    ("RF_IN", IN),
-]), description="u-blox MIA-M10Q GNSS (RAWX), UART + PPS")
+# u-blox MIA-M10Q GNSS SiP — VERIFIED-DS UBX-22015849 p9-11 Fig 2/Table 10:
+# M-LGA53 (4.5x4.5x1.0, 53 pads Ø0.27 on sparse 9x9 grid, 0.5 pitch — p19
+# Fig 4; land = 1:1 copper, mask Ø0.37, IM UBX-21028173 p83). Pads used here:
+# B1 VCC, J4 V_IO (REQUIRED IO supply — was missing), J5 V_BCKP, J6 VIO_SEL
+# (open = 3.3V V_IO), G1 TX, H1 RX, A7 TIMEPULSE, B9 RF_IN, A5 RTC_O (GND if
+# unused), D2+E2 reserved pair (connect to each other), F9/G7 reserved
+# (to GND — DS recommends 0R for dual-band/crystal-variant compat, fn17/18),
+# C4 RESET_N (open), remaining pads = GND. All other reserved pads left open.
+MIA_M10Q = mkpart("MIA_M10Q", "U", [
+    ("B1", "VCC", PWR), ("J4", "V_IO", PWR), ("J5", "V_BCKP", PWR),
+    ("J6", "VIO_SEL", IN), ("C4", "RESET_N", IN),
+    ("G1", "TXD", OUT), ("H1", "RXD", IN), ("A7", "TIMEPULSE", OUT),
+    ("B9", "RF_IN", IN),
+    ("A5", "RTC_O", OUT), ("D2", "RSVD_D2", PAS), ("E2", "RSVD_E2", PAS),
+    ("F9", "RSVD_F9", PAS), ("G7", "RSVD_G7", PAS),
+] + [(p, f"GND_{p}", PWR) for p in
+     ("A1", "A2", "A3", "A8", "A9", "B2", "B8", "C3", "C9", "E3", "E4", "E9",
+      "F1", "F3", "F4", "G3", "G4", "G5", "G6", "H8", "J8", "J9")],
+    description="u-blox MIA-M10Q GNSS (RAWX), UART + PPS, M-LGA53 (VERIFIED-DS p9-11)")
 
 # GNSS chip antenna
 ANT_GNSS = mkpart("ANT_GNSS", "AE", [
@@ -366,37 +416,65 @@ PIEZO = mkpart("PIEZO", "PZ", [
 # POWER
 # ============================================================================
 
-# Cypress/Infineon CYPD3177 USB-C PD sink controller (BCR) # pinout E0
-CYPD3177 = mkpart("CYPD3177", "U", _seq([
-    ("VBUS", PWR), ("GND", PWR),
-    ("CC1", BI), ("CC2", BI),
-    ("VBUS_MIN", IN), ("VBUS_MAX", IN),     # resistor-strap voltage window
-    ("ISNK_COARSE", IN), ("ISNK_FINE", IN), # resistor-strap current request
-    ("FAULT_N", OC), ("FLIP", OUT),
-]), description="CYPD3177 autonomous USB-C PD sink; straps set 5V/3A request")
+# Cypress/Infineon CYPD3177 USB-C PD sink controller (BCR).
+# VERIFIED-DS 002-25383 Rev*B Table 1 p5-6: real QFN-24 pin numbers below.
+# Straps are resistor DIVIDERS from VDDD (internal 3.3V LDO out, pin 23,
+# needs 1uF + 2x100nF; VCCD pin 24 needs 1uF), NOT single resistors to GND
+# (old model was wrong). Divider tables p8: Table 2 (VBUS_MIN/MAX),
+# Table 3/4 (ISNK coarse/fine). FAULT (pin 9) is driven HIGH on fault —
+# not an open-drain active-low. Package: QFN-24 4x4 P0.5, EP 2.75 typ (p20).
+# D+/D- (16/17) leave unconnected; VBUS_FET_EN/SAFE_PWR_EN/VDC_OUT unused —
+# VBUS_C feeds the BQ25620 input directly (charger tolerates the 9V contract).
+CYPD3177 = mkpart("CYPD3177", "U", [
+    (18, "VBUS", PWR), (19, "GND", PWR), (22, "VSS", PWR), (25, "EP", PWR),
+    (15, "CC1", BI), (14, "CC2", BI),
+    (23, "VDDD", PWO), (24, "VCCD", PWO),
+    (1, "VBUS_MIN", IN), (2, "VBUS_MAX", IN),     # divider-strap voltage window
+    (5, "ISNK_COARSE", IN), (6, "ISNK_FINE", IN), # divider-strap current request
+    (9, "FAULT", OUT), (10, "FLIP", OUT),  # both actively driven high/low (p6)
+], description="CYPD3177 autonomous USB-C PD sink; VDDD dividers request 5-9V/3A (VERIFIED-DS p8)")
 
-# TI BQ25620 I2C buck charger # pinout E0
-BQ25620 = mkpart("BQ25620", "U", _seq([
-    ("VBUS", PWR), ("PMID", PAS), ("REGN", PWO),
-    ("SW", OUT), ("BTST", PAS),
-    ("SYS", PWO), ("BAT", PWR),
-    ("SDA", BI), ("SCL", BI), ("INT_N", OC), ("CE_N", IN),
-    ("TS", IN), ("QON_N", IN), ("GND", PWR), ("PGND", PWR),
-]), description="TI BQ25620 3.5A charger, ~1C fast charge, SENTINEL_I2C 0x6B")
+# TI BQ25620 I2C buck charger — VERIFIED-DS SLUSEG2D Table 6-1 p5-6:
+# WQFN-18 "RYK" 2.5x3.0 (NOT WQFN-16 RTE 3x3 as previously footprinted).
+# 1 BTST (47nF to SW), 2 REGN (4.7uF), 3 PG (OD, opt.), 4 D-, 5 D+ (BC1.2
+# detect, may float — PD contract sets input), 6 TS, 7 QON (internal pullup),
+# 8 BAT, 9 SYS, 10 STAT (float if unused), 11 INT, 12 SDA, 13 SCL, 14 CE
+# (must not float), 15 GND, 16 SW, 17 PMID, 18 VBUS. Addr 0x6B (p37/p39).
+BQ25620 = mkpart("BQ25620", "U", [
+    (18, "VBUS", PWR), (17, "PMID", PAS), (2, "REGN", PWO),
+    (16, "SW", OUT), (1, "BTST", PAS),
+    (9, "SYS", PWO), (8, "BAT", PWR),
+    (12, "SDA", BI), (13, "SCL", BI), (11, "INT_N", OC), (14, "CE_N", IN),
+    (6, "TS", IN), (7, "QON_N", IN), (15, "GND", PWR),
+    (3, "PG_N", OC), (4, "DM", BI), (5, "DP", BI), (10, "STAT", OC),
+], description="TI BQ25620 3.5A charger, ~1C fast charge, SENTINEL_I2C 0x6B (VERIFIED-DS)")
 
-# TI BQ27427 fuel gauge (integrated sense R) # pinout E0
-BQ27427 = mkpart("BQ27427", "U", _seq([
-    ("VDD", PWR), ("BIN", IN),      # battery voltage sense
-    ("SRX", PAS),                    # internal-sense-resistor terminal
-    ("SDA", BI), ("SCL", BI), ("GPOUT", OC), ("VSS", PWR),
-]), description="TI BQ27427 gauge, SENTINEL_I2C 0x55; low-side sense # VERIFY topology")
+# TI BQ27427 fuel gauge — VERIFIED-DS SLUSEB5B Table 4-1 p3 + Fig 4-1:
+# DSBGA-9 balls A1 GPOUT, A2 SDA, A3 SCL, B1 BIN, B2 VSS, B3 VDD, C1 VSS,
+# C2 SRX, C3 BAT. Sense topology is HIGH-side: internal 7mΩ sits between
+# BAT (Kelvin to pack+) and SRX (to system rail VSYS side) — NOT low-side.
+# VDD is the internal 1.8V LDO OUTPUT (2.2uF to VSS), never a supply input.
+# BIN: embedded pack -> 10k pulldown to VSS (never short to rail, p3).
+# SDA/SCL/GPOUT open-drain, VPU 1.62-3.6V (p4) -> 3.3V AON pullups legal.
+# Addr fixed 0x55 (1010101, p16).
+BQ27427 = mkpart("BQ27427", "U", [
+    ("B3", "VDD", PWO),              # 1.8V LDO output (cap only)
+    ("B1", "BIN", IN),               # battery-insertion detect (10k to VSS)
+    ("C3", "BAT", PWR),              # Kelvin sense to pack+ (PACKP)
+    ("C2", "SRX", PAS),              # system-rail side of internal 7mΩ
+    ("A2", "SDA", BI), ("A3", "SCL", BI), ("A1", "GPOUT", OC),
+    ("B2", "VSS", PWR), ("C1", "VSS2", PWR),
+], description="TI BQ27427 gauge, SENTINEL_I2C 0x55; HIGH-side 7mΩ sense (VERIFIED-DS p3)")
 
-# TI BQ29700 1S protector # pinout E0
-BQ29700 = mkpart("BQ29700", "U", _seq([
-    ("VDD", PWR), ("VSS", PWR),
-    ("VM", IN),                      # pack- sense
-    ("COUT", OUT), ("DOUT", OUT),    # charge / discharge FET gates
-]), description="TI BQ29700 1S Li+ protector (with dual NMOS)")
+# TI BQ29700 1S protector — VERIFIED-DS bq2970_family Table 5-1 p3 (DSE
+# WSON-6): 1 NC, 2 COUT, 3 DOUT, 4 VSS, 5 BAT(VDD), 6 V-(VM). 330Ω VDD
+# series R confirmed (p14: also limits current on reverse connection).
+BQ29700 = mkpart("BQ29700", "U", [
+    (5, "VDD", PWR), (4, "VSS", PWR),
+    (6, "VM", IN),                      # charger-negative sense
+    (2, "COUT", OUT), (3, "DOUT", OUT), # charge / discharge FET gates
+    (1, "NC", NCP),
+], description="TI BQ29700 1S Li+ protector (with dual NMOS) (VERIFIED-DS p3)")
 
 # Dual common-drain NMOS for protection (CSD-class) # pinout E0
 DUAL_NFET = mkpart("DUAL_NFET_PROT", "Q", _seq([
@@ -404,29 +482,39 @@ DUAL_NFET = mkpart("DUAL_NFET_PROT", "Q", _seq([
     ("D2", PAS), ("G2", IN), ("S2", PAS),
 ]), description="Dual NMOS, battery protection series pair (low-side)")
 
-# TPS62840 60nA-IQ buck -> 3V3_AON # pinout E0
-TPS62840 = mkpart("TPS62840", "U", _seq([
-    ("VIN", PWR), ("GND", PWR),
-    ("EN", IN), ("SW", OUT), ("VOS", IN), ("MODE", IN),
-]), description="TI TPS62840, 60nA IQ, always-on 3.3V sentinel rail")
+# TPS62840 60nA-IQ buck -> 3V3_AON.
+# VERIFIED-DS SLVSEC6D p4-5 Pin Functions (DLC SON-8): 1 GND, 2 VIN, 3 MODE
+# (must be terminated), 4 EN, 5 VSET (RSET to GND sets VOUT — 267k -> 3.3V,
+# Table 1 p22), 6 STOP, 7 SW, 8 VOS. Old model had no VSET (output voltage
+# was undefined!) and no STOP.
+TPS62840 = mkpart("TPS62840", "U", [
+    (2, "VIN", PWR), (1, "GND", PWR),
+    (4, "EN", IN), (7, "SW", OUT), (8, "VOS", IN), (3, "MODE", IN),
+    (5, "VSET", IN), (6, "STOP", IN),
+], description="TI TPS62840DLC, 60nA IQ, 3V3_AON (VSET=267k, VERIFIED-DS p22)")
 
-# TPS62823 3A buck (x2: VDD_CORE_N6 and 3V3_SYS) # pinout E0
-TPS62823 = mkpart("TPS62823", "U", _seq([
-    ("VIN", PWR), ("GND", PWR),
-    ("EN", IN), ("SW", OUT), ("FB", IN), ("MODE", IN),
-]), description="TI TPS62823 3A buck")
+# TPS62823 3A buck (x2: VDD_CORE_N6 and 3V3_SYS).
+# VERIFIED-DS SLVSDV6C p3 Pin Functions: 1 EN, 2 FB, 3 AGND, 4 NC, 5 PGND,
+# 6 SW, 7 VIN, 8 PG (float if unused). There is NO MODE pin (old model had
+# a phantom one); power-save transition is automatic.
+TPS62823 = mkpart("TPS62823", "U", [
+    (7, "VIN", PWR), (3, "AGND", PWR), (5, "PGND", PWR),
+    (1, "EN", IN), (6, "SW", OUT), (2, "FB", IN),
+    (8, "PG", OC), (4, "NC", NCP),
+], description="TI TPS62823 3A buck (VERIFIED-DS p3)")
 
-# TLV62568 1A buck -> 1V8 (SOT-23-5) # pinout E0
+# TLV62568 1A buck -> 1V8 (SOT-23-5).
+# VERIFIED-DS SLVSD89B p3 Pin Functions (DBV): 1 EN, 2 GND, 3 SW, 4 VIN,
+# 5 FB — old model had 3=VIN/4=FB/5=SW (wrong).
 TLV62568 = mkpart("TLV62568", "U", [
-    (1, "EN", IN), (2, "GND", PWR), (3, "VIN", PWR), (4, "FB", IN), (5, "SW", OUT),
-    # pinout E0 — verify SOT-23-5 order vs TLV62568 DS
-], description="TI TLV62568 1A buck -> 1V8")
+    (1, "EN", IN), (2, "GND", PWR), (3, "SW", OUT), (4, "VIN", PWR), (5, "FB", IN),
+], description="TI TLV62568 1A buck -> 1V8 (VERIFIED-DS p3)")
 
-# TPS22916-class load switch # pinout E0
+# TPS22916 load switch — VERIFIED-DS SLVSDO5F p3 Table 5-1 (YFP WCSP-4,
+# 0.78x0.78, 0.4 pitch): A1 VOUT, A2 VIN, B1 GND, B2 ON.
 TPS22916 = mkpart("TPS22916", "U", [
-    (1, "VIN", PWR), (2, "GND", PWR), (3, "ON", IN), (4, "VOUT", PWO),
-    # pinout E0 — CSP-4 ball order at footprint stage
-], description="TI TPS22916 load switch (per-domain power gating)")
+    ("A2", "VIN", PWR), ("B1", "GND", PWR), ("B2", "ON", IN), ("A1", "VOUT", PWO),
+], description="TI TPS22916 load switch (per-domain power gating) (VERIFIED-DS p3)")
 
 # Signal/load NFET (AO3400/DMN-class) for LED / fan drive
 NFET_SOT23 = mkpart("NFET_SOT23", "Q", [
@@ -444,21 +532,30 @@ AND_1G08 = mkpart("74LVC1G08", "U", [
 # IO / HUMAN
 # ============================================================================
 
-# Azoteq IQS7222A 12ch cap touch # pinout E0
-IQS7222A = mkpart("IQS7222A", "U", _seq([
-    ("VDDHI", PWR), ("VREG", PAS), ("GND", PWR),
-    ("SDA", BI), ("SCL", BI), ("RDY", OC), ("MCLR_N", IN),
-    ("E0", PAS), ("E1", PAS), ("E2", PAS), ("E3", PAS),
-    ("E4", PAS), ("E5", PAS), ("E6", PAS), ("E7", PAS),
-    ("E8", PAS), ("E9", PAS), ("E10", PAS), ("E11", PAS),
-]), description="Azoteq IQS7222A touch, SENTINEL_I2C 0x44 (deliberate: avoids SHT41 0x44 on I2C-B)")
+# Azoteq IQS7222A cap touch — VERIFIED-DS IQS7222A DS v1.7 p6-7 Table 2.2/2.3
+# (QFN20 3x3 P0.4): 1 VDD, 2 VREGD, 3 VSS, 4 VREGA, 5-12 CRx0-7, 13 CTx8,
+# 14 OUTA, 15/16 NC, 17 RDY, 18 SCL, 19 SDA, 20 MCLR (internal 200k pullup),
+# 21 = thermal TAB (recommend VSS). Each VREG pin needs 2.2uF (p45 §12.1.2).
+# Addr: 0x44 for order code ...001, 0x57 for ...102 (p... §9.2) — ORDER THE
+# 001 VARIANT. NOTE: QFN20 has only NINE sensor pins (CRx0-7 + CTx8), not 12.
+IQS7222A = mkpart("IQS7222A", "U", [
+    (1, "VDDHI", PWR), (2, "VREGD", PAS), (3, "GND", PWR), (4, "VREGA", PAS),
+    (19, "SDA", BI), (18, "SCL", BI), (17, "RDY", OC), (20, "MCLR_N", IN),
+    (5, "E0", PAS), (6, "E1", PAS), (7, "E2", PAS), (8, "E3", PAS),
+    (9, "E4", PAS), (10, "E5", PAS), (11, "E6", PAS), (12, "E7", PAS),
+    (13, "E8", PAS),   # CTx8 (Tx-only pad)
+    (14, "OUTA", TRI), (15, "NC1", NCP), (16, "NC2", NCP), (21, "EP", PWR),
+], description="Azoteq IQS7222A-001 touch, SENTINEL_I2C 0x44 (VERIFIED-DS; avoids SHT41 0x44 on I2C-B)")
 
-# TI DRV2605L haptic driver # pinout E0
-DRV2605L = mkpart("DRV2605L", "U", _seq([
-    ("VDD", PWR), ("GND", PWR),
-    ("SDA", BI), ("SCL", BI), ("EN", IN), ("IN_TRIG", IN),
-    ("OUT_P", OUT), ("OUT_N", OUT),
-]), description="TI DRV2605L LRA driver, SENTINEL_I2C 0x5A")
+# TI DRV2605L haptic driver — VERIFIED-DS SLOS854D p5 Pin Functions (DGS
+# VSSOP-10): 1 REG (1.8V LDO out, 1uF required — was missing), 2 SCL, 3 SDA,
+# 4 IN/TRIG (tie to GND if unused), 5 EN, 6 VDD/NC (tie to VDD or float),
+# 7 OUT+, 8 GND, 9 OUT-, 10 VDD (1uF).
+DRV2605L = mkpart("DRV2605L", "U", [
+    (10, "VDD", PWR), (8, "GND", PWR), (6, "VDD_NC", PWR), (1, "REG", PWO),
+    (3, "SDA", BI), (2, "SCL", BI), (5, "EN", IN), (4, "IN_TRIG", IN),
+    (7, "OUT_P", OUT), (9, "OUT_N", OUT),
+], description="TI DRV2605L LRA driver, SENTINEL_I2C 0x5A (VERIFIED-DS p5)")
 
 # Electrode pad (ECG / touch shell electrodes)
 ELECTRODE = mkpart("ELECTRODE", "E", [

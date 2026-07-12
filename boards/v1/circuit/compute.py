@@ -157,7 +157,8 @@ def build_compute():
     pullup(Net.fetch("GAUGE_INT_N"), aon, "100k")
     bl["CHG_INT_IN"] += Net.fetch("CHG_INT_N")
     pullup(Net.fetch("CHG_INT_N"), aon, "100k")
-    pullup(Net.fetch("PD_FAULT_N"), aon, "100k")
+    # PD_FAULT: CYPD3177 FAULT is actively driven high on fault (VERIFIED-DS
+    # 002-25383 p6) — the old open-drain pullup was removed; testpoint only.
 
     for i in range(1, 7):
         bl[f"GLOW{i}"] += Net.fetch(f"GLOW{i}")
@@ -189,7 +190,9 @@ def build_compute():
     v_wifi += ren[1]
     en_net += ren[2], cen[1], c6["EN/CHIP_PU"]
     GND += cen[2]
-    # SDIO slave mapping (ESP32-C6 IO MUX)  # VERIFY exact GPIO<->SDIO map vs C6 DS
+    # SDIO slave mapping — VERIFIED-DS esp32-c6-mini-1 DS v1.5 p10-11
+    # Table 3-1: pad 24 IO18=SDIO_CMD, 25 IO19=SDIO_CLK, 26 IO20=SDIO_DATA0,
+    # 27 IO21=SDIO_DATA1, 28 IO22=SDIO_DATA2, 29 IO23=SDIO_DATA3. CLOSED.
     c6["GPIO18"] += Net.fetch("SDIO_CMD")
     c6["GPIO19"] += Net.fetch("SDIO_CLK")
     c6["GPIO20"] += Net.fetch("SDIO_D0")
@@ -199,8 +202,8 @@ def build_compute():
     # boot-mode service UART to testpoints
     tx = Net.fetch("C6_TXD0")
     rx = Net.fetch("C6_RXD0")
-    tx += c6[31]   # U0TXD/GPIO16
-    rx += c6[30]   # U0RXD/GPIO17
+    tx += c6[31]   # U0TXD/GPIO16  VERIFIED-DS p11 (pad 31 = TXD0)
+    rx += c6[30]   # U0RXD/GPIO17  VERIFIED-DS p11 (pad 30 = RXD0)
     tp(tx)
     tp(rx)
     boot9 = Net.fetch("C6_BOOT")

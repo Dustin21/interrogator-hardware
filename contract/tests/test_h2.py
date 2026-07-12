@@ -103,11 +103,14 @@ def test_manifest_coverage_38_of_38_no_to_generate():
     cov = m["coverage"]
     assert cov["components_json_parts"] == 38
     assert cov["footprint_to_generate"] == 0, "TO-GENERATE parts remain"
-    assert cov["footprint_harvested"] + cov["footprint_generated_E0"] == 38
+    # H2.5: generated footprints may be promoted E0 -> E1 once the real
+    # vendor land pattern has been overlaid; both still count as generated.
+    assert (cov["footprint_harvested"] + cov["footprint_generated_E0"]
+            + cov.get("footprint_generated_E1", 0)) == 38
     for p in m["parts"]:
         assert "TO-GENERATE" not in p["footprint_source"], p["part"]
         assert p["footprint_source"] in ("kicad-official", "espressif",
-                                         "generated-E0"), p["part"]
+                                         "generated-E0", "generated-E1"), p["part"]
 
 
 def test_every_footprint_file_exists():
@@ -126,7 +129,7 @@ def test_generated_footprints_carry_e0_header():
     assert len(files) >= 16, "expected the stage-2 generated footprint set"
     for f in files:
         head = f.read_text()[:1200]
-        assert "overlay-verify" in head, f"{f.name}: no E0 overlay-verify header"
+        assert "overlay-verify" in head, f"{f.name}: no overlay-verify header"
 
 
 def test_outline_is_valid_closed_bean():
