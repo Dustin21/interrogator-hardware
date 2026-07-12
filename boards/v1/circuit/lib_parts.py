@@ -107,33 +107,59 @@ NOR_OCTAL = mkpart("NOR_OCTAL_XSPI", "U", _seq([
 ]), description="Octal xSPI NOR flash for STM32N657 (MX25UW6445G-class)")
 
 # Ezurio BL54L15 module (nRF54L15) — always-on sentinel MCU + BLE.
-# pinout E0 — module pad numbers from Ezurio DS at footprint stage.
-BL54L15 = mkpart("BL54L15", "U", _seq([
-    ("VCC", PWR), ("GND", PWR),
+# VERIFIED-DS EZ-DS-BL54L15 v1.9 Table 1 p10-13: real 39-pad map.
+# GND = pads 1/16/27/39 (all must tie to the host GND plane, Table 1 Note 1);
+# 26 = VDD_nRF (1.7-3.5 V normal voltage mode); 5 SWDIO, 6 SWDCLK, 7 NRESET
+# (internal 13k pullup); 3 P2.08 (UARTE00 TXD), 4 P2.07 (UARTE00 RXD);
+# 10 P2.01 (dedicated CLK pin -> I2C SCL), 9 P2.00 (SDA — adjacent pad, per
+# Table 1 Note 2 data pins must sit close to their clock pin); 14 P1.03/NFC2,
+# 15 P1.02/NFC1; 24/25 = XL2/XL1 optional 32.768 kHz crystal pads (reserved,
+# NC in v1 — nRF54L15 has internal load caps); 31 P0.04 (GRTC LF-clock
+# capable -> Geiger pulse timestamping). Remaining GPIO per-pin comments.
+BL54L15 = mkpart("BL54L15", "U", [
+    (26, "VCC", PWR),                        # VDD_nRF, 1.7-3.5 V
+    (1, "GND", PWR), (16, "GND2", PWR), (27, "GND3", PWR), (39, "GND4", PWR),
     # SENTINEL_I2C master: BQ27427, BQ25620, IQS7222A, DRV2605L, accessory EEPROM
-    ("SENT_SCL", BI), ("SENT_SDA", BI),
+    (10, "SENT_SCL", BI),                    # P2.01 — dedicated clock pin
+    (9, "SENT_SDA", BI),                     # P2.00
     # radiation pulse counting (comparator output, counts in ambient)
-    ("GEIGER_PULSE_IN", IN),
-    # power-tree enables
-    ("EN_OPTICAL", OUT), ("EN_AIR", OUT), ("EN_CONTACT", OUT),
-    ("EN_RADAR", OUT), ("EN_GNSS", OUT), ("EN_WIFI", OUT),
-    ("EN_N6", OUT), ("EN_FAN", OUT), ("EN_ACC", OUT), ("EN_HAPTIC", OUT),
-    ("INTERLOCK_OK", OUT),                   # UV safety interlock (R5)
+    (31, "GEIGER_PULSE_IN", IN),             # P0.04 (GRTC clock-capable)
+    # power-tree enables (P1.x GPIO)
+    (20, "EN_OPTICAL", OUT),                 # P1.07
+    (21, "EN_AIR", OUT),                     # P1.06
+    (22, "EN_CONTACT", OUT),                 # P1.05
+    (23, "EN_RADAR", OUT),                   # P1.04
+    (28, "EN_GNSS", OUT),                    # P1.10
+    (29, "EN_WIFI", OUT),                    # P1.09
+    (30, "EN_N6", OUT),                      # P1.08
+    (32, "EN_FAN", OUT),                     # P1.14
+    (33, "EN_ACC", OUT),                     # P1.13
+    (34, "EN_HAPTIC", OUT),                  # P1.12
+    (35, "INTERLOCK_OK", OUT),               # P1.11 — UV safety interlock (R5)
     # inter-MCU
-    ("UART_TX", OUT), ("UART_RX", IN),
-    ("WAKE_N6", OUT), ("ATTN_FROM_N6", IN),
+    (3, "UART_TX", OUT),                     # P2.08 UARTE00 TXD
+    (4, "UART_RX", IN),                      # P2.07 UARTE00 RXD
+    (17, "WAKE_N6", OUT),                    # P0.00
+    (18, "ATTN_FROM_N6", IN),                # P0.01
     # housekeeping interrupts
-    ("TOUCH_RDY_IN", IN),                    # IQS7222A RDY (wake source)
-    ("GAUGE_INT_IN", IN),                    # BQ27427 GPOUT
-    ("CHG_INT_IN", IN),                      # BQ25620 /INT
+    (19, "TOUCH_RDY_IN", IN),                # P0.02 — IQS7222A RDY (wake source)
+    (36, "GAUGE_INT_IN", IN),                # P0.03 — BQ27427 GPOUT
+    (13, "CHG_INT_IN", IN),                  # P2.03 — BQ25620 /INT
     # glow ring PWM
-    ("GLOW1", OUT), ("GLOW2", OUT), ("GLOW3", OUT),
-    ("GLOW4", OUT), ("GLOW5", OUT), ("GLOW6", OUT),
+    (2, "GLOW1", OUT),                       # P2.09
+    (8, "GLOW2", OUT),                       # P2.02
+    (11, "GLOW3", OUT),                      # P2.04
+    (12, "GLOW4", OUT),                      # P2.05
+    (37, "GLOW5", OUT),                      # P2.10
+    (38, "GLOW6", OUT),                      # P2.06
     # NFC pins unused in v1 (antenna not fitted)
-    ("NFC1", NCP), ("NFC2", NCP),
+    (15, "NFC1", NCP),                       # P1.02/NFC1
+    (14, "NFC2", NCP),                       # P1.03/NFC2
+    # reserved for optional 32.768 kHz crystal (unfitted in v1)
+    (25, "XL1", NCP), (24, "XL2", NCP),      # P1.00/XL1, P1.01/XL2
     # debug
-    ("SWDIO", BI), ("SWCLK", IN), ("RESET_N", IN),
-]), description="Ezurio BL54L15 (nRF54L15) BLE sentinel module")
+    (5, "SWDIO", BI), (6, "SWCLK", IN), (7, "RESET_N", IN),
+], description="Ezurio BL54L15 (nRF54L15) BLE sentinel module, 39-pad LGA (VERIFIED-DS EZ-DS v1.9 Table 1)")
 
 
 # ============================================================================
@@ -393,18 +419,38 @@ ANT_GNSS = mkpart("ANT_GNSS", "AE", [
     (1, "FEED", PAS), (2, "GND", PAS),
 ], description="GNSS L1 chip antenna (keepout corner)")
 
-# SGX-4CO electrochemical CO cell (3-electrode)
+# SGX-4CO electrochemical CO cell (3-electrode).
+# VERIFIED-DS DS-0138 SGX-4CO Issue 3 p1 (outline): body Ø20 mm, height
+# 16.50 + 3.90 mm pins; 3 pins Ø1.55 on a 13.5 mm PCD — Working top,
+# Reference and Counter on the lower pair (drawing is a BOTTOM/pin-face
+# view; footprint mirrors it for top-view placement). p3 note 1: do NOT
+# glue or solder the pins — use PSB socket receptacles (warranty void
+# otherwise) -> BOM: fit 3x Ø1.7 socket receptacles; cell is field-
+# replaceable (R2 serviceability). Electricals p1: 70±20 nA/ppm output,
+# 10 Ω recommended load, >24 months life in air, -30..+50 °C.
 SGX_4CO = mkpart("SGX_4CO", "U", [
     (1, "WE", PAS), (2, "RE", PAS), (3, "CE", PAS),
-], description="SGX 4-CO electrochemical CO cell (serviceable, R2 flag)")
+], description="SGX 4-CO CO cell, 3x O1.55 pins on 13.5 PCD, SOCKET-MOUNT ONLY (VERIFIED-DS DS-0138 p1/p3)")
 
-# LMP91000-class potentiostat AFE for the CO cell # pinout E0
-LMP91000 = mkpart("LMP91000", "U", _seq([
-    ("VDD", PWR), ("GND", PWR),
-    ("SDA", BI), ("SCL", BI), ("MENB_N", IN),
-    ("VOUT", OUT), ("C1", PAS), ("C2", PAS),
-    ("WE", PAS), ("RE", PAS), ("CE", PAS),
-]), description="LMP91000 potentiostat, I2C-B 0x48 (fixed) -> ADS AIN3")
+# LMP91000 potentiostat AFE for the CO cell.
+# VERIFIED-DS LMP91000 SNAS506I p3 (Pin Functions, WSON-14): 1 DGND, 2 MENB
+# (active-low module enable — may be tied to GND when it is the only
+# LMP91000 on the bus, §7.5.2 p20), 3 SCL, 4 SDA, 5 NC (not internally
+# connected), 6 VDD, 7 AGND, 8 VOUT, 9 C2, 10 C1, 11 VREF, 12 WE, 13 RE,
+# 14 CE; DAP "connect to AGND" -> modeled as pin 15 EP. Old model was 11
+# sequential pins with a single GND and NO VREF/NC — netlist binds pads by
+# NUMBER, so it would have scrambled the WSON-14 footprint.
+# I2C addr: fixed 7-bit 1001000 = 0x48 (§7.5.1 p20). Reference: REFCN
+# register default 0x20 -> REF_SOURCE=0 = internal (VDD) reference
+# (§7.6.4 p22); VREF pin is tied to the AIR rail via 0R so the external-ref
+# option stays open at H3 (VREF must not float if ext mode is selected).
+LMP91000 = mkpart("LMP91000", "U", [
+    (1, "DGND", PWR), (2, "MENB_N", IN), (3, "SCL", BI), (4, "SDA", BI),
+    (5, "NC", NCP), (6, "VDD", PWR), (7, "AGND", PWR), (8, "VOUT", OUT),
+    (9, "C2", PAS), (10, "C1", PAS), (11, "VREF", IN),
+    (12, "WE", PAS), (13, "RE", PAS), (14, "CE", PAS),
+    (15, "EP", PWR),   # DAP -> AGND (VERIFIED-DS p3)
+], description="TI LMP91000 potentiostat, I2C-B 0x48 (fixed) -> ADS AIN3 (VERIFIED-DS SNAS506I p3)")
 
 # Piezo contact/vibration transducer (2-pad)
 PIEZO = mkpart("PIEZO", "PZ", [

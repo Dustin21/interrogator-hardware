@@ -1,15 +1,15 @@
 {
  "generated": "2026-07-12",
  "stage": "H2 stage-2 + H2.5 verify round 2",
- "note": "Footprint provenance: 'kicad-official' files are from KiCad 7.0.11 official libraries (Ubuntu archive package \u2014 the GitHub mirrors KiCad/kicad-footprints and KiCad/kicad-symbols are stale 2020 snapshots because KiCad development moved to GitLab, which is unreachable from this environment); 'espressif' from github.com/espressif/kicad-libraries (shallow clone). SnapEDA/easyeda2kicad/vendor portals blocked -> TO-GENERATE list is deliberate and substantial. | Stage-2: 18 TO-GENERATE closed \u2014 16 parametric E0 footprints in library/footprints/generated/ (gen_footprints.py;per-file header carries dim source + overlay-verify rule) and 2 remapped to official (ADS131M04 -> generic QFN-20, camera FPC -> Hirose FH12-24). Extra officials harvested: WSON-14 (LMP91000), MSOP-8 (OPA381), FH12-13/24 FPC, Antenova SR4G013 GNSS antenna. | H2.5 (2026-07-12): 9 footprints promoted to generated-E1 from real vendor land patterns (TCS3448, AS7421, MLX90632->SFN5, MLX90642->custom TO39, ENS161 3x3 grid, AS7058 named-grid, MIA-M10Q M-LGA53, TPS22916 named balls, BQ25620 WQFN18-RYK replacing wrong RTE16); symbols remapped to real pins for BQ27427/TPS62840/TPS62823/TLV62568/DRV2605L/IQS7222A/BQ29700/CYPD3177.",
+ "note": "Footprint provenance: 'kicad-official' files are from KiCad 7.0.11 official libraries (Ubuntu archive package \u2014 the GitHub mirrors KiCad/kicad-footprints and KiCad/kicad-symbols are stale 2020 snapshots because KiCad development moved to GitLab, which is unreachable from this environment); 'espressif' from github.com/espressif/kicad-libraries (shallow clone). SnapEDA/easyeda2kicad/vendor portals blocked -> TO-GENERATE list is deliberate and substantial. | Stage-2: 18 TO-GENERATE closed \u2014 16 parametric E0 footprints in library/footprints/generated/ (gen_footprints.py;per-file header carries dim source + overlay-verify rule) and 2 remapped to official (ADS131M04 -> generic QFN-20, camera FPC -> Hirose FH12-24). Extra officials harvested: WSON-14 (LMP91000), MSOP-8 (OPA381), FH12-13/24 FPC, Antenova SR4G013 GNSS antenna. | H2.5 (2026-07-12): 9 footprints promoted to generated-E1 from real vendor land patterns (TCS3448, AS7421, MLX90632->SFN5, MLX90642->custom TO39, ENS161 3x3 grid, AS7058 named-grid, MIA-M10Q M-LGA53, TPS22916 named balls, BQ25620 WQFN18-RYK replacing wrong RTE16); symbols remapped to real pins for BQ27427/TPS62840/TPS62823/TLV62568/DRV2605L/IQS7222A/BQ29700/CYPD3177. | H2.5 round 3 (2026-07-12): SGX-4CO footprint -> E1 (real 13.5 PCD pin circle, socket receptacles, DS-0138 Issue 3); BL54L15 -> E1 (real 39-pad LGA land pattern + antenna keep-out, EZ-DS v1.9); LMP91000 symbol renumbered to real WSON-14 pins (SNAS506I p3); BL54L15 symbol renumbered to real module pads (EZ-DS v1.9 Table 1).",
  "symbol_note": "All non-generic symbols are SKiDL programmatic templates in boards/v1/circuit/lib_parts.py (tier E0 pin maps).",
  "coverage": {
   "components_json_parts": 38,
   "footprint_harvested": 20,
-  "footprint_generated_E0": 9,
+  "footprint_generated_E0": 7,
   "footprint_to_generate": 0,
   "coverage": "38/38",
-  "footprint_generated_E1": 9
+  "footprint_generated_E1": 11
  },
  "parts": [
   {
@@ -196,10 +196,10 @@
    "components_json_name": "BL54L15 BLE sentinel",
    "part": "Ezurio BL54L15",
    "symbol_source": "skidl-custom",
-   "footprint_source": "generated-E0",
+   "footprint_source": "generated-E1",
    "footprint_file": "generated/BL54L15_MODULE.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "10x14 castellated, 32 numeric pads E0 placeholder; antenna keepout + real pad map need Ezurio DS."
+   "evidence_tier": "E1",
+   "verify_notes": "REAL 39-pad map + land pattern from EZ-DS-BL54L15 v1.9: Table 1 p10-13 (pin map, GND pads 1/16/27/39, VDD_nRF 26), Fig 11 p25 (pads 0.45x0.60 @0.75, spans 11.25/7.50/8.25). ANTENNA KEEP-OUT 5.0x8.5 at pin-1 end + >=15mm beyond both board edges, no copper any layer (p25 + s7.3.1 p21); module must sit on host-PCB edge -> ECO-H3 floorplan corner note."
   },
   {
    "components_json_name": "ESP32-C6-MINI WiFi",
@@ -250,10 +250,10 @@
    "components_json_name": "SGX-4CO electrochem +",
    "part": "SGX-4CO + LMP91000 AFE",
    "symbol_source": "skidl-custom",
-   "footprint_source": "generated-E0",
+   "footprint_source": "generated-E1",
    "footprint_file": "generated/SGX_4CO_4SERIES_TH.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "Cell: 3 radial TH pins on 20mm can, E0 (no SGX DS). AFE: LMP91000 on official WSON-14 4x4 (Package_SON.pretty, harvested)."
+   "evidence_tier": "E1",
+   "verify_notes": "Cell: REAL drawing DS-0138 Issue 3 p1 \u2014 O20 can, 3x O1.55 pins on 13.5 PCD (old 9mm PCD was wrong); drill 1.7 for PSB socket receptacles (p3 note 1: DO NOT SOLDER pins \u2014 socket-mount only, field-replaceable R2). DS pin-face drawing is a bottom view \u2014 mirrored for top-view footprint (WE top, RE lower-right, CE lower-left). ECO-H3: pad ring exceeds the ratified 14x14 envelope \u2014 zone repack. AFE: LMP91000 on official WSON-14 4x4 (harvested), pin map verified SNAS506I p3."
   },
   {
    "components_json_name": "CYPD3177 USB-C PD",
@@ -399,10 +399,10 @@
   {
    "part": "J_TOUCH FPC13 / J_CAM FPC24 / LRA pads / electrodes / piezo / shield can / SGX cell",
    "symbol_source": "skidl-custom",
-   "footprint_source": "mixed: kicad-official + generated-E0",
+   "footprint_source": "mixed: kicad-official + generated-E0/E1",
    "footprint_file": "Connector_FFC-FPC.pretty/Hirose_FH12-13S-0.5SH_1x13-1MP_P0.50mm_Horizontal.kicad_mod, Connector_FFC-FPC.pretty/Hirose_FH12-24S-0.5SH_1x24-1MP_P0.50mm_Horizontal.kicad_mod, generated/LRA_PADS.kicad_mod, generated/ELECTRODE_PAD_8MM.kicad_mod, generated/ELECTRODE_RING_12MM.kicad_mod, generated/PIEZO_DISC_PADS.kicad_mod, generated/SHIELD_CAN_RAD_10x10.kicad_mod, generated/SGX_4CO_4SERIES_TH.kicad_mod",
    "evidence_tier": "E0",
-   "verify_notes": "FPC connectors official Hirose FH12; mech-custom pads generated E0 (stage-2 done)."
+   "verify_notes": "FPC connectors official Hirose FH12; mech-custom pads generated E0 (stage-2 done); SGX cell footprint promoted E1 (DS-0138 p1: 13.5 PCD, socket receptacles)."
   },
   {
    "part": "AD8317 RF detector",
@@ -441,8 +441,8 @@
    "symbol_source": "skidl-custom",
    "footprint_source": "kicad-official",
    "footprint_file": "Package_SON.pretty/WSON-14-1EP_4.0x4.0mm_P0.5mm_EP2.6x2.6mm.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "Official WSON-14 4x4 P0.5 \u2014 matches LMP91000 package class. Fixed I2C addr 0x48."
+   "evidence_tier": "E1",
+   "verify_notes": "Official WSON-14 4x4 P0.5 \u2014 pin functions VERIFIED SNAS506I p3 (1 DGND, 2 MENB, 3 SCL, 4 SDA, 5 NC, 6 VDD, 7 AGND, 8 VOUT, 9 C2, 10 C1, 11 VREF, 12 WE, 13 RE, 14 CE, DAP->AGND); symbol renumbered to real pins. Fixed I2C addr 0x48 = 1001000 (s7.5.1 p20)."
   },
   {
    "part": "NFETs / diodes / LEDs / R / C / L / testpoints",

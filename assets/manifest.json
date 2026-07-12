@@ -60,14 +60,14 @@
   "retrieved": "2026-07-12"
  },
  {
-  "asset_id": "datasheet-bl54l15-bl54l15_ds.pdf",
+  "asset_id": "datasheet-bl54l15-ez-ds-bl54l15_v1_9.pdf",
   "part": "BL54L15",
   "kind": "datasheet",
-  "location": "device:registry_assets/BL54L15/datasheet/BL54L15_DS.pdf",
+  "location": "device:registry_assets/BL54L15/datasheet/EZ-DS-BL54L15_v1_9.pdf",
   "object_key": null,
-  "sha256": "a357e926f8d4d37cdad1b9d6079ca98b69930fcc6dc1e7c68019e36f1fddfb8c",
-  "bytes": 151602,
-  "source_url": "https://www.ezurio.com/documentation/datasheet-bl54l15-series",
+  "sha256": "75435f77a8f48d5c7c755f530d921130da3fee4614596e922a1be7d6306996e1",
+  "bytes": 3536624,
+  "source_url": "https://connectivity-staging.s3.us-east-2.amazonaws.com/2025-06/EZ-DS-BL54L15_v1_9.pdf",
   "evidence_tier": "E0",
   "retrieved": "2026-07-12"
  },
@@ -140,6 +140,18 @@
   "sha256": "a0b30367252bbffe524753fdcf61e4f6233843fab5dffc59619a884facb216c2",
   "bytes": 1482010,
   "source_url": "https://www.azoteq.com/images/stories/pdf/iqs7222a_datasheet.pdf",
+  "evidence_tier": "E0",
+  "retrieved": "2026-07-12"
+ },
+ {
+  "asset_id": "datasheet-lmp91000-lmp91000.pdf",
+  "part": "LMP91000",
+  "kind": "datasheet",
+  "location": "device:registry_assets/LMP91000/datasheet/lmp91000.pdf",
+  "object_key": null,
+  "sha256": "ad2d6ecc4b197c2cf0563f80563d99909b5c170ef7b38f149d0d5e999e0fa9c2",
+  "bytes": 877791,
+  "source_url": "https://www.ti.com/lit/ds/symlink/lmp91000.pdf",
   "evidence_tier": "E0",
   "retrieved": "2026-07-12"
  },
@@ -308,6 +320,18 @@
   "sha256": "618d5222e3b07dd0d157f171bf846dc3f76512139f46cbdf0248aac71dc9cb93",
   "bytes": 1157916,
   "source_url": "https://sensirion.com/media/documents/48C4B7FB/64C134E7/Sensirion_SCD4x_Datasheet.pdf",
+  "evidence_tier": "E0",
+  "retrieved": "2026-07-12"
+ },
+ {
+  "asset_id": "datasheet-sgx-4co-ds-0138-sgx-4co-datasheet-v3.pdf",
+  "part": "SGX-4CO",
+  "kind": "datasheet",
+  "location": "device:registry_assets/SGX-4CO/datasheet/DS-0138-SGX-4CO-datasheet-v3.pdf",
+  "object_key": null,
+  "sha256": "2bf46efd8e95a13d4962e1574a2726f07e257b27afa072823b85d2e20064db12",
+  "bytes": 317174,
+  "source_url": "https://www.sgxsensortech.com/content/uploads/2014/07/DS-0138-SGX-4CO-datasheet-v3.pdf",
   "evidence_tier": "E0",
   "retrieved": "2026-07-12"
  },

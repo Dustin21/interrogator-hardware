@@ -255,18 +255,36 @@ def build_sensors_misc():
     q_fan["S"] += GND
 
     # ---------------- SGX-4CO + LMP91000 potentiostat ----------------------
+    # Cell: VERIFIED-DS DS-0138 Issue 3 p1/p3 — 3 pins O1.55 on 13.5 PCD;
+    # pins must NOT be soldered (p3 note 1) -> PSB socket receptacles
+    # (~O1.7 drill), field-replaceable cell (R2). 70±20 nA/ppm, 10R load,
+    # >24 mo life. NOTE-ECO(H3): the 13.5 PCD pad ring exceeds the ratified
+    # 14x14 floorplan envelope — zone repack at H3 (no board rebuild here).
     cell = SGX_4CO(ref="U_CO", footprint="generated:SGX_4CO_4SERIES_TH")
+    # AFE: VERIFIED-DS LMP91000 SNAS506I p3 — real WSON-14 pin map (see
+    # lib_parts); split grounds DGND(1)/AGND(7), DAP -> AGND.
     pot = LMP91000(ref="U_COAFE", footprint="Package_SON:WSON-14-1EP_4.0x4.0mm_P0.5mm_EP2.6x2.6mm")
     pot["VDD"] += v_air          # hard-gated with AIR domain (ADR-0002 note:
-    pot["GND"] += GND            # continuous-bias trade documented in report)
+    pot["DGND"] += GND           # continuous-bias trade documented in report)
+    pot["AGND"] += GND           # both grounds to GND net (star at the part)
+    pot["EP"] += GND             # DAP: "connect to AGND"  VERIFIED-DS p3
+    pot["NC"] += NC              # pin 5 not internally connected
     decouple(v_air, n=1, bulk_uF=1)
-    pot["SDA"] += sda_b          # I2C-B 0x48 (fixed)
-    pot["SCL"] += scl_b
-    pot["MENB_N"] += GND         # module always enabled when AIR powered
+    pot["SDA"] += sda_b          # I2C-B, fixed 7-bit addr 1001000 = 0x48
+    pot["SCL"] += scl_b          # VERIFIED-DS SNAS506I §7.5.1 p20
+    pot["MENB_N"] += GND         # enabled whenever AIR domain is powered —
+                                 # legal: only LMP91000 on the bus (§7.5.2 p20)
+    # VREF: internal-ref mode is the register default (REFCN=0x20 ->
+    # REF_SOURCE=internal/VDD, VERIFIED-DS §7.6.4 p22). Tie VREF to the AIR
+    # rail through 0R so an external reference can be fitted at H3 without
+    # a respin (pin must not float if REF_SOURCE is ever set external).
+    r_vref = R("0R")
+    v_air += r_vref[1]
+    join("CO_VREF", r_vref[2], pot["VREF"])
     join("CO_WE", pot["WE"], cell["WE"])
     join("CO_RE", pot["RE"], cell["RE"])
     join("CO_CE", pot["CE"], cell["CE"])
     cc1 = C("2.2uF")
     pot["C1"] += cc1[1]
-    pot["C2"] += cc1[2]          # internal-amp compensation per DS (E0)
+    pot["C2"] += cc1[2]          # C1-C2 external filter per DS p3 (E0 value)
     pot["VOUT"] += Net.fetch("CO_AFE_OUT")   # -> ADS131M04 AIN3P

@@ -20,7 +20,7 @@ I2C-B (N657 I2C2, 400kHz, pull-ups 4.7k -> 3V3_SYS in compute.py):
   0x30  MMC5983MA  (fixed)                          3V3_SYS (magnet zone)
   0x35  TMAG5273   VERIFIED-DS p16 (A1 variant)     3V3_SYS (magnet zone)
   0x57  BMV080     VERIFIED-DS p32 (CSB=MISO=1)     AIR domain (sensors_misc)
-  0x48  LMP91000   (fixed)                          AIR domain (sensors_misc)
+  0x48  LMP91000   VERIFIED-DS SNAS506I p20 (fixed 1001000)  AIR (sensors_misc)
 
 COLLISION AUDIT (stage-2 update):
 - 0x59 TCS3448 vs SGP41 (both would sit on I2C-B): TCS3448 DS001121 p19

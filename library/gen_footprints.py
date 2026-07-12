@@ -307,13 +307,41 @@ generated.append(ball_grid(
     "EST components.json 8x6 body; 6x4 balls @1.0 NUMERIC-PLACEHOLDER (E0)",
     8.0, 6.0, 1.0, balls, 0.4))
 
-# 13. BL54L15 castellated module 10x14 (Ezurio DS unavailable). 32 pads used
-#     by the circuit model; 12/4/12/4 perimeter, NUMERIC E0 placeholder.
-generated.append(castellated(
-    "BL54L15_MODULE", "Ezurio BL54L15 (nRF54L15) BLE module, castellated",
-    "RS bom-v1.md E0-unverified: 10x14 module; 32 castellations NUMERIC-PLACEHOLDER; "
-    "antenna keepout at top edge per module manual (get Ezurio DS)",
-    10.0, 14.0, 12, 4, 12, 4, 1.1))
+# 13. BL54L15 — REAL 39-pad land pattern from EZ-DS-BL54L15 v1.9 Fig 11 p25
+#     ("recommended PCB footprint", top view): module 14 x 10, pads
+#     0.45 x 0.60 @ 0.75 pitch on three sides (U shape, antenna end
+#     pad-free): bottom row 1-16 right->left (pin 1 at the ANTENNA end,
+#     span 11.25), left column 17-27 bottom->top (span 7.50), top row
+#     28-39 left->right (span 8.25). Edge offsets from Fig 11: rows 0.503
+#     to pad center, left column 0.55, row starts 0.75/1.25 (E1 — DS Note 5
+#     allows tuning; overlay-verify at H3).
+#     ANTENNA KEEP-OUT (Fig 11 p25 + §7.3.1 p21): 5.00 x 8.50 no-copper-any-
+#     layer zone under the antenna end, extending >=15 mm beyond BOTH host
+#     board edges; module MUST sit on the host-PCB edge (antenna outboard).
+#     Keep-out drawn on Dwgs.User; floorplan impact -> ECO-H3.
+fp = FP("BL54L15_MODULE",
+        "Ezurio BL54L15 (nRF54L15) BLE module, 39-pad LGA; ANTENNA KEEP-OUT "
+        "5.0x8.5 at pin-1 end + >=15mm beyond board edges, NO copper any "
+        "layer; module must sit on host-PCB edge",
+        "EZ-DS-BL54L15 v1.9 Fig 11 p25: pads 0.45x0.60 @0.75, spans "
+        "11.25/7.50/8.25; keep-out §7.3.1 p21", tier="E1")
+BLP = 0.75
+for i in range(16):     # bottom row: pin 1 at right (antenna end)
+    fp.pad(1 + i, 5.0 - i * BLP, 4.497, 0.45, 0.6)
+for i in range(11):     # left column, bottom -> top
+    fp.pad(17 + i, -6.45, 3.75 - i * BLP, 0.45, 0.6)
+for i in range(12):     # top row, left -> right
+    fp.pad(28 + i, -6.25 + i * BLP, -4.497, 0.45, 0.6)
+fp.body(14.0, 10.0)
+fp.pin1_dot(5.0, 5.35)
+# antenna keep-out outline (5.0 x 8.5 inside the module; extends >=15mm
+# beyond the board edges — the extension is a board-level rule, ECO-H3)
+for a, b in [((2.0, -5.0), (7.0, -5.0)), ((7.0, -5.0), (7.0, 3.5)),
+             ((7.0, 3.5), (2.0, 3.5)), ((2.0, 3.5), (2.0, -5.0))]:
+    fp.items.append(
+        f'  (fp_line (start {F(a[0])} {F(a[1])}) (end {F(b[0])} {F(b[1])}) '
+        f'(stroke (width 0.1) (type dash)) (layer "Dwgs.User"))')
+generated.append(fp.write())
 
 # 14. MIA-M10Q — REAL M-LGA53 map from MIA-M10Q DS UBX-22015849 p9 Fig 2 +
 #     p19 Fig 4: body 4.5x4.5x1.0, 53 pads Ø0.27 on a sparse 9x9 grid,
@@ -351,21 +379,32 @@ generated.append(dual_row(
     "ADI CP-8-13 class E0: body 2x3, pitch 0.5, EP 0.9x1.6 (verify vs ADI DS)",
     2.0, 3.0, 0.5, 4, 1.8, 0.6, 0.25, ep=(0.9, 1.6)))
 
-# 17. SGX-4CO electrochemical cell, 4-series TH (SGX DS unavailable). 3 radial
-#     pins (WE/RE/CE); board envelope held to the ratified 14x14 floorplan
-#     rect (components.json) — the cell body may overhang inside the chassis
-#     air pocket, but copper/courtyard stays in the 14 mm square. E0.
-fp = FP("SGX_4CO_4SERIES_TH", "SGX 4-CO electrochemical CO cell, TH radial",
-        "RS bom-v1.md E0-unverified: 4-series can, courtyard held to the "
-        "ratified 14x14 envelope; 3 pins on 4.5mm-radius circle E0 (WE/RE/CE) "
-        "-- get SGX 4-CO DS before fab", smd=False)
-for num, ang in ((1, 90), (2, 210), (3, 330)):     # WE, RE, CE
-    x = 4.5 * math.cos(math.radians(ang))
-    y = -4.5 * math.sin(math.radians(ang))
-    fp.circle_pad(num, x, y, 1.8, kind="thru_hole",
-                  layers='"*.Cu" "*.Mask"', drill=0.9)
-fp.fp_circle(0, 0, 6.7, "F.SilkS", 0.15)
-fp.fp_circle(0, 0, 6.9, "F.CrtYd", 0.05)
+# 17. SGX-4CO electrochemical cell — REAL drawing, DS-0138 Issue 3 p1:
+#     body Ø20 (16.50 h + 3.90 pins), 3 pins Ø1.55 on a 13.5 mm PCD (the
+#     old 9 mm PCD guess was WRONG). p3 note 1: pins must NOT be soldered —
+#     PSB socket receptacles only -> drill 1.7 (receptacle for the Ø1.55
+#     pin), pad annulus 2.5.
+#     VIEW: the DS pin-face drawing (Working top, Reference lower-left,
+#     Counter lower-right) shows the pin ENDS face-on = BOTTOM view; this
+#     top-view footprint mirrors it -> WE(1) top 90°, RE(2) lower-RIGHT
+#     330°, CE(3) lower-LEFT 210°.
+#     NOTE-ECO(H3): pads at ±6.75 + annulus exceed the ratified 14x14
+#     floorplan envelope for the CO cell — zone repack absorbs it
+#     (VERIFY_LOG round 3); board NOT rebuilt here.
+fp = FP("SGX_4CO_4SERIES_TH",
+        "SGX 4-CO electrochemical CO cell, TH radial, SOCKET-MOUNT ONLY "
+        "(PSB receptacles, do-not-solder per DS-0138 p3 note 1; "
+        "field-replaceable R2)",
+        "DS-0138 SGX-4CO Issue 3 p1: O20 can, 3x O1.55 pins on 13.5 PCD "
+        "(bottom-view drawing mirrored for top view); drill 1.7 for socket "
+        "receptacles", smd=False, tier="E1")
+for num, ang in ((1, 90), (2, 330), (3, 210)):     # WE, RE, CE (top view)
+    x = 6.75 * math.cos(math.radians(ang))
+    y = -6.75 * math.sin(math.radians(ang))
+    fp.circle_pad(num, x, y, 2.5, kind="thru_hole",
+                  layers='"*.Cu" "*.Mask"', drill=1.7)
+fp.fp_circle(0, 0, 10.15, "F.SilkS", 0.15)   # Ø20 body + tol
+fp.fp_circle(0, 0, 10.4, "F.CrtYd", 0.05)
 fp.body(0.1, 0.1, courtyard_margin=0)  # fab cross at center
 generated.append(fp.write())
 

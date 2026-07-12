@@ -1,4 +1,4 @@
-# VERIFY closure log — H2 stage-2 (+ H2.5 round 2)
+# VERIFY closure log — H2 stage-2 (+ H2.5 rounds 2-3)
 
 **Date:** 2026-07-12 · Method: `pdftotext` (+ `pdftoppm` page renders for
 drawing figures) over the STAGED datasheet PDFs in
@@ -11,6 +11,11 @@ bottom with the exact file the owner should drop in.
 items and opportunistically re-verified 8 more parts. 9 footprints promoted
 to `generated-E1` (real vendor land patterns); ERC still 0/0, 19/19 tests
 green after all circuit fixes below.
+
+**H2.5 round 3 (items 27+):** the same-day second drop (SGX-4CO DS-0138,
+LMP91000 SNAS506I, BL54L15 EZ-DS v1.9) closed the last 3 closable items.
+2 more footprints promoted to E1; LMP91000 and BL54L15 symbols renumbered
+to real package pins (netlist regenerated). ERC 0/0, 19/19 green.
 
 ## Closed (datasheet-verified)
 
@@ -51,16 +56,24 @@ Bonus extractions used for footprints: A121 full 50-ball named map (DS p8-9)
 | 25 | TPS62823 / TLV62568 / DRV2605L / BQ29700 pin maps (opportunistic) | TPS62823: **no MODE pin exists** (model had a phantom one, tied to GND); real map 1 EN 2 FB 3 AGND 4 NC 5 PGND 6 SW 7 VIN 8 PG. TLV62568 SOT-23-5: **3=SW 4=VIN 5=FB** (model had 3=VIN 4=FB 5=SW). DRV2605L VSSOP-10: **REG (pin 1) 1µF was missing**; pin 6 VDD/NC→VDD. BQ29700 DSE: 1 NC 2 COUT 3 DOUT 4 VSS 5 BAT 6 V-; 330R VDD RC confirmed | tps62823 SLVSDV6C p3; tlv62568 SLVSD89B p3; drv2605l SLOS854D p5; bq2970_family p3+p14 | **4 symbol pin-map bugs fixed**; DRV2605L REG cap added; TPS62823 MODE ties removed (PG/NC float per DS) |
 | 26 | SHT41 / SCD41 / BNO086 addr re-check (opportunistic) | SHT41: 0x44 belongs to the **SHT41-AD1B** ordering code (0x45/0x46 exist) — BOM must call out AD1B. SCD41: 0x62 confirmed. BNO086: BNO08x DS is the same doc already used to close #6 (PS1/PS0 straps, SPI) — no change | SHT4x DS v7.1 p2/p7; SCD4x DS p9 (§3.4); BNO08x-Datasheet | Bus-table comments updated; ordering note in sensors_i2c.py docstring |
 
-## Still open — with reasons (updated 2026-07-12, round 2)
+## Closed — H2.5 round 3 (2026-07-12, second same-day drop)
+
+| # | Item | Verdict | Evidence | Circuit action |
+|---|------|---------|----------|----------------|
+| 27 | SGX-4CO cell drawing (pin circle) | Body **Ø20**, h 16.50 + 3.90 pins; **3 pins Ø1.55 on a 13.5 mm PCD** — the footprint's 9 mm PCD guess was WRONG. **Pins must NOT be glued/soldered — PSB socket receptacles only** (p3 note 1, warranty) → cell is field-replaceable (strengthens the R2 serviceability story). The pin-face drawing (Working top, Reference lower-left, Counter lower-right) shows the pin ends face-on = **BOTTOM view** → top-view footprint must mirror it: WE top, RE lower-RIGHT, CE lower-LEFT. Electricals: 70±20 nA/ppm, 10 Ω load, >20k ppm·h filter, >24 mo in air, −30..+50 °C, IS data 1.3 V o/c max | DS-0138 SGX-4CO Issue 3 p1 (outline + pin-face drawing), p3 (note 1), p1 tables | Footprint → E1: 13.5 PCD, drill 1.7 for Ø1.55-pin receptacles, pad 2.5, RE/CE mirrored for top view; BOM note = 3× PSB socket receptacles, do-not-solder. **ECO-H3**: pads at ±6.75 + annulus exceed the ratified 14×14 CO-cell envelope — gas_b zone repack absorbs it (board NOT rebuilt at H2.5) |
+| 28 | LMP91000 pin map + addr | Real WSON-14 map: **1 DGND, 2 MENB (act-low), 3 SCL, 4 SDA, 5 NC, 6 VDD, 7 AGND, 8 VOUT, 9 C2, 10 C1, 11 VREF, 12 WE, 13 RE, 14 CE, DAP→AGND**. Old model was 11 sequentially-numbered pins with one GND and NO VREF/NC — netlist binds pads by number, so the WSON-14 would have been scrambled (SCL on VOUT etc.). Addr **0x48 confirmed** (fixed 1001000). MENB may tie to GND when sole LMP91000 on the bus. REFCN default 0x20 → REF_SOURCE = **internal (VDD) reference** | SNAS506I p3 (Pin Functions), p20 (§7.5.1 addr, §7.5.2 MENB), p22 (§7.6.4 REFCN) | **Bug fixed**: symbol renumbered to real pins; AGND/DGND split (both → GND); **VREF added** (0R to AIR rail — internal-ref register default, external-ref option preserved for H3); NC pin 5 + DAP-as-pin-15 EP added; MENB→GND retained (legal per §7.5.2). Manifest: WSON-14 entry → E1 notes |
+| 29 | BL54L15 pad map + land pattern + antenna keepout | Full **39-pad map** extracted; GND = 1/16/27/39, VDD_nRF = 26 (1.7–3.5 V), SWDIO/SWDCLK/NRESET = 5/6/7, UARTE00 TXD/RXD = 3 (P2.08)/4 (P2.07), I2C = 10 (P2.01, dedicated CLK pin)/9 (P2.00, adjacent per Note 2), NFC = 15/14, XL1/XL2 = 25/24 (optional 32 kHz crystal — reserved NC), Geiger count in = 31 (P0.04, GRTC clock-capable); all EN/INT/GPIO assignments as wired (P0.x/P1.x/P2.x per lib_parts comments). Land pattern: pads **0.45×0.60 @ 0.75** in a U (bottom 1-16 span 11.25, pin 1 at antenna end; left 17-27 span 7.50; top 28-39 span 8.25); module 14×10. **Antenna keep-out: 5.00×8.50 no-copper-any-layer under the antenna end + ≥15 mm beyond BOTH board edges; module must sit on the host-PCB edge** (dev-board reference ~5×28.6) | EZ-DS-BL54L15 v1.9 Table 1 p10-13 (pin map + notes), Fig 11 p25 (land + keep-out), §7.3.1 p21, §7.3.2 p22 (metal ≥20-40 mm) | Symbol renumbered from sequential E0 to real pads; **3 missing GND pads + XL1/XL2 added** (crystal pads NC with reservation comment). Footprint: 32-pad numeric castellated placeholder replaced by real 39-pad E1 land with keep-out drawn on Dwgs.User. **ECO-H3**: keep-out + mandatory board-edge placement constrain the radio_ble floorplan corner — verify at zone repack |
+
+## Still open — with reasons (updated 2026-07-12, round 3)
 
 | Item | Status / needed file |
 |------|----------------------|
 | STM32N657 VFBGA142 ball map (**blocks routing**) | DS14791 still pending (ST browser download queued) → `STM32N657/datasheet/DS14791*.pdf` |
-| AS7058 ball-SIGNAL map + I2C addr (0x30 unconfirmed) | Short DS DS001085 verified the A1..G6 grid geometry (footprint now E1) but **lacks the ball map and the address — full DS DS001573 is NDA-gated, FAE contact queued** |
-| BL54L15 pad map + antenna keepout | Staged `BL54L15_DS.pdf` is an **HTML page saved with a .pdf name, not a PDF** — re-fetch the real Ezurio datasheet PDF |
-| SGX-4CO cell drawing (pin circle) | Staged file is 0 bytes — re-fetch `SGX-4CO/datasheet/SGX-4CO*.pdf` |
-| LMP91000 pin map (footprint already official WSON-14) | Not fetched yet → `LMP91000/datasheet/lmp91000.pdf` (TI) |
+| AS7058 ball-SIGNAL map + I2C addr (0x30 unconfirmed) | Short DS DS001085 verified the A1..G6 grid geometry (footprint E1) but **lacks the ball map and the address — full DS DS001573 is NDA-gated, FAE contact queued** |
 | VL53L8CH exact DS | Still anchored on the VL53L8CX DS14161 (pads/straps verified there); VL53L8CH-specific DS nice-to-have |
 | VD66GY | DNP in v1 — no action |
-| CYPD3177 EP size | Minor: official footprint EP 2.6 vs DS 2.75 typ (2.65 min) — H3 footprint touch-up note |
-| BQ25620 RYK land pattern | E1 approximation (HR pads rectangularized) — overlay-verify against TI 4226526/A at H3 |
+
+H3 footprint touch-ups carried (not blocking, tracked in manifest notes):
+CYPD3177 EP 2.6 vs DS 2.75 typ; BQ25620 RYK land = E1 approximation
+(overlay-verify vs TI 4226526/A); BL54L15/SGX-4CO micro-offsets per DS
+Note 5 ("may modify land dimensions") — overlay-verify at H3.

@@ -127,8 +127,9 @@ def build_compute():
 
     # ================= BL54L15 BLE sentinel ================================
     bl = BL54L15(ref="U_BL54", footprint="generated:BL54L15_MODULE")
-    bl["VCC"] += aon
-    bl["GND"] += GND
+    bl["VCC"] += aon                 # pad 26 VDD_nRF  VERIFIED-DS EZ-DS v1.9 Table 1
+    for g in ("GND", "GND2", "GND3", "GND4"):   # pads 1/16/27/39 — all must
+        bl[g] += GND                 # tie to the GND plane (Table 1 Note 1)
     decouple(aon, n=2, bulk_uF=10)
 
     bl["SENT_SDA"] += Net.fetch("SENT_SDA")
@@ -163,8 +164,10 @@ def build_compute():
     for i in range(1, 7):
         bl[f"GLOW{i}"] += Net.fetch(f"GLOW{i}")
 
-    bl["NFC1"] += NC   # NFC antenna not fitted in v1
+    bl["NFC1"] += NC   # NFC antenna not fitted in v1 (pads 15/14, P1.02/P1.03)
     bl["NFC2"] += NC
+    bl["XL1"] += NC    # pads 25/24 — reserved for optional 32.768 kHz
+    bl["XL2"] += NC    # crystal (VERIFIED-DS EZ-DS v1.9 Table 1 p12)
 
     # SWD #2
     join("BL_SWDIO", bl["SWDIO"])

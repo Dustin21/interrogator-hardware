@@ -61,3 +61,14 @@ AS7343. Watch-item: MIA-M10Q-01B orderability.
 ## RATIFIED 2026-07-11 (ADR-0002)
 All 7 adds ACCEPTED (MLX90632, AS7421, MEMS mic, ENS161, SCD41, SGX-4CO, SHT41). BG51→bare-PIN ACCEPTED.
 Magnetic pogo accessory port ACCEPTED. Board 60×46, chassis 66×50×18. See docs/decisions/0002.
+
+## H2.5 datasheet note (2026-07-12) — SGX-4CO (DS-0138 Issue 3)
+- MOUNTING: pins must NOT be glued or soldered (DS p3 note 1, warranty) — **BOM add: 3× PSB
+  socket receptacles for Ø1.55 pins** (Mill-Max 0326/0305 class, drill Ø1.7); cell plugs in →
+  field-replaceable, which is exactly the R2 serviceability flag ("~2-5yr life") answered.
+- Pin circle: 3× Ø1.55 pins on 13.5 mm PCD, can Ø20 × 16.5 (+3.9 pins) — footprint E1;
+  13.5 PCD pad ring slightly exceeds the ratified 14×14 envelope → ECO-H3 gas_b repack.
+- Electricals (p1): output 70±20 nA/ppm, recommended load 10 Ω, range 0-2000 ppm (overload
+  5000), t90 <30 s, baseline ±2 ppm, filter capacity >20 000 ppm·h, life >24 months in air,
+  −30..+50 °C, 15-90 %RH; intrinsic-safety max o/c 1.3 V / 0.3 mA @2000 ppm — comfortably
+  inside LMP91000 potentiostat range (TIA gains cover 70 nA/ppm × 2000 ppm = 140 µA FS).
