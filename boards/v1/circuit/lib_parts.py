@@ -141,16 +141,27 @@ BL54L15 = mkpart("BL54L15", "U", _seq([
 # ============================================================================
 
 # VL53L8CH ToF 8x8 with CNH histograms, SPI mode.
-# Comm-mode straps per DS UM: SPI_I2C_N high = SPI; I2C_RST low. pinout E0
+# VERIFIED-DS DS14161 (VL53L8CX) Table 3 p6-7: pin C1 SPI_I2C_N -> connect to
+# IOVDD via 47k pullup for SPI mode (to GND via 47k pulldown for I2C). There
+# is NO separate I2C_RST pin — C1 doubles as the I2C-interface reset (toggle
+# 0-1-0). Our I2C_RST model pin maps to GND-strapped RSVD (A6/A7). Real pads:
+# A1=GPIO1/INT, A2=LPn, A3=IOVDD, A4=SDA/MOSI, A5=SCL/MCLK, B7=CORE_1V8,
+# C2=NCS, C4=AVDD(3V3), C5=MISO, B4=thermal.
+# NOTE-ECO(H3): IOVDD is 1.2/1.8 V ONLY (p7) — currently fed 3V3_OPTICAL;
+# move IOVDD (+ CORE_1V8) to the 1V8 rail and level-shift or run SPI1 at 1.8V.
 VL53L8CH = mkpart("VL53L8CH", "U", _seq([
     ("AVDD", PWR), ("IOVDD", PWR), ("GND", PWR),
     ("SCLK", IN), ("MOSI", IN), ("MISO", TRI), ("NCS", IN),
-    ("SPI_I2C_N", IN),   # strap HIGH -> SPI mode  # VERIFY strap name/polarity vs DS
-    ("I2C_RST", IN),     # strap LOW in SPI mode   # VERIFY
+    ("SPI_I2C_N", IN),   # strap HIGH (47k to IOVDD) -> SPI mode  VERIFIED-DS p7
+    ("I2C_RST", IN),     # legacy model pin -> RSVD/GND           VERIFIED-DS p7 (no such pin)
     ("LPN", IN), ("INT", OC),
 ]), description="ST VL53L8CH 8x8 ToF, SPI mode (straps in copper)")
 
 # BNO086 IMU, SPI (SHTP) mode: PS1=HIGH, PS0/WAKE used as WAKE. pinout E0
+# VERIFIED-DS BNO085 DS p9 Fig 1-5: PS1=1, PS0=1 -> SPI; p18: both pins must
+# be high at reset, after which PS0 is repurposed as active-low WAKE (p19) —
+# matches our 10k-pullup + host-GPIO topology. Real pins: 5=PS1, 6=PS0/WAKE
+# (p10). I2C fallback addr would be 0x4A/0x4B via SA0 (p14). CLOSED.
 BNO086 = mkpart("BNO086", "U", _seq([
     ("VDD", PWR), ("VDDIO", PWR), ("GND", PWR),
     ("PS0_WAKE", IN), ("PS1", IN),
@@ -172,8 +183,12 @@ ADS131M04 = mkpart("ADS131M04", "U", _seq([
 # Acconeer A121 60 GHz radar, fcCSP — SPI-only per DS. pinout E0
 A121 = mkpart("A121", "U", _seq([
     ("VIO1", PWR), ("VIO2", PWR), ("GND", PWR),
-    # VERIFY: A121 supply domains (VIO 1.8V nominal per DS) — may need local
-    # 1.8V LDO instead of 3V3_RADAR; resolve at stage-2 against Acconeer DS.
+    # VERIFIED-DS A121 DS v1.8 p10 Table 2: VRX/VTX/VDIG are 1.8 V rails
+    # (abs-max 2.0 V — 3V3 would destroy them); VIO may be 1.8 V or 3.3 V
+    # (abs-max 3.63 V). SPI is mode 0, max clock 50 MHz (p17 Table 12).
+    # Model pins: VIO1=VIO (may stay 3V3_RADAR), VIO2=VDIG+VRX+VTX bundle.
+    # NOTE-ECO(H3): feed VIO2 bundle from 1V8 (EN-gated / A121 ENABLE
+    # hibernate), NOT from 3V3_RADAR as currently wired.
     ("SPI_SCLK", IN), ("SPI_MOSI", IN), ("SPI_MISO", TRI), ("SPI_SS_N", IN),
     ("INTERRUPT", OUT), ("ENABLE", IN),
 ]), description="Acconeer A121 pulsed coherent radar, Sparse-IQ raw")
@@ -199,8 +214,9 @@ MAX30102 = mkpart("MAX30102", "U", _seq([
     ("SDA", BI), ("SCL", BI), ("INT_N", OC),
 ]), description="MAX30102 PPG, I2C-A 0x57; VDD=1V8, VLED=3V3_CONTACT")
 # pinout E0 (OLGA-14; unused NC pads omitted).
-# VERIFY: SDA/SCL are tolerant above VDD per DS abs-max (6V) -> 3V3 bus pull-ups
-# acceptable with VDD=1.8V. Confirm at stage-2.
+# VERIFIED-DS MAX30102 DS p2 (Abs Max): "All Other Pins to GND -0.3V to +6.0V"
+# and p28: designed to be tolerant of any supply sequence -> SDA/SCL pulled to
+# 3V3 with VDD=1.8V is within ratings. CLOSED.
 
 AS7058 = mkpart("AS7058", "U", _seq([
     ("VDD", PWR), ("VDDIO", PWR), ("GND", PWR),
@@ -266,13 +282,18 @@ TMAG5273 = mkpart("TMAG5273", "U", [
     (1, "SCL", BI), (2, "GND", PWR), (3, "SDA", BI),
     (4, "INT_N", OC), (5, "VCC", PWR), (6, "NC", NCP),
     # SOT-23-6 # pinout E0 — verify pin order vs TMAG5273 DS
-], description="TI TMAG5273A1 hall, I2C-B 0x35 # VERIFY variant/addr")
+    # VERIFIED-DS tmag5273 p16 Table 6-2: TMAG5273A1 default 7-bit addr = 0x35
+    # (A2 also 0x35; B1=0x22, C1=0x78, D1=0x44). Order the A1 variant. CLOSED.
+], description="TI TMAG5273A1 hall, I2C-B 0x35 (VERIFIED-DS p16)")
 
 BMV080 = mkpart("BMV080", "U", _seq([
     ("VDD", PWR), ("VDDIO", PWR), ("GND", PWR),
     ("SDA", BI), ("SCL", BI), ("IRQ", OUT),
-    ("AB_SEL", IN),   # comm-select strap -> I2C  # VERIFY name vs DS
-]), description="Bosch BMV080 PM2.5, I2C-B 0x57 # VERIFY addr")  # pinout E0
+    # VERIFIED-DS bst-bmv080-ds000 p26/p32: PS (protocol select) to VDDIO
+    # selects I2C (low = SPI); CSB and MISO become address straps and must
+    # not float: CSB=1 & MISO=1 -> addr 0x57 (Table 14, p32).
+    ("PS", IN), ("CSB", IN), ("MISO_ADDR", IN),
+]), description="Bosch BMV080 PM2.5, I2C-B 0x57 (VERIFIED-DS: PS=VDDIO, CSB=MISO=1)")  # pinout E0
 
 
 # ============================================================================

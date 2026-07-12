@@ -86,3 +86,72 @@ def test_circuit_erc_clean():
                        capture_output=True, text=True, timeout=300)
     assert r.returncode == 0, f"circuit build/ERC failed:\n{r.stdout[-2000:]}\n{r.stderr[-2000:]}"
     assert "erc_errors=0" in r.stdout
+
+
+# ===========================================================================
+# H2 stage-2 gates: footprint coverage 38/38, bean outline, board file
+# ===========================================================================
+
+GENERATED = REPO / "library" / "footprints" / "generated"
+OUTLINE = REPO / "boards" / "v1" / "outline.json"
+BOARD = REPO / "boards" / "v1" / "board" / "interrogator_v1.kicad_pcb"
+DRC = REPO / "boards" / "v1" / "board" / "drc_baseline.json"
+
+
+def test_manifest_coverage_38_of_38_no_to_generate():
+    m = json.loads(MANIFEST.read_text())
+    cov = m["coverage"]
+    assert cov["components_json_parts"] == 38
+    assert cov["footprint_to_generate"] == 0, "TO-GENERATE parts remain"
+    assert cov["footprint_harvested"] + cov["footprint_generated_E0"] == 38
+    for p in m["parts"]:
+        assert "TO-GENERATE" not in p["footprint_source"], p["part"]
+        assert p["footprint_source"] in ("kicad-official", "espressif",
+                                         "generated-E0"), p["part"]
+
+
+def test_every_footprint_file_exists():
+    m = json.loads(MANIFEST.read_text())
+    lib = REPO / "library" / "footprints"
+    for p in m["parts"] + m["supporting_parts"]:
+        ff = p.get("footprint_file")
+        if not ff or ".kicad_mod" not in ff:
+            continue
+        for f in [s.strip() for s in ff.split(",") if ".kicad_mod" in s]:
+            assert (lib / f).exists(), f"{p['part']}: missing {f}"
+
+
+def test_generated_footprints_carry_e0_header():
+    files = sorted(GENERATED.glob("*.kicad_mod"))
+    assert len(files) >= 16, "expected the stage-2 generated footprint set"
+    for f in files:
+        head = f.read_text()[:1200]
+        assert "overlay-verify" in head, f"{f.name}: no E0 overlay-verify header"
+
+
+def test_outline_is_valid_closed_bean():
+    o = json.loads(OUTLINE.read_text())
+    pts = o["points_mm"]
+    assert len(pts) >= 64
+    assert pts[0] != pts[-1], "polygon should not duplicate the closing point"
+    # shoelace area, closed implicitly
+    area = 0.0
+    for (x1, y1), (x2, y2) in zip(pts, pts[1:] + pts[:1]):
+        area += x1 * y2 - x2 * y1
+    area = abs(area) / 2
+    assert 1500 <= area <= 2600, f"bean area {area:.0f} mm^2 out of sanity range"
+    assert abs(area - o["area_mm2"]) < 5
+
+
+def test_board_file_loads_shape():
+    assert BOARD.exists(), "run boards/v1/board/build_board.py"
+    text = BOARD.read_text()
+    assert '(layer "Edge.Cuts")' in text, "no board outline on Edge.Cuts"
+    n_fp = text.count("(footprint ")
+    assert n_fp >= 30, f"only {n_fp} footprint blocks"
+    # bean outline is drawn as >=64 edge segments
+    assert text.count('(layer "Edge.Cuts")') >= 64
+    # DRC baseline was captured
+    d = json.loads(DRC.read_text())
+    assert d["counts"]["Footprint errors"] == 0
+    assert d["counts"]["unconnected pads"] > 0, "baseline should predate routing"

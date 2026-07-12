@@ -233,7 +233,7 @@ def build_power():
     # ---------------- domain load switches --------------------------------
     domains = ["OPTICAL", "AIR", "CONTACT", "RADAR", "GNSS", "WIFI"]
     for name in domains:
-        sw = TPS22916(ref=f"U_SW_{name}", footprint="Package_CSP:TO_GENERATE_TPS22916_CSP4")
+        sw = TPS22916(ref=f"U_SW_{name}", footprint="generated:TPS22916_CSP4")
         rail = Net.fetch(f"3V3_{name}")
         sw["VIN"] += v3sys
         sw["VOUT"] += rail
@@ -244,7 +244,7 @@ def build_power():
 
     # STAGE-1 ADD: accessory-port switched power (from VSYS: accessories may
     # regulate locally; pogo pin carries battery-class voltage)
-    sw_acc = TPS22916(ref="U_SW_ACC", footprint="Package_CSP:TO_GENERATE_TPS22916_CSP4")
+    sw_acc = TPS22916(ref="U_SW_ACC", footprint="generated:TPS22916_CSP4")
     vacc = Net.fetch("VACC")
     sw_acc["VIN"] += vsys
     sw_acc["VOUT"] += vacc

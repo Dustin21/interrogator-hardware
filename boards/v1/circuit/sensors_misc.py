@@ -23,19 +23,25 @@ def build_sensors_misc():
 
     # ---------------- BMV080 PM2.5 — I2C-B 0x57 ---------------------------
     # (0x57 collides with MAX30102 only nominally — MAX30102 is on I2C-A.)
-    pm = BMV080(ref="U_BMV", footprint="Sensor:TO_GENERATE_BMV080")
+    pm = BMV080(ref="U_BMV", footprint="generated:BMV080_Molex_503566-1302_ZIF13")
     pm["VDD"] += v_air
     pm["VDDIO"] += v_air
     pm["GND"] += GND
     pm["SDA"] += sda_b
     pm["SCL"] += scl_b
-    pm["AB_SEL"] += GND          # comm strap -> I2C  # VERIFY vs DS
+    # VERIFIED-DS bst-bmv080-ds000 p26: PS=VDDIO selects I2C (GND would be SPI);
+    # p32 Table 14: CSB=1, MISO=1 -> device address 0x57. Straps in copper.
+    pm["PS"] += v_air
+    pm["CSB"] += v_air
+    pm["MISO_ADDR"] += v_air
     decouple(v_air, n=1, bulk_uF=10)
     pm["IRQ"] += Net.fetch("INT_BMV")
 
     # ---------------- A121 radar — SPI-only per DS ------------------------
-    radar = A121(ref="U_A121", footprint="Package_CSP:TO_GENERATE_A121_FCCSP")
-    radar["VIO1"] += v_radar     # VERIFY supply domains (see lib_parts note)
+    radar = A121(ref="U_A121", footprint="generated:A121_fcCSP50")
+    # VERIFIED-DS A121 v1.8 p10: VIO=1.8/3.3V OK, but VRX/VTX/VDIG are
+    # 1.8V-only (abs-max 2.0V). ECO-H3: rewire VIO2 bundle to 1V8 rail.
+    radar["VIO1"] += v_radar     # VIO — 3.3V legal per DS p10
     radar["VIO2"] += v_radar
     radar["GND"] += GND
     decouple(v_radar, n=2, bulk_uF=10)
@@ -47,7 +53,7 @@ def build_sensors_misc():
     radar["ENABLE"] += v_radar   # enabled whenever RADAR domain is powered
 
     # ---------------- MIA-M10Q GNSS ---------------------------------------
-    gnss = MIA_M10Q(ref="U_GNSS", footprint="RF_GPS:TO_GENERATE_UBLOX_MIA_M10Q")
+    gnss = MIA_M10Q(ref="U_GNSS", footprint="generated:UBLOX_MIA_M10Q")
     gnss["VCC"] += v_gnss
     gnss["GND"] += GND
     decouple(v_gnss, n=1, bulk_uF=10)
@@ -65,7 +71,7 @@ def build_sensors_misc():
     gnss["TXD"] += Net.fetch("GNSS_TX")
     gnss["RXD"] += Net.fetch("GNSS_RX")
     gnss["TIMEPULSE"] += Net.fetch("GNSS_PPS")
-    ant = ANT_GNSS(ref="AE_GNSS", footprint="RF_Antenna:TO_GENERATE_GNSS_CHIP_ANT")
+    ant = ANT_GNSS(ref="AE_GNSS", footprint="RF_Antenna:Antenova_SR4G013_GPS")
     join("GNSS_RF", gnss["RF_IN"], ant["FEED"])
     ant["GND"] += GND
 
@@ -79,7 +85,7 @@ def build_sensors_misc():
     mic["SEL"] += GND            # data on falling edge
 
     # ---------------- camera FPC (VD66GY, DNP) -----------------------------
-    cam = J_CAM_24P(ref="J_CAM", footprint="Connector_FFC-FPC:TO_GENERATE_FPC24_0.5mm")
+    cam = J_CAM_24P(ref="J_CAM", footprint="Connector_FFC-FPC:Hirose_FH12-24S-0.5SH_1x24-1MP_P0.50mm_Horizontal")
     cam[1] += GND
     join("CSI_CKP", cam[2])
     join("CSI_CKN", cam[3])
@@ -105,9 +111,9 @@ def build_sensors_misc():
     # BPW34-class PIN, charge amp (OPA381-class), comparator -> GEIGER_PULSE.
     # Powered from 3V3_AON so the sentinel can count dose in ambient mode.
     pin_d = BPW34(ref="D_PIN", footprint="OptoDevice:Osram_BPW34S-SMD")
-    champ = OPA381(ref="U_CHAMP", footprint="Package_TO_SOT_SMD:TO_GENERATE_OPA381_MSOP8")
+    champ = OPA381(ref="U_CHAMP", footprint="Package_SO:MSOP-8_3x3mm_P0.65mm")
     cmp_ = TLV3201(ref="U_CMP", footprint="Package_TO_SOT_SMD:SOT-23-5")
-    shield = SHIELD_CAN(ref="SH_RAD", footprint="TO_GENERATE:SHIELD_CAN_RAD")
+    shield = SHIELD_CAN(ref="SH_RAD", footprint="generated:SHIELD_CAN_RAD_10x10")
 
     champ["V+"] += aon
     champ["V-"] += GND
@@ -158,7 +164,7 @@ def build_sensors_misc():
     GND += rsh[2]
 
     # ---------------- AD8317 RF survey detector ----------------------------
-    rf = AD8317(ref="U_RF", footprint="Package_DFN_QFN:TO_GENERATE_AD8317_LFCSP8")
+    rf = AD8317(ref="U_RF", footprint="generated:AD8317_LFCSP8_2x3")
     sma = J_SMA(ref="J_RF", footprint="Connector_Coaxial:SMA_Amphenol_132134_Vertical")
     rf["VPOS"] += v3sys
     rf["GND"] += GND
@@ -234,8 +240,8 @@ def build_sensors_misc():
     q_fan["S"] += GND
 
     # ---------------- SGX-4CO + LMP91000 potentiostat ----------------------
-    cell = SGX_4CO(ref="U_CO", footprint="TO_GENERATE:SGX_4CO_4SERIES_TH")
-    pot = LMP91000(ref="U_COAFE", footprint="Package_DFN_QFN:TO_GENERATE_LMP91000_WSON14")
+    cell = SGX_4CO(ref="U_CO", footprint="generated:SGX_4CO_4SERIES_TH")
+    pot = LMP91000(ref="U_COAFE", footprint="Package_SON:WSON-14-1EP_4.0x4.0mm_P0.5mm_EP2.6x2.6mm")
     pot["VDD"] += v_air          # hard-gated with AIR domain (ADR-0002 note:
     pot["GND"] += GND            # continuous-bias trade documented in report)
     decouple(v_air, n=1, bulk_uF=1)

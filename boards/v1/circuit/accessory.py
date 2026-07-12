@@ -17,7 +17,7 @@ def build_accessory():
     sent_sda, sent_scl = Net.fetch("SENT_SDA"), Net.fetch("SENT_SCL")
 
     # ---------------- magnetic 6-pogo accessory port (ADR-0002) -----------
-    pogo = J_POGO(ref="J_POGO", footprint="Connector:TO_GENERATE_POGO6_MAGRING")
+    pogo = J_POGO(ref="J_POGO", footprint="generated:POGO6_MAGRING")
     pogo["VACC"] += Net.fetch("VACC")        # switched VSYS (U_SW_ACC, EN_ACC)
     pogo["GND"] += GND
     pogo["SDA"] += sent_sda                  # accessory ID EEPROM lives at 0x50
@@ -44,7 +44,7 @@ def build_accessory():
     touch["MCLR_N"] += mclr
     pullup(mclr, aon, "10k")
     # 12 shell electrodes out on a flex connector (engraved-face field)
-    jt = J_TOUCH_FPC(ref="J_TOUCH", footprint="Connector_FFC-FPC:TO_GENERATE_FPC13_0.5mm")
+    jt = J_TOUCH_FPC(ref="J_TOUCH", footprint="Connector_FFC-FPC:Hirose_FH12-13S-0.5SH_1x13-1MP_P0.50mm_Horizontal")
     for i in range(12):
         join(f"TOUCH_E{i}", touch[f"E{i}"], jt[f"E{i}"])
     jt["GND"] += GND
@@ -58,7 +58,7 @@ def build_accessory():
     hap["SCL"] += sent_scl
     hap["EN"] += Net.fetch("EN_HAPTIC")
     hap["IN_TRIG"] += GND            # I2C-triggered playback only in v1
-    lra = J_LRA(ref="J_LRA", footprint="TO_GENERATE:LRA_PADS")
+    lra = J_LRA(ref="J_LRA", footprint="generated:LRA_PADS")
     join("LRA_P", hap["OUT_P"], lra["OUT+"])
     join("LRA_N", hap["OUT_N"], lra["OUT-"])
 

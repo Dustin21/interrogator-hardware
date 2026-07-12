@@ -127,3 +127,116 @@ honest provenance + harvested files exist, (c) `main.py` rebuild is ERC-clean.
    components.json + rerun zone-packer + power budget.
 6. ERC re-run after pin-map hardening; add antenna/RF review (BL54 + C6 + GNSS
    corner) before layout.
+
+---
+
+# H2 stage-2 report — footprints 38/38, bean board, first .kicad_pcb
+
+**Date:** 2026-07-12 · **Scope:** footprint generation, bean outline + repack,
+board-file bring-up (pcbnew), datasheet VERIFY closures.
+
+## 1. Footprint coverage: 38/38, zero TO-GENERATE left
+
+`library/gen_footprints.py` — parametric `.kicad_mod` writers (ball-grid,
+dual-row DFN/OLGA, quad QFN/SON, castellated module, TH radial, ring/pad
+customs). 24 files generated into `library/footprints/generated/`; every file
+header carries its dimension source + the rule *"E0 — overlay-verify against
+the vendor land-pattern drawing before fab"*. All 24 load in pcbnew 7.0.11.
+
+- **From staged datasheets** (best tier): A121 fcCSP50 with the **real named
+  50-ball map** (DS p8-9), VL53L8 LGA16 with real pad names (DS14161 Table 3),
+  SGP41 DFN-6 (2.44/0.8 + die pad, DS p18), BMV080 host side = **Molex
+  503566-1302 ZIF 13ckt 0.3 mm** (DS p16), AS7331 OLGA16 body dims,
+  TCS3448 = AS7343-family OLGA-8.
+- **E0 placeholders (flagged in-file)**: STM32N657 VFBGA142 (numeric 12×12
+  fill — must be replaced from DS14791 **before routing**), AS7058 WLCSP42,
+  NOR BGA24, BL54L15 castellations, MIA-M10Q perimeter, TPS22916 CSP4,
+  MLX90632 SFN, ENS161 LGA9, AS7421 OLGA10, AD8317 LFCSP8, SGX cell, customs.
+- **Remapped to KiCad-official instead of generating** (per-part in
+  manifest): ADS131M04 → generic QFN-20 3×3 P0.4; camera FPC + touch FPC →
+  Hirose FH12-24/13; OPA381 → MSOP-8; LMP91000 → WSON-14 4×4 (exact class
+  match); GNSS antenna → Antenova SR4G013.
+- `library/manifest.json`: **22 harvested + 16 generated-E0 = 38/38**,
+  `footprint_to_generate: 0` (tested).
+
+## 2. Bean board — outline + repack
+
+- `boards/v1/outline.py` → `outline.json`: Product Stone plan
+  (enclosure/product_stone.py `w_smooth`/`w_notch`) inset **3.5 mm**
+  (1.6 wall + 1.9 clearance) via shapely round-join buffer; resampled to a
+  **96-point closed polygon**. Board bbox **67.9 × 39.9 mm**, area
+  **2065 mm² = 75 % of the old 60×46 rectangle** (recorded in envelope.json).
+- `design_v1.py`: zones re-mapped onto the bean — optical + contact on the
+  fat-lobe face, air pocket mid with **SCD41 top-mid**, taper tip = A121
+  radar + magnet edge sensors, **SGX-CO (14×14) bottom fat lobe**, compute +
+  power bottom mid, C6 bottom taper (antenna toward tip), BL54L15 rotated 90°
+  with its antenna edge on the smooth rim. The **PIN radiation block moved to
+  the TOP face** (bottom fat lobe is consumed by the SGX cell; gamma doesn't
+  care). Packer gained a **polygon-containment check** (every part rect +0.8
+  margin fully inside the bean; violation raises). Pack passes; SVGs now draw
+  the bean outline. Stack 12.1 mm (unchanged parts). Power budget untouched
+  (same part set).
+- Real finding for H3: at 2065 mm²/face the bean is tight — the 284
+  passives/TPs/connectors do NOT all fit at conservative shelf spacing
+  (see §3 overlap debt).
+
+## 3. Board file — `boards/v1/board/interrogator_v1.kicad_pcb`
+
+- **Path A (pcbnew scripting)**: `kinet2pcb` does not build here (Debian
+  setuptools `install_layout` regression in its 2020-era setup.py), but the
+  pcbnew 7.0.11 python bindings are present — `build_board.py` does the same
+  netlist→board conversion directly: parses the netlist, loads every
+  footprint (repo libs + generated + official fallback), places the 38
+  majors at their bean-floorplan coordinates (refdes↔part table; bottom
+  parts flipped), greedy-grid-places the remaining 284 parts inside the
+  bean, binds **1019 pads to nets** by (ref, pin), and draws the 96-segment
+  Edge.Cuts bean. 392 pads stay unbound where E0 logical pin numbers don't
+  match real package pad names (A1-style balls) — H3 pin-map hardening.
+- Placement debt: **77 parts** (TPs + decoupling caps + the 3 big mech items
+  pogo-ring/ECG-ring/SMA) only fit via the containment-only fallback —
+  inside the bean but courtyard-overlapping primaries. That is the DRC noise
+  band below and the first H3 work item.
+- **DRC baseline** (`run_drc.py` → `drc_baseline.json`): kicad-cli **7.0.11
+  has no `pcb drc`** (KiCad 8 feature) — DRC runs through the same engine via
+  `pcbnew.WriteDRCReport`; `kicad-cli pcb export svg` passes as load-proof.
+  Counts: **unconnected pads 499** (the routing todo — expected, no tracks),
+  **Footprint errors 0**, violations 1389 = courtyard/silk/clearance overlap
+  noise from baseline placement (309 clearance, 154 courtyards_overlap,
+  199 silk_overlap, …) + 45 items_not_allowed + 30 text_height.
+- **No `.kicad_pro` created on purpose** — CI's eda job gates on `*.kicad_pro`
+  and routing hasn't happened; arming it now would fail the pipeline
+  honestly-but-uselessly.
+
+## 4. VERIFY closures (see boards/v1/VERIFY_LOG.md)
+
+**Closed from staged PDFs (11):** BMV080 addr 0x57 + PS/CSB/MISO straps
+(**bug fixed** — old model's GND strap selected SPI); MAX30102 6 V-tolerant
+pins → 3V3 bus OK; **A121 rails: VRX/VTX/VDIG 1.8 V-only → ECO-H3** (+ SPI
+50 MHz mode 0); TMAG5273A1 = 0x35 (full variant table); BNO085 PS1/PS0
+straps + 0x4A/0x4B; VL53L8CX SPI strap = C1 to IOVDD (no I2C_RST pin exists;
+**IOVDD 1.2/1.8 V-only → ECO-H3**); AS7331 0x74 strap math; BME688 0x77;
+SGP41 0x59; TCS3448 0x39 anchored to AS7343 DS (partial).
+
+**Still open (16)** — each listed in VERIFY_LOG.md with the exact PDF to drop
+into `registry_assets/<PART>/datasheet/`; the routing-blocking one is
+**DS14791 (STM32N657 ball map)**.
+
+## 5. Tests
+
+`contract/tests/test_h2.py` extended: manifest 38/38 + no TO-GENERATE, every
+manifest footprint file exists, generated files carry the E0 header, bean
+outline valid closed polygon with 1500–2600 mm² sanity, board file loads with
+Edge.Cuts + ≥30 footprints + DRC baseline captured. **Full suite: 19/19
+passed** (11 ingest + 8 H2).
+
+## NEXT (H3 routing)
+
+1. Drop in DS14791 → replace `ST_VFBGA142_PLACEHOLDER` with the real ball
+   map; renumber E0 logical pins to package pads (kills the 392 unbound pads).
+2. Execute the two ECOs: A121 VDIG/VRX/VTX → 1V8; VL53L8CH IOVDD/CORE_1V8 →
+   1V8 (level-shift or run SPI1 domain at 1.8 V).
+3. Placement refinement: absorb the 77 overlap-fallback parts (decouplers to
+   their owners' back side, TP field consolidation, pogo/ECG rings to their
+   ADR positions), then route: 499 unconnected → 0.
+4. Antenna/RF review at the bean edges (BL54 rim, C6 tip, GNSS notch corner).
+5. Create the `.kicad_pro` only when routing starts (arms CI eda job).

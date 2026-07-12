@@ -107,12 +107,12 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='3',name='VIN',func=pin_types.PWRIN),
             Pin(num='4',name='FB',func=pin_types.INPUT),
             Pin(num='5',name='SW',func=pin_types.OUTPUT)] }),
-        Part(**{ 'name':'TPS22916', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'TPS22916'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_CSP:TO_GENERATE_TPS22916_CSP4', 'keywords':None, 'description':'TI TPS22916 load switch (per-domain power gating)', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'TPS22916', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'TPS22916'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:TPS22916_CSP4', 'keywords':None, 'description':'TI TPS22916 load switch (per-domain power gating)', 'datasheet':None, 'pins':[
             Pin(num='1',name='VIN',func=pin_types.PWRIN),
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='ON',func=pin_types.INPUT),
             Pin(num='4',name='VOUT',func=pin_types.PWROUT)] }),
-        Part(**{ 'name':'STM32N657', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'STM32N657'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_BGA:TO_GENERATE_ST_VFBGA142', 'keywords':None, 'description':'STM32N657X0 app MCU + NPU, VFBGA142 (used-signals model)', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'STM32N657', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'STM32N657'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:ST_VFBGA142_PLACEHOLDER', 'keywords':None, 'description':'STM32N657X0 app MCU + NPU, VFBGA142 (used-signals model)', 'datasheet':None, 'pins':[
             Pin(num='1',name='VDD_CORE1',func=pin_types.PWRIN),
             Pin(num='2',name='VDD_CORE2',func=pin_types.PWRIN),
             Pin(num='3',name='VDD18_1',func=pin_types.PWRIN),
@@ -195,7 +195,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='80',name='EN_WHITE',func=pin_types.OUTPUT),
             Pin(num='81',name='RSTN_BNO',func=pin_types.OUTPUT),
             Pin(num='82',name='LPN_VL53',func=pin_types.OUTPUT)] }),
-        Part(**{ 'name':'NOR_OCTAL_XSPI', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'NOR_OCTAL_XSPI'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_BGA:TO_GENERATE_NOR_BGA24_5x5', 'keywords':None, 'description':'Octal xSPI NOR flash for STM32N657 (MX25UW6445G-class)', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'NOR_OCTAL_XSPI', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'NOR_OCTAL_XSPI'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:NOR_BGA24_6x8', 'keywords':None, 'description':'Octal xSPI NOR flash for STM32N657 (MX25UW6445G-class)', 'datasheet':None, 'pins':[
             Pin(num='1',name='VCC',func=pin_types.PWRIN),
             Pin(num='2',name='VSS',func=pin_types.PWRIN),
             Pin(num='3',name='CS_N',func=pin_types.INPUT),
@@ -210,7 +210,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='12',name='DQ5',func=pin_types.BIDIR),
             Pin(num='13',name='DQ6',func=pin_types.BIDIR),
             Pin(num='14',name='DQ7',func=pin_types.BIDIR)] }),
-        Part(**{ 'name':'BL54L15', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'BL54L15'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'RF_Module:TO_GENERATE_BL54L15', 'keywords':None, 'description':'Ezurio BL54L15 (nRF54L15) BLE sentinel module', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'BL54L15', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'BL54L15'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:BL54L15_MODULE', 'keywords':None, 'description':'Ezurio BL54L15 (nRF54L15) BLE sentinel module', 'datasheet':None, 'pins':[
             Pin(num='1',name='VCC',func=pin_types.PWRIN),
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='SENT_SCL',func=pin_types.BIDIR),
@@ -299,7 +299,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='27',name='GPIO21',func=pin_types.BIDIR,unit=1),
             Pin(num='28',name='GPIO22',func=pin_types.BIDIR,unit=1),
             Pin(num='29',name='GPIO23',func=pin_types.BIDIR,unit=1)], 'unit_defs':[] }),
-        Part(**{ 'name':'VL53L8CH', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'VL53L8CH'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Sensor_Distance:TO_GENERATE_ST_VL53L8', 'keywords':None, 'description':'ST VL53L8CH 8x8 ToF, SPI mode (straps in copper)', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'VL53L8CH', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'VL53L8CH'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:ST_VL53L8_LGA16', 'keywords':None, 'description':'ST VL53L8CH 8x8 ToF, SPI mode (straps in copper)', 'datasheet':None, 'pins':[
             Pin(num='1',name='AVDD',func=pin_types.PWRIN),
             Pin(num='2',name='IOVDD',func=pin_types.PWRIN),
             Pin(num='3',name='GND',func=pin_types.PWRIN),
@@ -324,7 +324,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='10',name='H_INTN',func=pin_types.OPENCOLL),
             Pin(num='11',name='NRST',func=pin_types.INPUT),
             Pin(num='12',name='BOOTN',func=pin_types.INPUT)] }),
-        Part(**{ 'name':'ADS131M04', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'ADS131M04'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_DFN_QFN:TO_GENERATE_TI_ADS131M04_WQFN20', 'keywords':None, 'description':'TI ADS131M04 4ch 24b simultaneous ADC (piezo + PIN + spares)', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'ADS131M04', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'ADS131M04'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_DFN_QFN:QFN-20-1EP_3x3mm_P0.4mm_EP1.65x1.65mm', 'keywords':None, 'description':'TI ADS131M04 4ch 24b simultaneous ADC (piezo + PIN + spares)', 'datasheet':None, 'pins':[
             Pin(num='1',name='AVDD',func=pin_types.PWRIN),
             Pin(num='2',name='DVDD',func=pin_types.PWRIN),
             Pin(num='3',name='AGND',func=pin_types.PWRIN),
@@ -344,7 +344,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='17',name='DRDY_N',func=pin_types.OUTPUT),
             Pin(num='18',name='SYNC_RESET_N',func=pin_types.INPUT),
             Pin(num='19',name='CLKIN',func=pin_types.INPUT)] }),
-        Part(**{ 'name':'PIEZO', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'PIEZO'}), 'ref_prefix':'PZ', 'fplist':None, 'footprint':'TO_GENERATE:PIEZO_DISC_PADS', 'keywords':None, 'description':'Piezo disc, contact vibration -> ADS131M04 AIN0 diff', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'PIEZO', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'PIEZO'}), 'ref_prefix':'PZ', 'fplist':None, 'footprint':'generated:PIEZO_DISC_PADS', 'keywords':None, 'description':'Piezo disc, contact vibration -> ADS131M04 AIN0 diff', 'datasheet':None, 'pins':[
             Pin(num='1',name='P1',func=pin_types.PASSIVE),
             Pin(num='2',name='P2',func=pin_types.PASSIVE)] }),
         Part(**{ 'name':'MLX90642', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'MLX90642'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_TO_SOT_THT:TO-39-4', 'keywords':None, 'description':'Melexis MLX90642 32x24 FIR array, TO-39, I2C-A 0x33', 'datasheet':None, 'pins':[
@@ -352,7 +352,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='VDD',func=pin_types.PWRIN),
             Pin(num='4',name='SCL',func=pin_types.BIDIR)] }),
-        Part(**{ 'name':'MLX90632', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'MLX90632'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_DFN_QFN:TO_GENERATE_MLX90632_SFN', 'keywords':None, 'description':'Melexis MLX90632 medical spot FIR, I2C-A 0x3A', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'MLX90632', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'MLX90632'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:MLX90632_SFN8_3x3', 'keywords':None, 'description':'Melexis MLX90632 medical spot FIR, I2C-A 0x3A', 'datasheet':None, 'pins':[
             Pin(num='1',name='VDD',func=pin_types.PWRIN),
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='SDA',func=pin_types.BIDIR),
@@ -365,7 +365,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='5',name='SDA',func=pin_types.BIDIR),
             Pin(num='6',name='SCL',func=pin_types.BIDIR),
             Pin(num='7',name='INT_N',func=pin_types.OPENCOLL)] }),
-        Part(**{ 'name':'AS7058', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'AS7058'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_CSP:TO_GENERATE_AS7058_WLCSP42', 'keywords':None, 'description':'ams AS7058 PPG/ECG/BioZ AFE, I2C-A 0x30 # VERIFY addr', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'AS7058', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'AS7058'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:AS7058_WLCSP42', 'keywords':None, 'description':'ams AS7058 PPG/ECG/BioZ AFE, I2C-A 0x30 # VERIFY addr', 'datasheet':None, 'pins':[
             Pin(num='1',name='VDD',func=pin_types.PWRIN),
             Pin(num='2',name='VDDIO',func=pin_types.PWRIN),
             Pin(num='3',name='GND',func=pin_types.PWRIN),
@@ -375,7 +375,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='7',name='ECG_INP',func=pin_types.INPUT),
             Pin(num='8',name='ECG_INN',func=pin_types.INPUT),
             Pin(num='9',name='ECG_REF',func=pin_types.OUTPUT)] }),
-        Part(**{ 'name':'ELECTRODE', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'ELECTRODE'}), 'ref_prefix':'E', 'fplist':None, 'footprint':'TO_GENERATE:ELECTRODE_FIELD', 'keywords':None, 'description':'Exposed electrode pad (ECG contact / return)', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'ELECTRODE', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'ELECTRODE'}), 'ref_prefix':'E', 'fplist':None, 'footprint':'generated:ELECTRODE_PAD_8MM', 'keywords':None, 'description':'Exposed electrode pad (ECG contact / return)', 'datasheet':None, 'pins':[
             Pin(num='1',name='E',func=pin_types.PASSIVE)] }),
         Part(**{ 'name':'BME688', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'BME688'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_LGA:Bosch_LGA-8_3x3mm_P0.8mm_ClockwisePinNumbering', 'keywords':None, 'description':'Bosch BME688 gas/T/RH/P, I2C-B 0x77 (SDO=1)', 'datasheet':None, 'pins':[
             Pin(num='1',name='VDD',func=pin_types.PWRIN),
@@ -385,12 +385,12 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='5',name='SDI',func=pin_types.BIDIR),
             Pin(num='6',name='SDO',func=pin_types.INPUT),
             Pin(num='7',name='CSB',func=pin_types.INPUT)] }),
-        Part(**{ 'name':'SGP41', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'SGP41'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Sensor_Humidity:TO_GENERATE_SGP41_DFN', 'keywords':None, 'description':'Sensirion SGP41 VOC/NOx, I2C-B 0x59 (fixed)', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'SGP41', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'SGP41'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:SGP41_DFN6_2.44x2.44', 'keywords':None, 'description':'Sensirion SGP41 VOC/NOx, I2C-B 0x59 (fixed)', 'datasheet':None, 'pins':[
             Pin(num='1',name='VDD',func=pin_types.PWRIN),
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='SDA',func=pin_types.BIDIR),
             Pin(num='4',name='SCL',func=pin_types.BIDIR)] }),
-        Part(**{ 'name':'ENS161', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'ENS161'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_LGA:TO_GENERATE_ENS161_LGA9', 'keywords':None, 'description':'ScioSense ENS161 4-el MOX, I2C-B 0x53; VDD=1V8', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'ENS161', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'ENS161'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:ENS161_LGA9', 'keywords':None, 'description':'ScioSense ENS161 4-el MOX, I2C-B 0x53; VDD=1V8', 'datasheet':None, 'pins':[
             Pin(num='1',name='VDD',func=pin_types.PWRIN),
             Pin(num='2',name='VDDIO',func=pin_types.PWRIN),
             Pin(num='3',name='GND',func=pin_types.PWRIN),
@@ -409,13 +409,13 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='SDA',func=pin_types.BIDIR),
             Pin(num='4',name='SCL',func=pin_types.BIDIR)] }),
-        Part(**{ 'name':'TCS3448', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'TCS3448'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'OptoDevice:TO_GENERATE_TCS3448_OLGA', 'keywords':None, 'description':'ams TCS3448 14ch VIS spectral, I2C-B 0x39 # VERIFY addr', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'TCS3448', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'TCS3448'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:TCS3448_OLGA8', 'keywords':None, 'description':'ams TCS3448 14ch VIS spectral, I2C-B 0x39 # VERIFY addr', 'datasheet':None, 'pins':[
             Pin(num='1',name='VDD',func=pin_types.PWRIN),
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='SDA',func=pin_types.BIDIR),
             Pin(num='4',name='SCL',func=pin_types.BIDIR),
             Pin(num='5',name='INT_N',func=pin_types.OPENCOLL)] }),
-        Part(**{ 'name':'AS7331', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'AS7331'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'OptoDevice:TO_GENERATE_AS7331_OLGA16', 'keywords':None, 'description':'ams AS7331 UV A/B/C, I2C-B 0x74 (A1A0=00)', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'AS7331', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'AS7331'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:AS7331_OLGA16', 'keywords':None, 'description':'ams AS7331 UV A/B/C, I2C-B 0x74 (A1A0=00)', 'datasheet':None, 'pins':[
             Pin(num='1',name='VDD',func=pin_types.PWRIN),
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='SDA',func=pin_types.BIDIR),
@@ -424,7 +424,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='6',name='A1',func=pin_types.INPUT),
             Pin(num='7',name='READY',func=pin_types.OUTPUT),
             Pin(num='8',name='SYN',func=pin_types.INPUT)] }),
-        Part(**{ 'name':'AS7421', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'AS7421'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'OptoDevice:TO_GENERATE_AS7421_OLGA', 'keywords':None, 'description':'ams AS7421 64ch NIR, I2C-B 0x64 # VERIFY addr', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'AS7421', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'AS7421'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:AS7421_OLGA10', 'keywords':None, 'description':'ams AS7421 64ch NIR, I2C-B 0x64 # VERIFY addr', 'datasheet':None, 'pins':[
             Pin(num='1',name='VDD',func=pin_types.PWRIN),
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='SDA',func=pin_types.BIDIR),
@@ -441,22 +441,24 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='4',name='SDA',func=pin_types.BIDIR),
             Pin(num='5',name='SCL',func=pin_types.BIDIR),
             Pin(num='6',name='INT_DRDY',func=pin_types.OUTPUT)] }),
-        Part(**{ 'name':'TMAG5273', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'TMAG5273'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_TO_SOT_SMD:SOT-23-6', 'keywords':None, 'description':'TI TMAG5273A1 hall, I2C-B 0x35 # VERIFY variant/addr', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'TMAG5273', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'TMAG5273'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_TO_SOT_SMD:SOT-23-6', 'keywords':None, 'description':'TI TMAG5273A1 hall, I2C-B 0x35 (VERIFIED-DS p16)', 'datasheet':None, 'pins':[
             Pin(num='1',name='SCL',func=pin_types.BIDIR),
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='SDA',func=pin_types.BIDIR),
             Pin(num='4',name='INT_N',func=pin_types.OPENCOLL),
             Pin(num='5',name='VCC',func=pin_types.PWRIN),
             Pin(num='6',name='NC',func=pin_types.NOCONNECT)] }),
-        Part(**{ 'name':'BMV080', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'BMV080'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Sensor:TO_GENERATE_BMV080', 'keywords':None, 'description':'Bosch BMV080 PM2.5, I2C-B 0x57 # VERIFY addr', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'BMV080', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'BMV080'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:BMV080_Molex_503566-1302_ZIF13', 'keywords':None, 'description':'Bosch BMV080 PM2.5, I2C-B 0x57 (VERIFIED-DS: PS=VDDIO, CSB=MISO=1)', 'datasheet':None, 'pins':[
             Pin(num='1',name='VDD',func=pin_types.PWRIN),
             Pin(num='2',name='VDDIO',func=pin_types.PWRIN),
             Pin(num='3',name='GND',func=pin_types.PWRIN),
             Pin(num='4',name='SDA',func=pin_types.BIDIR),
             Pin(num='5',name='SCL',func=pin_types.BIDIR),
             Pin(num='6',name='IRQ',func=pin_types.OUTPUT),
-            Pin(num='7',name='AB_SEL',func=pin_types.INPUT)] }),
-        Part(**{ 'name':'A121', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'A121'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_CSP:TO_GENERATE_A121_FCCSP', 'keywords':None, 'description':'Acconeer A121 pulsed coherent radar, Sparse-IQ raw', 'datasheet':None, 'pins':[
+            Pin(num='7',name='PS',func=pin_types.INPUT),
+            Pin(num='8',name='CSB',func=pin_types.INPUT),
+            Pin(num='9',name='MISO_ADDR',func=pin_types.INPUT)] }),
+        Part(**{ 'name':'A121', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'A121'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:A121_fcCSP50', 'keywords':None, 'description':'Acconeer A121 pulsed coherent radar, Sparse-IQ raw', 'datasheet':None, 'pins':[
             Pin(num='1',name='VIO1',func=pin_types.PWRIN),
             Pin(num='2',name='VIO2',func=pin_types.PWRIN),
             Pin(num='3',name='GND',func=pin_types.PWRIN),
@@ -466,7 +468,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='7',name='SPI_SS_N',func=pin_types.INPUT),
             Pin(num='8',name='INTERRUPT',func=pin_types.OUTPUT),
             Pin(num='9',name='ENABLE',func=pin_types.INPUT)] }),
-        Part(**{ 'name':'MIA_M10Q', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'MIA_M10Q'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'RF_GPS:TO_GENERATE_UBLOX_MIA_M10Q', 'keywords':None, 'description':'u-blox MIA-M10Q GNSS (RAWX), UART + PPS', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'MIA_M10Q', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'MIA_M10Q'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:UBLOX_MIA_M10Q', 'keywords':None, 'description':'u-blox MIA-M10Q GNSS (RAWX), UART + PPS', 'datasheet':None, 'pins':[
             Pin(num='1',name='VCC',func=pin_types.PWRIN),
             Pin(num='2',name='V_BCKP',func=pin_types.PWRIN),
             Pin(num='3',name='GND',func=pin_types.PWRIN),
@@ -477,7 +479,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
         Part(**{ 'name':'D_Schottky', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'D_Schottky'}), 'ref_prefix':'D', 'fplist':[''], 'footprint':'Diode_SMD:D_SOD-323', 'keywords':'diode Schottky', 'description':'', 'datasheet':'~', 'pins':[
             Pin(num='1',name='K',func=pin_types.PASSIVE,unit=1),
             Pin(num='2',name='A',func=pin_types.PASSIVE,unit=1)], 'unit_defs':[] }),
-        Part(**{ 'name':'ANT_GNSS', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'ANT_GNSS'}), 'ref_prefix':'AE', 'fplist':None, 'footprint':'RF_Antenna:TO_GENERATE_GNSS_CHIP_ANT', 'keywords':None, 'description':'GNSS L1 chip antenna (keepout corner)', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'ANT_GNSS', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'ANT_GNSS'}), 'ref_prefix':'AE', 'fplist':None, 'footprint':'RF_Antenna:Antenova_SR4G013_GPS', 'keywords':None, 'description':'GNSS L1 chip antenna (keepout corner)', 'datasheet':None, 'pins':[
             Pin(num='1',name='FEED',func=pin_types.PASSIVE),
             Pin(num='2',name='GND',func=pin_types.PASSIVE)] }),
         Part(**{ 'name':'PDM_MIC', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'PDM_MIC'}), 'ref_prefix':'MK', 'fplist':None, 'footprint':'Sensor_Audio:Knowles_LGA-5_3.5x2.65mm', 'keywords':None, 'description':'MEMS PDM mic, bottom port (heart/lung + acoustic)', 'datasheet':None, 'pins':[
@@ -486,7 +488,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='3',name='CLK',func=pin_types.INPUT),
             Pin(num='4',name='DATA',func=pin_types.TRISTATE),
             Pin(num='5',name='SEL',func=pin_types.INPUT)] }),
-        Part(**{ 'name':'CONN_FPC_24P', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'CONN_FPC_24P'}), 'ref_prefix':'J', 'fplist':None, 'footprint':'Connector_FFC-FPC:TO_GENERATE_FPC24_0.5mm', 'keywords':None, 'description':'24p FPC, VD66GY camera (MIPI CSI-2) — DNP in v1', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'CONN_FPC_24P', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'CONN_FPC_24P'}), 'ref_prefix':'J', 'fplist':None, 'footprint':'Connector_FFC-FPC:Hirose_FH12-24S-0.5SH_1x24-1MP_P0.50mm_Horizontal', 'keywords':None, 'description':'24p FPC, VD66GY camera (MIPI CSI-2) — DNP in v1', 'datasheet':None, 'pins':[
             Pin(num='1',name='P1',func=pin_types.PASSIVE),
             Pin(num='2',name='P2',func=pin_types.PASSIVE),
             Pin(num='3',name='P3',func=pin_types.PASSIVE),
@@ -514,7 +516,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
         Part(**{ 'name':'PIN_BPW34', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'PIN_BPW34'}), 'ref_prefix':'D', 'fplist':None, 'footprint':'OptoDevice:Osram_BPW34S-SMD', 'keywords':None, 'description':'BPW34S-class large-area PIN photodiode, light-tight cavity', 'datasheet':None, 'pins':[
             Pin(num='1',name='A',func=pin_types.PASSIVE),
             Pin(num='2',name='K',func=pin_types.PASSIVE)] }),
-        Part(**{ 'name':'OPA381', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'OPA381'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_TO_SOT_SMD:TO_GENERATE_OPA381_MSOP8', 'keywords':None, 'description':'OPA381-class transimpedance/charge amp for PIN detector', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'OPA381', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'OPA381'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_SO:MSOP-8_3x3mm_P0.65mm', 'keywords':None, 'description':'OPA381-class transimpedance/charge amp for PIN detector', 'datasheet':None, 'pins':[
             Pin(num='1',name='V+',func=pin_types.PWRIN),
             Pin(num='2',name='V-',func=pin_types.PWRIN),
             Pin(num='3',name='+IN',func=pin_types.INPUT),
@@ -526,12 +528,12 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='3',name='+IN',func=pin_types.INPUT),
             Pin(num='4',name='-IN',func=pin_types.INPUT),
             Pin(num='5',name='OUT',func=pin_types.OUTPUT)] }),
-        Part(**{ 'name':'SHIELD_CAN', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'SHIELD_CAN'}), 'ref_prefix':'SH', 'fplist':None, 'footprint':'TO_GENERATE:SHIELD_CAN_RAD', 'keywords':None, 'description':'Shield can, radiation charge-amp cavity (light-tight)', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'SHIELD_CAN', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'SHIELD_CAN'}), 'ref_prefix':'SH', 'fplist':None, 'footprint':'generated:SHIELD_CAN_RAD_10x10', 'keywords':None, 'description':'Shield can, radiation charge-amp cavity (light-tight)', 'datasheet':None, 'pins':[
             Pin(num='1',name='S1',func=pin_types.PASSIVE),
             Pin(num='2',name='S2',func=pin_types.PASSIVE),
             Pin(num='3',name='S3',func=pin_types.PASSIVE),
             Pin(num='4',name='S4',func=pin_types.PASSIVE)] }),
-        Part(**{ 'name':'AD8317', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'AD8317'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_DFN_QFN:TO_GENERATE_AD8317_LFCSP8', 'keywords':None, 'description':'AD8317 1M-10GHz RF power detector -> N657 ADC_IN0', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'AD8317', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'AD8317'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:AD8317_LFCSP8_2x3', 'keywords':None, 'description':'AD8317 1M-10GHz RF power detector -> N657 ADC_IN0', 'datasheet':None, 'pins':[
             Pin(num='1',name='VPOS',func=pin_types.PWRIN),
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='INHI',func=pin_types.INPUT),
@@ -554,11 +556,11 @@ main = SchLib(tool=SKIDL).add_parts(*[
         Part(**{ 'name':'CONN_FAN_2P', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'CONN_FAN_2P'}), 'ref_prefix':'J', 'fplist':None, 'footprint':'Connector_PinHeader_1.00mm:PinHeader_1x02_P1.00mm_Vertical_SMD_Pin1Left', 'keywords':None, 'description':'Blower fan (Sunon UB3F3-500 class), low-side switched', 'datasheet':None, 'pins':[
             Pin(num='1',name='FAN+',func=pin_types.PWRIN),
             Pin(num='2',name='FAN-',func=pin_types.PASSIVE)] }),
-        Part(**{ 'name':'SGX_4CO', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'SGX_4CO'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'TO_GENERATE:SGX_4CO_4SERIES_TH', 'keywords':None, 'description':'SGX 4-CO electrochemical CO cell (serviceable, R2 flag)', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'SGX_4CO', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'SGX_4CO'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'generated:SGX_4CO_4SERIES_TH', 'keywords':None, 'description':'SGX 4-CO electrochemical CO cell (serviceable, R2 flag)', 'datasheet':None, 'pins':[
             Pin(num='1',name='WE',func=pin_types.PASSIVE),
             Pin(num='2',name='RE',func=pin_types.PASSIVE),
             Pin(num='3',name='CE',func=pin_types.PASSIVE)] }),
-        Part(**{ 'name':'LMP91000', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'LMP91000'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_DFN_QFN:TO_GENERATE_LMP91000_WSON14', 'keywords':None, 'description':'LMP91000 potentiostat, I2C-B 0x48 (fixed) -> ADS AIN3', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'LMP91000', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'LMP91000'}), 'ref_prefix':'U', 'fplist':None, 'footprint':'Package_SON:WSON-14-1EP_4.0x4.0mm_P0.5mm_EP2.6x2.6mm', 'keywords':None, 'description':'LMP91000 potentiostat, I2C-B 0x48 (fixed) -> ADS AIN3', 'datasheet':None, 'pins':[
             Pin(num='1',name='VDD',func=pin_types.PWRIN),
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='SDA',func=pin_types.BIDIR),
@@ -570,7 +572,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='9',name='WE',func=pin_types.PASSIVE),
             Pin(num='10',name='RE',func=pin_types.PASSIVE),
             Pin(num='11',name='CE',func=pin_types.PASSIVE)] }),
-        Part(**{ 'name':'CONN_POGO_6P', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'CONN_POGO_6P'}), 'ref_prefix':'J', 'fplist':None, 'footprint':'Connector:TO_GENERATE_POGO6_MAGRING', 'keywords':None, 'description':'Magnetic 6-pogo accessory port (ADR-0002): pwr+I2C-ID+2 analog', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'CONN_POGO_6P', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'CONN_POGO_6P'}), 'ref_prefix':'J', 'fplist':None, 'footprint':'generated:POGO6_MAGRING', 'keywords':None, 'description':'Magnetic 6-pogo accessory port (ADR-0002): pwr+I2C-ID+2 analog', 'datasheet':None, 'pins':[
             Pin(num='1',name='VACC',func=pin_types.PASSIVE),
             Pin(num='2',name='GND',func=pin_types.PWRIN),
             Pin(num='3',name='SDA',func=pin_types.BIDIR),
@@ -597,7 +599,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='17',name='E9',func=pin_types.PASSIVE),
             Pin(num='18',name='E10',func=pin_types.PASSIVE),
             Pin(num='19',name='E11',func=pin_types.PASSIVE)] }),
-        Part(**{ 'name':'CONN_TOUCH_13P', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'CONN_TOUCH_13P'}), 'ref_prefix':'J', 'fplist':None, 'footprint':'Connector_FFC-FPC:TO_GENERATE_FPC13_0.5mm', 'keywords':None, 'description':'Shell touch-electrode flex, 12 electrodes + guard GND', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'CONN_TOUCH_13P', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'CONN_TOUCH_13P'}), 'ref_prefix':'J', 'fplist':None, 'footprint':'Connector_FFC-FPC:Hirose_FH12-13S-0.5SH_1x13-1MP_P0.50mm_Horizontal', 'keywords':None, 'description':'Shell touch-electrode flex, 12 electrodes + guard GND', 'datasheet':None, 'pins':[
             Pin(num='1',name='E0',func=pin_types.PASSIVE),
             Pin(num='2',name='E1',func=pin_types.PASSIVE),
             Pin(num='3',name='E2',func=pin_types.PASSIVE),
@@ -620,7 +622,7 @@ main = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='6',name='IN_TRIG',func=pin_types.INPUT),
             Pin(num='7',name='OUT_P',func=pin_types.OUTPUT),
             Pin(num='8',name='OUT_N',func=pin_types.OUTPUT)] }),
-        Part(**{ 'name':'CONN_LRA_2P', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'CONN_LRA_2P'}), 'ref_prefix':'J', 'fplist':None, 'footprint':'TO_GENERATE:LRA_PADS', 'keywords':None, 'description':'LRA haptic actuator pads', 'datasheet':None, 'pins':[
+        Part(**{ 'name':'CONN_LRA_2P', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'CONN_LRA_2P'}), 'ref_prefix':'J', 'fplist':None, 'footprint':'generated:LRA_PADS', 'keywords':None, 'description':'LRA haptic actuator pads', 'datasheet':None, 'pins':[
             Pin(num='1',name='OUT+',func=pin_types.PASSIVE),
             Pin(num='2',name='OUT-',func=pin_types.PASSIVE)] }),
         Part(**{ 'name':'TC2030', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'TC2030'}), 'ref_prefix':'J', 'fplist':None, 'footprint':'Connector:Tag-Connect_TC2030-IDC-NL_2x03_P1.27mm_Vertical', 'keywords':None, 'description':'Tag-Connect TC2030-IDC-NL SWD footprint (no BOM cost)', 'datasheet':None, 'pins':[

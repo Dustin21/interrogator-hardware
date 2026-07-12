@@ -15,7 +15,7 @@ def build_sensors_spi():
     mosi = Net.fetch("SPI1_MOSI")
 
     # ---------------- VL53L8CH — SPI mode --------------------------------
-    tof = VL53L8CH(ref="U_VL53", footprint="Sensor_Distance:TO_GENERATE_ST_VL53L8")
+    tof = VL53L8CH(ref="U_VL53", footprint="generated:ST_VL53L8_LGA16")
     tof["AVDD"] += v_opt
     tof["IOVDD"] += v_opt
     tof["GND"] += GND
@@ -24,9 +24,11 @@ def build_sensors_spi():
     tof["MOSI"] += mosi
     tof["MISO"] += miso
     tof["NCS"] += Net.fetch("CS_VL53_N")
-    # comm-mode straps in copper (DS: SPI select)  # VERIFY strap polarity
-    tof["SPI_I2C_N"] += v_opt          # HIGH -> SPI
-    tof["I2C_RST"] += GND              # LOW in SPI mode
+    # comm-mode straps in copper. VERIFIED-DS DS14161 p7: SPI mode = SPI_I2C_N
+    # (pad C1) pulled to IOVDD with 47k; NCS gets 47k pullup; no separate
+    # I2C_RST pin exists (model pin lands on GND-strapped RSVD).
+    tof["SPI_I2C_N"] += v_opt          # HIGH -> SPI   VERIFIED-DS p7
+    tof["I2C_RST"] += GND              # RSVD-to-GND   VERIFIED-DS p7
     tof["LPN"] += Net.fetch("LPN_VL53")
     int_vl53 = Net.fetch("INT_VL53")
     tof["INT"] += int_vl53
@@ -58,7 +60,7 @@ def build_sensors_spi():
     v3sys += rbootn[2]                 # BOOTN high = normal boot
 
     # ---------------- ADS131M04 — precision 4ch ADC ------------------------
-    adc = ADS131M04(ref="U_ADS", footprint="Package_DFN_QFN:TO_GENERATE_TI_ADS131M04_WQFN20")
+    adc = ADS131M04(ref="U_ADS", footprint="Package_DFN_QFN:QFN-20-1EP_3x3mm_P0.4mm_EP1.65x1.65mm")
     adc["AVDD"] += v3sys
     adc["DVDD"] += v3sys
     adc["AGND"] += GND
@@ -75,7 +77,7 @@ def build_sensors_spi():
     adc["CLKIN"] += Net.fetch("CLK_ADS")   # 8.192MHz from N657 MCO
 
     # AIN0: piezo, differential across P/N with bias resistors
-    pz = PIEZO(ref="PZ1", footprint="TO_GENERATE:PIEZO_DISC_PADS")
+    pz = PIEZO(ref="PZ1", footprint="generated:PIEZO_DISC_PADS")
     p_p = Net.fetch("PIEZO_P")
     p_n = Net.fetch("PIEZO_N")
     p_p += pz["P1"], adc["AIN0P"]

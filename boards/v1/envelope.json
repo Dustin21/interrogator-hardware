@@ -1,18 +1,26 @@
 {
- "board_w_mm": 60.0,
- "board_h_mm": 46.0,
+ "board_shape": "bean (Product Stone plan inset 3.5mm \u2014 boards/v1/outline.json)",
+ "board_bbox_w_mm": 67.9,
+ "board_bbox_h_mm": 39.9,
  "board_t_mm": 1.6,
+ "board_area_mm2": 2064.9,
+ "prev_rect_mm": [
+  60,
+  46
+ ],
+ "prev_rect_area_mm2": 2760.0,
+ "area_vs_old_rect": "75% of the old 60x46 rectangle",
  "max_comp_top_mm": 6.5,
  "max_comp_bot_mm": 4.0,
  "stack_mm": 12.1,
  "device_target_mm": [
-  66,
-  50,
-  18
+  75,
+  48,
+  19
  ],
  "chassis_buffer_mm": {
-  "xy": 2.0,
-  "z": 1.0
+  "wall": 1.6,
+  "clearance": 1.9
  },
  "layers": 6,
  "process": "JLCPCB 6L through-via + POFV",

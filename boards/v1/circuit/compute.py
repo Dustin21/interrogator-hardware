@@ -19,7 +19,7 @@ def build_compute():
     aon = Net.fetch("3V3_AON")
 
     # ================= STM32N657 application MCU ==========================
-    n6 = STM32N657(ref="U_N657", footprint="Package_BGA:TO_GENERATE_ST_VFBGA142")
+    n6 = STM32N657(ref="U_N657", footprint="generated:ST_VFBGA142_PLACEHOLDER")
     n6["VDD_CORE1 VDD_CORE2"] += vcore
     n6["VDD18_1 VDD18_2"] += v18
     n6["VDD33_1 VDD33_2 VDD33_3 VDD33_4"] += v3sys
@@ -111,7 +111,7 @@ def build_compute():
     join("LPN_VL53", n6["LPN_VL53"])
 
     # ================= Octal NOR on XSPI ==================================
-    nor = NOR_OCTAL(ref="U_NOR", footprint="Package_BGA:TO_GENERATE_NOR_BGA24_5x5")
+    nor = NOR_OCTAL(ref="U_NOR", footprint="generated:NOR_BGA24_6x8")
     nor["VCC"] += v18
     nor["VSS"] += GND
     for i in range(8):
@@ -126,7 +126,7 @@ def build_compute():
     decouple(v18, n=2)
 
     # ================= BL54L15 BLE sentinel ================================
-    bl = BL54L15(ref="U_BL54", footprint="RF_Module:TO_GENERATE_BL54L15")
+    bl = BL54L15(ref="U_BL54", footprint="generated:BL54L15_MODULE")
     bl["VCC"] += aon
     bl["GND"] += GND
     decouple(aon, n=2, bulk_uF=10)
