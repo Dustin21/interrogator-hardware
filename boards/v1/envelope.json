@@ -1,20 +1,20 @@
 {
- "board_w_mm": 54.0,
- "board_h_mm": 40.0,
+ "board_w_mm": 60.0,
+ "board_h_mm": 46.0,
  "board_t_mm": 1.6,
- "max_comp_top_mm": 5.1,
- "max_comp_bot_mm": 3.2,
- "stack_note": "board+comps ~9.9 mm; +battery 5.2 under bottom; +shell 2x1.4 + gaps",
+ "max_comp_top_mm": 6.5,
+ "max_comp_bot_mm": 4.0,
+ "stack_mm": 12.1,
  "device_target_mm": [
-  62,
-  47,
-  17
+  66,
+  50,
+  18
  ],
  "chassis_buffer_mm": {
   "xy": 2.0,
-  "z": 1.0,
-  "spare_apertures": 2
+  "z": 1.0
  },
  "layers": 6,
- "process": "JLCPCB 6L through-via + POFV via-in-pad"
+ "process": "JLCPCB 6L through-via + POFV",
+ "sensor_count": 38
 }

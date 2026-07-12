@@ -1,56 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="808.0" height="600.0" font-family="Helvetica,Arial" font-size="11">
-<rect x="0" y="0" width="808.0" height="600.0" fill="white"/>
-<g transform="translate(60,40)">
-<rect x="0" y="0" width="648.0" height="480.0" rx="36" fill="#134E4A" opacity="0.08" stroke="#134E4A" stroke-width="2"/>
-<rect x="84" y="240.0" width="432" height="144" fill="#dbe7f6" opacity="0.8" rx="6"/>
-<text x="90.0" y="254.0" fill="#666" font-size="10">DIGITAL</text>
-<rect x="24" y="12.0" width="144" height="204" fill="#f3e8fb" opacity="0.8" rx="6"/>
-<text x="30.0" y="26.0" fill="#666" font-size="10">RF</text>
-<rect x="36" y="384.0" width="384" height="96" fill="#fdecec" opacity="0.8" rx="6"/>
-<text x="42.0" y="398.0" fill="#666" font-size="10">POWER</text>
-<rect x="192" y="84.0" width="264" height="96" fill="#f2f2ea" opacity="0.8" rx="6"/>
-<text x="198.0" y="98.0" fill="#666" font-size="10">QUIET</text>
-<rect x="240.0" y="192.0" width="96.0" height="96.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="288.0" y="189.0" text-anchor="middle" fill="#1E293B" font-size="9">STM32N657</text>
-<rect x="360.0" y="216.0" width="96.0" height="72.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="408.0" y="213.0" text-anchor="middle" fill="#1E293B" font-size="9">Octal NOR flash</text>
-<rect x="36.0" y="24.0" width="120.0" height="168.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="96.0" y="21.0" text-anchor="middle" fill="#1E293B" font-size="9">BL54L15</text>
-<rect x="468.0" y="244.79999999999998" width="158.39999999999998" height="199.20000000000002" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="547.2" y="241.79999999999998" text-anchor="middle" fill="#1E293B" font-size="9">ESP32-C6-MINI-1</text>
-<rect x="576.0" y="18.0" width="54.0" height="54.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="603.0" y="15.0" text-anchor="middle" fill="#1E293B" font-size="9">MIA-M10Q</text>
-<rect x="396.0" y="135.60000000000002" width="45.599999999999994" height="62.400000000000006" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="418.79999999999995" y="132.60000000000002" text-anchor="middle" fill="#1E293B" font-size="9">BNO086</text>
-<rect x="186.0" y="138.0" width="36.0" height="36.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="204.0" y="135.0" text-anchor="middle" fill="#1E293B" font-size="9">ADS131M04</text>
-<rect x="498.0" y="132.0" width="36.0" height="36.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="516.0" y="129.0" text-anchor="middle" fill="#1E293B" font-size="9">IQS7222A</text>
-<rect x="558.0" y="132.0" width="36.0" height="36.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="576.0" y="129.0" text-anchor="middle" fill="#1E293B" font-size="9">DRV2605L + LRA drv</text>
-<rect x="48.0" y="384.0" width="48.0" height="48.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="72.0" y="381.0" text-anchor="middle" fill="#1E293B" font-size="9">CYPD3177</text>
-<rect x="114.0" y="396.0" width="30.0" height="36.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="129.0" y="393.0" text-anchor="middle" fill="#1E293B" font-size="9">BQ25620</text>
-<rect x="162.0" y="406.79999999999995" width="19.200000000000003" height="19.200000000000003" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="171.60000000000002" y="403.79999999999995" text-anchor="middle" fill="#1E293B" font-size="9">BQ27427</text>
-<rect x="198.0" y="403.20000000000005" width="19.200000000000003" height="25.200000000000003" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="207.60000000000002" y="400.20000000000005" text-anchor="middle" fill="#1E293B" font-size="9">TPS62840</text>
-<rect x="234.0" y="403.20000000000005" width="19.200000000000003" height="25.200000000000003" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="243.60000000000002" y="400.20000000000005" text-anchor="middle" fill="#1E293B" font-size="9">TPS62823</text>
-<rect x="270.0" y="397.20000000000005" width="19.200000000000003" height="34.8" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="279.6" y="394.20000000000005" text-anchor="middle" fill="#1E293B" font-size="9">TLV62568</text>
-<rect x="48.0" y="294.0" width="48.0" height="36.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="72.0" y="291.0" text-anchor="middle" fill="#1E293B" font-size="9">BQ29700+FETs</text>
-<rect x="48.0" y="342.0" width="96.0" height="24.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="96.0" y="339.0" text-anchor="middle" fill="#1E293B" font-size="9">Load switches x6</text>
-<rect x="324.0" y="390.0" width="108.0" height="90.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="378.0" y="387.0" text-anchor="middle" fill="#1E293B" font-size="9">USB-C conn</text>
-<rect x="174.0" y="6.0" width="378.0" height="114.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="363.0" y="3.0" text-anchor="middle" fill="#1E293B" font-size="9">BG51</text>
-<line x1="0" y1="502.0" x2="648.0" y2="502.0" stroke="#333"/>
-<text x="324.0" y="518.0" text-anchor="middle">54 mm</text>
-<line x1="670.0" y1="0" x2="670.0" y2="480.0" stroke="#333"/>
-<text x="678.0" y="240.0" writing-mode="tb">40 mm</text>
-<text x="0" y="-16" font-size="15" font-weight="bold">interrogator v1 · BOTTOM — compute face · 6-layer, 1.6 mm</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="830.0" height="626.0" font-family="Helvetica,Arial" font-size="10">
+<rect width="830.0" height="626.0" fill="white"/><g transform="translate(60,44)">
+<rect x="0" y="0" width="660.0" height="506.0" rx="33" fill="#134E4A" opacity="0.07" stroke="#134E4A" stroke-width="2"/>
+<rect x="220.0" y="11.0" width="264.0" height="198.0" fill="#dbe7f6" opacity="0.7" rx="5"/>
+<text x="224.39999999999998" y="23.0" fill="#889" font-size="9">COMPUTE</text>
+<rect x="22.0" y="11.0" width="132.0" height="165.0" fill="#f3e8fb" opacity="0.7" rx="5"/>
+<text x="26.4" y="23.0" fill="#889" font-size="9">RADIO_BLE</text>
+<rect x="495.0" y="286.0" width="154.0" height="198.0" fill="#efe3fb" opacity="0.7" rx="5"/>
+<text x="499.4" y="298.0" fill="#889" font-size="9">RADIO_WIFI</text>
+<rect x="198.0" y="231.0" width="286.0" height="121.0" fill="#f2f2ea" opacity="0.7" rx="5"/>
+<text x="202.39999999999998" y="243.0" fill="#889" font-size="9">SENSE_B</text>
+<rect x="22.0" y="187.0" width="165.0" height="176.0" fill="#e3f3ef" opacity="0.7" rx="5"/>
+<text x="26.4" y="199.0" fill="#889" font-size="9">GAS_B</text>
+<rect x="22.0" y="374.0" width="286.0" height="110.0" fill="#fdecec" opacity="0.7" rx="5"/>
+<text x="26.4" y="386.0" fill="#889" font-size="9">POWER</text>
+<rect x="506.0" y="22.0" width="143.0" height="242.0" fill="#e7eefb" opacity="0.7" rx="5"/>
+<text x="510.4" y="34.0" fill="#889" font-size="9">IO</text>
+<rect x="228.8" y="11.0" width="88.0" height="88.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="272.8" y="9.0" text-anchor="middle" fill="#1E293B" font-size="8">STM32N657 VFBGA142</text>
+<rect x="325.6" y="11.0" width="88.0" height="66.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="369.6" y="9.0" text-anchor="middle" fill="#1E293B" font-size="8">Octal NOR flash</text>
+<rect x="30.799999999999997" y="11.0" width="110.0" height="154.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="85.8" y="9.0" text-anchor="middle" fill="#1E293B" font-size="8">BL54L15 BLE sentinel</text>
+<rect x="503.79999999999995" y="286.0" width="145.2" height="182.60000000000002" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="576.4" y="284.0" text-anchor="middle" fill="#1E293B" font-size="8">ESP32-C6-MINI WiFi</text>
+<rect x="206.8" y="231.0" width="41.8" height="57.2" fill="#0F766E" opacity="0.85" rx="2"/>
+<text x="227.7" y="229.0" text-anchor="middle" fill="#1E293B" font-size="8">BNO086 IMU raw+fused</text>
+<rect x="257.4" y="231.0" width="33.0" height="33.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="273.9" y="229.0" text-anchor="middle" fill="#1E293B" font-size="8">ADS131M04 24b 4ch</text>
+<rect x="299.2" y="231.0" width="110.0" height="110.0" fill="#0F766E" opacity="0.85" rx="2"/>
+<text x="354.20000000000005" y="229.0" text-anchor="middle" fill="#1E293B" font-size="8">PIN radiation det</text>
+<rect x="418.0" y="231.0" width="38.5" height="29.15" fill="#0F766E" opacity="0.85" rx="2"/>
+<text x="437.25" y="229.0" text-anchor="middle" fill="#1E293B" font-size="8">MEMS mic</text>
+<rect x="30.799999999999997" y="187.0" width="154.0" height="154.0" fill="#0F766E" opacity="0.85" rx="2"/>
+<text x="107.80000000000001" y="185.0" text-anchor="middle" fill="#1E293B" font-size="8">SGX-4CO electrochem</text>
+<rect x="30.799999999999997" y="374.0" width="44.0" height="44.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="52.8" y="372.0" text-anchor="middle" fill="#1E293B" font-size="8">CYPD3177 USB-C PD</text>
+<rect x="83.6" y="374.0" width="27.5" height="33.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="97.35" y="372.0" text-anchor="middle" fill="#1E293B" font-size="8">BQ25620 charger 3.5A</text>
+<rect x="119.89999999999998" y="374.0" width="17.6" height="17.6" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="128.7" y="372.0" text-anchor="middle" fill="#1E293B" font-size="8">BQ27427 gauge</text>
+<rect x="146.29999999999998" y="374.0" width="17.6" height="23.1" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="155.1" y="372.0" text-anchor="middle" fill="#1E293B" font-size="8">TPS62840 sentinel buck</text>
+<rect x="172.7" y="374.0" width="17.6" height="23.1" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="181.5" y="372.0" text-anchor="middle" fill="#1E293B" font-size="8">TPS62823 core buck</text>
+<rect x="199.10000000000002" y="374.0" width="17.6" height="31.9" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="207.90000000000003" y="372.0" text-anchor="middle" fill="#1E293B" font-size="8">TLV62568 1V8 buck</text>
+<rect x="225.5" y="374.0" width="44.0" height="33.0" fill="#0F766E" opacity="0.85" rx="2"/>
+<text x="247.5" y="372.0" text-anchor="middle" fill="#1E293B" font-size="8">BQ29700+FET protect</text>
+<rect x="30.799999999999997" y="426.79999999999995" width="88.0" height="22.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="74.8" y="424.79999999999995" text-anchor="middle" fill="#1E293B" font-size="8">Load switches x6</text>
+<rect x="514.8" y="22.0" width="33.0" height="33.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="531.3" y="20.0" text-anchor="middle" fill="#1E293B" font-size="8">IQS7222A touch</text>
+<rect x="556.5999999999999" y="22.0" width="33.0" height="33.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="573.0999999999999" y="20.0" text-anchor="middle" fill="#1E293B" font-size="8">DRV2605L haptic</text>
+<rect x="598.3999999999999" y="22.0" width="49.5" height="49.5" fill="#1E3A8A" opacity="0.85" rx="2"/>
+<text x="623.1499999999999" y="20.0" text-anchor="middle" fill="#1E293B" font-size="8">MIA-M10Q GNSS RAWX</text>
+<line x1="0" y1="526.0" x2="660.0" y2="526.0" stroke="#333"/>
+<text x="330.0" y="541.0" text-anchor="middle" font-size="11">60 mm</text>
+<line x1="680.0" y1="0" x2="680.0" y2="506.0" stroke="#333"/>
+<text x="688.0" y="253.0" font-size="11">46 mm</text>
+<text x="0" y="-20" font-size="14" font-weight="bold">interrogator v1 · BOTTOM · compute face · 6-layer 1.6mm · green=new</text>
 </g></svg>

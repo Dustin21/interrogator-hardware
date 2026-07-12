@@ -58,3 +58,11 @@ Routing corrections (supersedes the looser wording above):
    reflex + edge policy via device-profile ref, §8 of interface-requirements.md).
 4. **Upstream reconcile ask**: PLAN §7 lists `uncalibrated|error` flags that record_schema.md's 4-bit
    field doesn't define — upstream should reconcile schema↔PLAN before extending the bitfield.
+
+## v1.1 sensor deltas (ADR-0002, 2026-07-11) — ingest-package additions
+ADD USR records + specs + semantics (HW drafts E0 facts; SME authors meaning):
+MLX90632, AS7421, MEMS_MIC, ENS161, SCD41, SGX_4CO, SHT41, PIN_RAD (radiation, replaces BG51).
+DEPRECATE: BG51 → PIN_RAD. New intents unlocked for SME authoring: spot-temp/fever (MLX90632),
+hydration/tissue-NIR (AS7421), phonocardiography/acoustic (MEMS_MIC), scent-granularity (ENS161),
+true-CO2 occupancy/ventilation (SCD41), CO safety/breath (SGX_4CO). New accessory-port channel class:
+attachments register via ID EEPROM (ECG/BioZ/probe/rad-wand) — device-profile addition.

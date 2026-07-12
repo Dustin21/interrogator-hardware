@@ -57,3 +57,7 @@ AS7343. Watch-item: MIA-M10Q-01B orderability.
 - ENS161: REJECTED (black-box DSP outputs vs ADR-0014 raw-first; same MOX class = no orthogonal info;
   1.8V rail; patchy supply). SGP41 was never replaced — BME688+SGP41 are complements (different MOX
   platforms; SGP41 has the NOx pixel).
+
+## RATIFIED 2026-07-11 (ADR-0002)
+All 7 adds ACCEPTED (MLX90632, AS7421, MEMS mic, ENS161, SCD41, SGX-4CO, SHT41). BG51→bare-PIN ACCEPTED.
+Magnetic pogo accessory port ACCEPTED. Board 60×46, chassis 66×50×18. See docs/decisions/0002.

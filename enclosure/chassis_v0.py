@@ -19,8 +19,8 @@ from cadquery import exporters
 HERE = Path(__file__).resolve().parent
 ENV = json.loads((HERE.parents[0] / "boards" / "v1" / "envelope.json").read_text())
 
-# Device outer dims from envelope + buffer (board 54x40, battery 50x34x5.2 beside-stacked)
-L, W, H = 62.0, 47.0, 17.0   # mm — envelope.json device_target
+# Device outer dims from envelope + buffer (board 60x46, battery beside-stacked)
+L, W, H = 66.0, 50.0, 18.0   # mm — envelope.json device_target (grew with board 54x40->60x46)
 R_EDGE = 6.5                 # side rounding
 R_TOP = 2.8                  # lid rounding
 WALL = 1.4
@@ -59,6 +59,14 @@ def features(s):
     # lanyard hole (non-magnetic mount) through a corner boss
     s = (s.faces(">Z").workplane(centerOption="CenterOfBoundBox").center(L/2 - 5, -W/2 + 5)
          .circle(1.6).cutThruAll())
+    # magnetic pogo accessory port (ADR-0002): 6 pogo-pad seats in the back target ring
+    # (power + I2C plug-and-play ID + 2 analog -> AS7058/ADS131M04). concentric w/ ferrous target.
+    s = (s.faces("<Z").workplane().center(12, -6)
+         .polarArray(radius=7.0, startAngle=0, angle=360, count=6)
+         .circle(0.9).cutBlind(-0.6))
+    # SGX-CO electrochemical vent (bottom face, over gas_b zone) + MEMS mic port (bottom)
+    s = s.faces("<Z").workplane().center(-20, 8).rarray(2.2, 2.2, 3, 3).circle(0.4).cutThruAll()
+    s = s.faces("<Z").workplane().center(-8, -14).circle(0.5).cutThruAll()  # mic acoustic port
     return s
 
 def main():
