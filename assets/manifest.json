@@ -348,6 +348,18 @@
   "retrieved": "2026-07-12"
  },
  {
+  "asset_id": "datasheet-stm32n657-stm32n657a0.pdf",
+  "part": "STM32N657",
+  "kind": "datasheet",
+  "location": "device:registry_assets/STM32N657/datasheet/stm32n657a0.pdf",
+  "object_key": null,
+  "sha256": "914497733eb955feba1c6f0b0bc3d420da3ebb0aa419b1d751344202d33157b7",
+  "bytes": 5158264,
+  "source_url": "https://www.st.com/resource/en/datasheet/stm32n657x0.pdf",
+  "evidence_tier": "E0",
+  "retrieved": "2026-07-12"
+ },
+ {
   "asset_id": "datasheet-tcs3448-tcs3448_ds001121.pdf",
   "part": "TCS3448",
   "kind": "datasheet",
@@ -356,6 +368,30 @@
   "sha256": "305738d08f15d865c8519f295e3285ce1f5745c58821d74ea3c817ded74d08e3",
   "bytes": 1590258,
   "source_url": "https://look.ams-osram.com/m/1c24b057e65ee61e/original/TCS3448-14-Channel-multi-spectral-sensor.pdf",
+  "evidence_tier": "E0",
+  "retrieved": "2026-07-12"
+ },
+ {
+  "asset_id": "datasheet-vd66gy-vd66gy.pdf",
+  "part": "VD66GY",
+  "kind": "datasheet",
+  "location": "device:registry_assets/VD66GY/datasheet/vd66gy.pdf",
+  "object_key": null,
+  "sha256": "119bd7cb4953d6701d8c1f5b571cef4f1bf37cb0f0072c3cb4b8ace81304debd",
+  "bytes": 3349201,
+  "source_url": "https://www.st.com/resource/en/datasheet/vd66gy.pdf",
+  "evidence_tier": "E0",
+  "retrieved": "2026-07-12"
+ },
+ {
+  "asset_id": "datasheet-vl53l8ch-vl53l8ch.pdf",
+  "part": "VL53L8CH",
+  "kind": "datasheet",
+  "location": "device:registry_assets/VL53L8CH/datasheet/vl53l8ch.pdf",
+  "object_key": null,
+  "sha256": "0fde2f49f7f00f3ff395618fa31bcb0f33be9eef50685034fe7ed875b8a3a2a4",
+  "bytes": 3671670,
+  "source_url": "https://www.st.com/resource/en/datasheet/vl53l8ch.pdf",
   "evidence_tier": "E0",
   "retrieved": "2026-07-12"
  },

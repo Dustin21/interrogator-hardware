@@ -45,57 +45,162 @@ def _seq(defs):
 # COMPUTE
 # ============================================================================
 
-# STM32N657X0 VFBGA142 — modeled connector-style with only the used signals.
-# pinout E0 — logical numbering; real ball map (DS14791) at footprint stage.
-STM32N657 = mkpart("STM32N657", "U", _seq([
-    # --- power ---
-    ("VDD_CORE1", PWR), ("VDD_CORE2", PWR),
-    ("VDD18_1", PWR), ("VDD18_2", PWR),
-    ("VDD33_1", PWR), ("VDD33_2", PWR), ("VDD33_3", PWR), ("VDD33_4", PWR),
-    ("VSS1", PWR), ("VSS2", PWR), ("VSS3", PWR), ("VSS4", PWR),
-    # --- SPI1 (sensor SPI: VL53L8CH, BNO086, ADS131M04, A121) ---
-    ("SPI1_SCK", OUT), ("SPI1_MISO", IN), ("SPI1_MOSI", OUT),
-    ("CS_VL53_N", OUT), ("CS_BNO_N", OUT), ("CS_ADS_N", OUT), ("CS_A121_N", OUT),
-    # --- I2C ---
-    ("I2C1_SCL", BI), ("I2C1_SDA", BI),      # I2C-A (1 MHz capable)
-    ("I2C2_SCL", BI), ("I2C2_SDA", BI),      # I2C-B (400 kHz)
-    # --- SDIO to ESP32-C6 (ESP-Hosted) ---
-    ("SDIO_CLK", OUT), ("SDIO_CMD", BI),
-    ("SDIO_D0", BI), ("SDIO_D1", BI), ("SDIO_D2", BI), ("SDIO_D3", BI),
-    # --- UART1: GNSS + PPS input capture ---
-    ("UART1_TX", OUT), ("UART1_RX", IN), ("PPS_IN", IN),
-    # --- UART2: inter-MCU link to BL54L15 sentinel ---
-    ("UART2_TX", OUT), ("UART2_RX", IN),
-    # --- USB HS ---
-    ("USB_DP", BI), ("USB_DM", BI),
-    # --- camera (MIPI CSI-2 reserved; J_CAM is DNP) ---
-    ("CSI_CKP", BI), ("CSI_CKN", BI),
-    ("CSI_D0P", BI), ("CSI_D0N", BI), ("CSI_D1P", BI), ("CSI_D1N", BI),
-    ("CAM_XCLK", OUT), ("CAM_RSTN", OUT),
-    # --- PDM mic ---
-    ("PDM_CLK", OUT), ("PDM_DATA", IN),
-    # --- analog ---
-    ("ADC_IN0", IN),                          # AD8317 RF detector output
-    ("MCO_OUT", OUT),                         # 8.192 MHz clock for ADS131M04
-    # --- debug / boot ---
-    ("SWDIO", BI), ("SWCLK", IN), ("NRST", IN), ("BOOT0", IN),
-    # --- XSPI (octal NOR) ---
-    ("XSPI_D0", BI), ("XSPI_D1", BI), ("XSPI_D2", BI), ("XSPI_D3", BI),
-    ("XSPI_D4", BI), ("XSPI_D5", BI), ("XSPI_D6", BI), ("XSPI_D7", BI),
-    ("XSPI_CLK", OUT), ("XSPI_CS_N", OUT), ("XSPI_DQS", BI),
-    # --- interrupt / data-ready inputs (R7: INT wired for every sensor) ---
-    ("INT_VL53", IN), ("INT_BNO", IN), ("DRDY_ADS", IN),
-    ("INT_MAX", IN), ("INT_AS7058", IN), ("IRQ_A121", IN),
-    ("DRDY_MMC", IN), ("INT_TMAG", IN), ("INT_TCS", IN),
-    ("RDY_AS7331", IN), ("INT_AS7421", IN), ("INT_BMV", IN), ("INT_ENS", IN),
-    # --- inter-MCU wake ---
-    ("WAKE_IN", IN),                          # WAKE_FROM_SENTINEL
-    ("WAKE_OUT", OUT),                        # N6 -> sentinel attention
-    # --- misc GPIO ---
-    ("EN_UV_REQ", OUT),                       # UV request (ANDed w/ INTERLOCK_OK)
-    ("EN_WHITE", OUT),                        # white illumination LED
-    ("RSTN_BNO", OUT), ("LPN_VL53", OUT),
-]), description="STM32N657X0 app MCU + NPU, VFBGA142 (used-signals model)")
+# STM32N657X0 VFBGA142 — REAL ball map.
+# VERIFIED-DS DS14791 Rev 9 Table 18 p88-112 (pin/ball definition, VFBGA142
+# column; 142 balls extracted, count cross-checked vs Fig 7 ballout p87 and
+# Table 128 N=142 p236). Grid = 15x15 (rows A-R, no I/O/Q; cols 1-15),
+# 0.5 mm pitch, body 8x8, D1/E1=7.00 (Fig 67 p235). Peripheral instance
+# choices are constrained by what the 142-ball package bonds out:
+#  * I2C1 is NOT available on VFBGA142 (only I2C1_SMBA on PB4) — bus A uses
+#    I2C2 (PB10/PB11), bus B uses I2C4 (PE13/PE14).       VERIFIED-DS Table 18
+#  * USART2_RX is not bonded (PA3/PC2/PF6 absent) — sentinel link moved to
+#    UART4 (TX=PA12, RX=PA11).
+#  * SDMMC1 to the ESP32-C6: CK=PC12, CMD=PH2(boot pin set), D0-3=PC8-PC11.
+#  * XSPIM_P2 (boot flash port) is the dedicated PN port: DQS0=PN0, NCS1=PN1,
+#    IO0-7=PN2-5/PN8-11, CLK=PN6 (NCLK PN7 + NCS2 PN12 unused).
+#  * BOOT1 is a non-dedicated boot pin defaulting to PA6 (§3.6 p14 + Table 19
+#    AF0) — PA6 is reserved as the BOOT1 strap, NOT reused for SPI1_MISO
+#    (which moves to PB4, tri-stated by CS pullups at reset).
+# IO supply domains (Table 18 footnotes 1/6/9): general GPIO -> VDD (3V3),
+# PN port -> VDDIO3 (1V8, NOR domain), SDMMC group PC8-12/PH2 -> VDDIO4 (3V3).
+# OPT124 bits + VDDIOxVRSEL registers must match the chosen rail voltages (fw).
+STM32N657 = mkpart("STM32N657", "U", [
+    # --- core / IO / analog supplies ------------------------------------
+    ("M5", "VDDCORE1", PWR), ("M6", "VDDCORE2", PWR), ("M7", "VDDCORE3", PWR),
+    ("M8", "VDDCORE4", PWR), ("M9", "VDDCORE5", PWR),   # 0.81V VOS-lo / 0.89V VOS-hi (Table 24 p139)
+    ("F12", "VDD1", PWR), ("G12", "VDD2", PWR), ("H12", "VDD3", PWR),  # 3.3V IO
+    ("K12", "VDDIO3_1", PWR), ("L12", "VDDIO3_2", PWR),  # XSPI/PN port IO (1V8)
+    ("D8", "VDDIO4", PWR),                               # SDMMC IO (3V3)
+    ("P8", "VDDCSI", PWR),          # = VDDCORE range (Table 24 p139)
+    ("R7", "VDDA18CSI", PWR), ("K4", "VDDA18PLL", PWR),
+    ("D4", "VDDA18USB", PWR), ("B6", "VDD33USB", PWR),
+    ("R3", "VDDA18ADC", PWR), ("E4", "VDDA18AON", PWR), ("F1", "VDDA18PMU", PWR),
+    ("P2", "VREF_P", PWR), ("R2", "VREF_N", PWR),        # ADC reference pair
+    ("D1", "VBAT", PWR),
+    # internal SMPS — BYPASS configuration (VCORE from external buck,
+    # DS14791 §3.4.4 Fig 2 p26: VDDSMPS/VDDA18PMU stay supplied at 1.8V;
+    # VLXSMPS + VFBSMPS left unconnected in bypass)
+    ("J1", "VDDSMPS1", PWR), ("J2", "VDDSMPS2", PWR), ("J3", "VDDSMPS3", PWR),
+    ("G1", "VSSSMPS1", PWR), ("G2", "VSSSMPS2", PWR), ("G3", "VSSSMPS3", PWR),
+    ("H1", "VLXSMPS1", NCP), ("H2", "VLXSMPS2", NCP), ("H3", "VLXSMPS3", NCP),
+    ("F3", "VFBSMPS", NCP),
+    ("E1", "V08CAP", PWO),          # backup-regulator output — cap only (0.8V)
+    # grounds
+    ("A15", "VSS1", PWR), ("D9", "VSS2", PWR), ("J12", "VSS3", PWR),
+    ("M4", "VSS4", PWR), ("M10", "VSS5", PWR), ("M12", "VSS6", PWR),
+    ("R1", "VSS7", PWR), ("R15", "VSS8", PWR),
+    ("P3", "VSSA", PWR), ("F4", "VSSAON", PWR), ("F2", "VSSAPMU", PWR),
+    # --- power management / reset / boot --------------------------------
+    ("A1", "PDR_ON", IN),           # power-down reset enable, 1.8V (Table 24 p140)
+    ("D2", "PWR_ON", OUT),          # requests external VCORE supply (§3.4.7 Fig 3 p27)
+    ("C2", "NRST", IN), ("B2", "BOOT0", IN),
+    ("P13", "BOOT1", IN),           # PA6 = default BOOT1 pin (§3.6 p14) — strap only
+    # --- SPI1 (sensor SPI: VL53L8CH, BNO086, ADS131M04, A121) ------------
+    ("R12", "SPI1_SCK", OUT),       # PA5  AF SPI1_SCK
+    ("L14", "SPI1_MISO", IN),       # PB4  AF SPI1_MISO
+    ("M15", "SPI1_MOSI", OUT),      # PB5  AF SPI1_MOSI
+    ("C13", "CS_VL53_N", OUT),      # PD8
+    ("N13", "CS_BNO_N", OUT),       # PB12
+    ("B13", "CS_ADS_N", OUT),       # PE10
+    ("B11", "CS_A121_N", OUT),      # PE12
+    # --- I2C: bus A = I2C2, bus B = I2C4 (I2C1 not bonded on 142) ---------
+    ("N15", "I2CA_SCL", BI),        # PB10 I2C2_SCL
+    ("N14", "I2CA_SDA", BI),        # PB11 I2C2_SDA
+    ("A11", "I2CB_SCL", BI),        # PE13 I2C4_SCL
+    ("D10", "I2CB_SDA", BI),        # PE14 I2C4_SDA
+    # --- SDMMC1 to ESP32-C6 (ESP-Hosted SDIO) -----------------------------
+    ("A10", "SDIO_CLK", OUT),       # PC12 SDMMC1_CK
+    ("B10", "SDIO_CMD", BI),        # PH2  SDMMC1_CMD
+    ("A8", "SDIO_D0", BI),          # PC8  SDMMC1_D0
+    ("B8", "SDIO_D1", BI),          # PC9  SDMMC1_D1
+    ("A9", "SDIO_D2", BI),          # PC10 SDMMC1_D2
+    ("B9", "SDIO_D3", BI),          # PC11 SDMMC1_D3
+    # --- USART1: GNSS; PPS -> TIM2_CH2 capture ----------------------------
+    ("P11", "UART1_TX", OUT),       # PA9  USART1_TX
+    ("R11", "UART1_RX", IN),        # PA10 USART1_RX
+    ("P14", "PPS_IN", IN),          # PA1  TIM2_CH2/TIM5_CH2 input capture
+    # --- UART4: inter-MCU link to BL54L15 (USART2_RX not bonded) ----------
+    ("P10", "UART2_TX", OUT),       # PA12 UART4_TX
+    ("R10", "UART2_RX", IN),        # PA11 UART4_RX
+    # --- USB HS (OTG1) -----------------------------------------------------
+    ("B5", "USB_DP", BI),           # OTG1_HSDP
+    ("A5", "USB_DM", BI),           # OTG1_HSDM
+    ("A6", "OTG1_TXRTUNE", PAS),    # 200R +/-1% to GND (Table 123 p219)
+    ("B4", "OTG1_ID", NCP),         # device-only port — ID unused
+    ("D6", "UCPD1_CC1", NCP), ("D7", "UCPD1_CC2", NCP),  # CC handled by CYPD3177
+    # second USB PHY unused
+    ("A3", "OTG2_HSDM", NCP), ("B3", "OTG2_HSDP", NCP),
+    ("A2", "OTG2_ID", NCP), ("D5", "OTG2_TXRTUNE", NCP),
+    ("C3", "RSVD_C3", NCP), ("A4", "RSVD_A4", NCP),  # "must be kept floating" (Table 18 fn4)
+    # --- camera MIPI CSI-2 (J_CAM DNP) -------------------------------------
+    ("R5", "CSI_CKP", BI), ("P5", "CSI_CKN", BI),
+    ("R6", "CSI_D0P", BI), ("P6", "CSI_D0N", BI),
+    ("R4", "CSI_D1P", BI), ("P4", "CSI_D1N", BI),
+    ("P7", "CSI_REXT", PAS),        # 200R +/-1% to GND (Table 122 p218)
+    ("A13", "CAM_XCLK", OUT),       # PE9 TIM1_CH1 (camera DNP)
+    ("C15", "CAM_RSTN", OUT),       # PE3
+    # --- PDM mic (ADF1) ----------------------------------------------------
+    ("D15", "PDM_CLK", OUT),        # PB6 ADF1_CCK1
+    ("E12", "PDM_DATA", IN),        # PB7 ADF1_SDI0
+    # --- analog / clocks ---------------------------------------------------
+    ("L4", "ADC_IN0", IN),          # PF3 ADC1_INP16 — AD8317 detector out
+    ("M11", "MCO_OUT", OUT),        # PA8 MCO1 — 8.192 MHz to ADS131M04
+    ("A7", "OSC_IN", IN),           # PH0 — HSE crystal (16-48 MHz, DS p13)
+    ("B7", "OSC_OUT", OUT),         # PH1
+    ("C1", "PC14_OSC32_IN", NCP),   # LSE unused (no 32k crystal fitted)
+    ("B1", "PC15_OSC32_OUT", NCP),
+    # --- debug -------------------------------------------------------------
+    ("R9", "SWDIO", BI),            # PA13 JTMS/SWDIO
+    ("R8", "SWCLK", IN),            # PA14 JTCK/SWCLK
+    # --- XSPI (octal NOR on XSPIM_P2 = dedicated PN port, boot source) -----
+    ("H15", "XSPI_D0", BI),         # PN2  XSPIM_P2_IO0
+    ("K15", "XSPI_D1", BI),         # PN3  XSPIM_P2_IO1
+    ("E14", "XSPI_D2", BI),         # PN4  XSPIM_P2_IO2
+    ("F15", "XSPI_D3", BI),         # PN5  XSPIM_P2_IO3
+    ("E15", "XSPI_D4", BI),         # PN8  XSPIM_P2_IO4
+    ("G14", "XSPI_D5", BI),         # PN9  XSPIM_P2_IO5
+    ("H14", "XSPI_D6", BI),         # PN10 XSPIM_P2_IO6
+    ("J14", "XSPI_D7", BI),         # PN11 XSPIM_P2_IO7
+    ("G15", "XSPI_CLK", OUT),       # PN6  XSPIM_P2_CLK
+    ("D14", "XSPI_CS_N", OUT),      # PN1  XSPIM_P2_NCS1
+    ("J15", "XSPI_DQS", BI),        # PN0  XSPIM_P2_DQS0
+    ("F14", "XSPI_NCLK", NCP),      # PN7  differential clk — unused (SDR/DTR NOR)
+    ("K14", "XSPI_NCS2", NCP),      # PN12 second CS — unused
+    # --- interrupt / data-ready inputs (R7: INT wired for every sensor) ----
+    ("D12", "INT_VL53", IN),        # PE8
+    ("B14", "INT_BNO", IN),         # PE1
+    ("B15", "DRDY_ADS", IN),        # PE2
+    ("A14", "INT_MAX", IN),         # PE0
+    ("D11", "INT_AS7058", IN),      # PE15
+    ("L1", "IRQ_A121", IN),         # PF2
+    ("K1", "DRDY_MMC", IN),         # PF4
+    ("K3", "INT_TMAG", IN),         # PF5
+    ("M2", "INT_TCS", IN),          # PF7
+    ("N1", "RDY_AS7331", IN),       # PF8
+    ("K2", "INT_AS7421", IN),       # PF10
+    ("N2", "INT_BMV", IN),          # PF11
+    ("P1", "INT_ENS", IN),          # PF12
+    # --- inter-MCU wake -----------------------------------------------------
+    ("E2", "WAKE_IN", IN),          # PC13 — WKUP/tamper pin, Standby-capable
+    ("N3", "WAKE_OUT", OUT),        # PF13
+    # --- misc GPIO ----------------------------------------------------------
+    ("L2", "EN_UV_REQ", OUT),       # PF14
+    ("M1", "EN_WHITE", OUT),        # PF15
+    ("M14", "RSTN_BNO", OUT),       # PG2
+    ("P15", "LPN_VL53", OUT),       # PG10
+    ("R13", "VCORE_SEL", OUT),      # PG13 — VOS-high (0.89V) request to core buck
+    # --- unused GPIO balls (kept NC; available for H3 reallocation) ---------
+    ("R14", "PA0_NC", NCP), ("P12", "PA2_NC", NCP), ("L15", "PA15_NC", NCP),
+    ("C14", "PB0_NC", NCP), ("B12", "PD1_NC", NCP), ("A12", "PE7_NC", NCP),
+    ("P9", "PG14_NC", NCP),
+], description="STM32N657X0 app MCU + NPU, VFBGA142 — real ball map (VERIFIED-DS DS14791 Rev 9 Table 18)")
+
+# HSE crystal for the N657 (USB HS PHY PLL + CSI/PLL reference; HSE range
+# 16-48 MHz per DS14791 p13 — 48 MHz matches the ST N6 reference design).
+# 3225 4-pad: 1/3 = crystal, 2/4 = GND. Load caps E0 (set per crystal CL).
+XTAL_3225 = mkpart("XTAL_3225", "X", [
+    (1, "X1", PAS), (2, "GND1", PWR), (3, "X2", PAS), (4, "GND2", PWR),
+], description="48 MHz HSE crystal, 3225 (N657 USB-HS/CSI clock reference)")
 
 # Octal xSPI NOR flash (MX25UW6445G-class, BGA24 / SOPB) — N6 is flashless.
 # pinout E0
@@ -167,14 +272,17 @@ BL54L15 = mkpart("BL54L15", "U", [
 # ============================================================================
 
 # VL53L8CH ToF 8x8 with CNH histograms, SPI mode.
-# VERIFIED-DS DS14161 (VL53L8CX) Table 3 p6-7: pin C1 SPI_I2C_N -> connect to
-# IOVDD via 47k pullup for SPI mode (to GND via 47k pulldown for I2C). There
-# is NO separate I2C_RST pin — C1 doubles as the I2C-interface reset (toggle
-# 0-1-0). Our I2C_RST model pin maps to GND-strapped RSVD (A6/A7). Real pads:
-# A1=GPIO1/INT, A2=LPn, A3=IOVDD, A4=SDA/MOSI, A5=SCL/MCLK, B7=CORE_1V8,
-# C2=NCS, C4=AVDD(3V3), C5=MISO, B4=thermal.
-# NOTE-ECO(H3): IOVDD is 1.2/1.8 V ONLY (p7) — currently fed 3V3_OPTICAL;
-# move IOVDD (+ CORE_1V8) to the 1V8 rail and level-shift or run SPI1 at 1.8V.
+# VERIFIED-DS DS14310 Rev 9 (real VL53L8CH DS) Table 3 p7: pin map is
+# IDENTICAL to the VL53L8CX anchor (DS14161) — A1=GPIO1/INT, A2=LPn,
+# A3=IOVDD, A4=SDA/MOSI, A5=SCL/MCLK, A6/A7=RSVD->GND, B1=GPIO2, B4=thermal
+# pad->GND (AN5897), B7=CORE_1V8, C1=SPI_I2C_N, C2=NCS, C3/C7=GND,
+# C4=AVDD(3.3V), C5=MISO, C6=RSVD->GND. SPI mode: C1 to IOVDD via 47k pullup;
+# NCS needs its own 47k pullup to IOVDD (Table 3). No separate I2C_RST pin —
+# C1 doubles as I2C-interface reset (toggle 0-1-0). Our I2C_RST model pin
+# lands on GND-strapped RSVD.
+# NOTE-ECO(H3): IOVDD is 1.2/1.8 V ONLY (DS14310 p1 features + Table 3 A3 —
+# re-confirmed on the CH-specific DS); currently fed 3V3_OPTICAL — move
+# IOVDD (+ CORE_1V8) to the 1V8 rail and level-shift or run SPI1 at 1.8V.
 VL53L8CH = mkpart("VL53L8CH", "U", _seq([
     ("AVDD", PWR), ("IOVDD", PWR), ("GND", PWR),
     ("SCLK", IN), ("MOSI", IN), ("MISO", TRI), ("NCS", IN),

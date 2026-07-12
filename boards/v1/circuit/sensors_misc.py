@@ -100,6 +100,19 @@ def build_sensors_misc():
     mic["SEL"] += GND            # data on falling edge
 
     # ---------------- camera FPC (VD66GY, DNP) -----------------------------
+    # VD66GY captured — VERIFIED-DS DS13838 Rev 9 (VB66GY/VD66GY, staged):
+    # bare-die sensor (115 bonding pads, Table 6/7 p15-16) -> the v1 FPC mates
+    # a MODULE built on it. Supplies p4/p15: VANA 2.8V, VDDIO 1.8V, VCORE
+    # 1.15V (core + CSI-2 drivers). Interface checks vs this connector:
+    #  * MIPI CSI-2 1 or 2 lanes, <=1.5 Gbps/lane (p2/p12) — 2-lane wiring
+    #    below is correct; N657 CSI PHY handles 2 lanes to 2.5G (DS14791).
+    #  * XSHUTDOWN reset ACTIVE LOW (Table 6) -> CAM_RSTN polarity correct.
+    #  * CLKIN external input clock required (Table 6) -> CAM_XCLK correct.
+    #  * I2C control (SDA/SCL, Table 6) -> CCI on I2C-A correct.
+    # NOTE-ECO(H3): FPC carries only 3V3_OPTICAL (pin 16) + 1V8 (pin 17) —
+    # the camera module must generate 2.8V and 1.15V locally (2x LDO on the
+    # module flex), or two pins of the reserved 19-24 group must be
+    # repurposed as 2V8/1V15 feeds. DNP in v1 — note only, no rewire.
     cam = J_CAM_24P(ref="J_CAM", footprint="Connector_FFC-FPC:Hirose_FH12-24S-0.5SH_1x24-1MP_P0.50mm_Horizontal")
     cam[1] += GND
     join("CSI_CKP", cam[2])

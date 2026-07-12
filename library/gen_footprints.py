@@ -176,20 +176,28 @@ generated.append(ball_grid(
     5.5, 5.2, 0.5, balls, 0.27))
 # antenna keepout note lives in descr of the board doc; AiP -> no copper above.
 
-# 2. VL53L8CH optical LGA16+thermal — pad NAMES from VL53L8CX DS14161 Table 3
-#    p6-7 (staged): rows A(1-7), B(1,4,7), C(1-7); body 6.4x3.0x1.75.
-#    Col/row pitch E0-estimate from body (drawing figure is an image).
+# 2. VL53L8CH optical LGA16+thermal — REAL geometry from the CH-specific DS:
+#    VL53L8CH DS14310 Rev 9 Fig 30 p33 (module substrate pad drawing, dims
+#    decoded from the rendered figure): 14 pads (A1-7/C1-7) 0.500 x 0.515,
+#    pitch 0.750 non-cumulative; B1/B7 0.535 x 0.500 at x = +/-2.57;
+#    B4 thermal 2.316 x 1.200 centered (thermal pad REQUIRED to GND, AN5897);
+#    A/C row centers +/-1.0575 from package center (2.115 c-c; pad-to-
+#    substrate margin 0.100 checks against the "0.100 +/-0.080" callout);
+#    substrate 6.2 x 2.83 under a 6.4 x 3.0 x 1.75 cap (p1). Land 1:1 (E1 —
+#    AN5897 land pattern not staged; overlay-verify at H3). Layout below =
+#    real top view rotated 180 deg (A row at top, A1 leftmost), matching the
+#    bottom-view Fig 30 mirrored.
 fp = FP("ST_VL53L8_LGA16",
         "ST VL53L8CH/CX ToF module, optical LGA16 + thermal pad",
-        "DS14161 Table 3 p6-7 pad names; body 6.4x3.0 p4; pitch E0-est 0.85/1.0")
-cp, rp = 0.85, 1.0
-for r, row in enumerate("ABC"):
+        "VL53L8CH DS14310 Rev 9 Fig 30 p33: pads 0.5x0.515 @0.75, rows +/-1.0575; "
+        "B1/B7 0.535x0.5 @+/-2.57; B4 2.316x1.2; body 6.4x3.0 p2", tier="E1")
+for r, row in enumerate("AC"):
+    y = -1.0575 if row == "A" else 1.0575
     for c in range(7):
-        num = f"{row}{c + 1}"
-        if row == "B" and c + 1 not in (1, 4, 7):
-            continue
-        w, h = (0.5, 0.5) if num == "B4" else (0.4, 0.6)
-        fp.pad(num, -3 * cp + c * cp, -rp + r * rp, w, h)
+        fp.pad(f"{row}{c + 1}", -2.25 + c * 0.75, y, 0.5, 0.515)
+fp.pad("B1", -2.57, 0, 0.535, 0.5)
+fp.pad("B7", 2.57, 0, 0.535, 0.5)
+fp.pad("B4", 0, 0, 2.316, 1.2)
 fp.body(6.4, 3.0)
 fp.pin1_dot(-3.5, -1.5)
 generated.append(fp.write())
@@ -291,14 +299,30 @@ generated.append(ball_grid(
     "ball-signal map pending full DS (NDA)",
     2.545, 2.815, 0.4, balls, 0.23, tier="E1"))
 
-# 11. STM32N657 VFBGA142 (DS14791 unavailable here). 0.5 mm pitch;
-#     PLACEHOLDER 12x12 serpentine fill of 142 numeric balls — REPLACE with
-#     real ball map before any routing (E0 hard gate).
-balls = [(str(i + 1), i % 12, i // 12) for i in range(142)]
+# 11. STM32N657 VFBGA142 — REAL ball map from DS14791 Rev 9: Table 18
+#     p88-112 (pin/ball definition, VFBGA142 column; 142 balls, no dupes,
+#     cross-checked vs Fig 7 ballout p87) + Fig 67/Table 128 p235-236:
+#     body 8.00 x 8.00, pitch e = 0.50 BSC, grid 15x15 (rows A-R skipping
+#     I/O/Q, cols 1-15), D1=E1=7.00 (14 pitches), ball dia b = 0.26-0.36
+#     (0.31 typ) -> NSMD land O0.27 (0.55*pitch class; AN5967 land/via-in-pad
+#     guidance not staged — overlay-verify at H3 fanout).
+N657_BALLS = (
+    "A1 A2 A3 A4 A5 A6 A7 A8 A9 A10 A11 A12 A13 A14 A15 B1 B2 B3 B4 B5 B6 B7 "
+    "B8 B9 B10 B11 B12 B13 B14 B15 C1 C2 C3 C13 C14 C15 D1 D2 D4 D5 D6 D7 D8 "
+    "D9 D10 D11 D12 D14 D15 E1 E2 E4 E12 E14 E15 F1 F2 F3 F4 F12 F14 F15 "
+    "G1 G2 G3 G12 G14 G15 H1 H2 H3 H12 H14 H15 J1 J2 J3 J12 J14 J15 "
+    "K1 K2 K3 K4 K12 K14 K15 L1 L2 L4 L12 L14 L15 "
+    "M1 M2 M4 M5 M6 M7 M8 M9 M10 M11 M12 M14 M15 N1 N2 N3 N13 N14 N15 "
+    "P1 P2 P3 P4 P5 P6 P7 P8 P9 P10 P11 P12 P13 P14 P15 "
+    "R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12 R13 R14 R15").split()
+assert len(N657_BALLS) == 142
+N657_ROWS = "ABCDEFGHJKLMNPR"
+balls = [(b, int(b[1:]) - 1, N657_ROWS.index(b[0])) for b in N657_BALLS]
 generated.append(ball_grid(
-    "ST_VFBGA142_PLACEHOLDER", "STM32N657X0 VFBGA142 0.5mm",
-    "RS bom-v1.md: body 8x8 E0-unverified; BALL MAP PLACEHOLDER (numeric 12x12 fill)",
-    8.0, 8.0, 0.5, balls, 0.27))
+    "ST_VFBGA142", "STM32N657X0 VFBGA142 0.5mm — real 142-ball map",
+    "DS14791 Rev 9 Table 18 p88-112 (ball map) + Fig 67/Table 128 p235-236 "
+    "(8x8 body, e=0.5, 15x15 A-R x 1-15, ball 0.31 typ)",
+    8.0, 8.0, 0.5, balls, 0.27, tier="E1"))
 
 # 12. Octal NOR BGA24 (MX25UW6445G-class; no DS here). 6x4 @ 1.0 mm numeric.
 balls = [(str(i + 1), i % 6, i // 6) for i in range(24)]

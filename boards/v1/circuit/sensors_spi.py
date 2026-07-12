@@ -23,12 +23,19 @@ def build_sensors_spi():
     tof["SCLK"] += sck
     tof["MOSI"] += mosi
     tof["MISO"] += miso
-    tof["NCS"] += Net.fetch("CS_VL53_N")
-    # comm-mode straps in copper. VERIFIED-DS DS14161 p7: SPI mode = SPI_I2C_N
-    # (pad C1) pulled to IOVDD with 47k; NCS gets 47k pullup; no separate
-    # I2C_RST pin exists (model pin lands on GND-strapped RSVD).
-    tof["SPI_I2C_N"] += v_opt          # HIGH -> SPI   VERIFIED-DS p7
-    tof["I2C_RST"] += GND              # RSVD-to-GND   VERIFIED-DS p7
+    cs_vl53 = Net.fetch("CS_VL53_N")
+    tof["NCS"] += cs_vl53
+    # comm-mode straps — VERIFIED-DS DS14310 Rev 9 (VL53L8CH-specific DS)
+    # Table 3 p7, identical to the CX anchor: SPI mode = SPI_I2C_N (pad C1)
+    # "connect to IOVDD with 47k pullup resistor" (was a direct rail tie —
+    # changed to the DS-specified 47k); NCS requires its own 47k pullup to
+    # IOVDD (also keeps the part deselected while the N657 boots); no
+    # separate I2C_RST pin exists (model pin lands on GND-strapped RSVD).
+    spi_sel = Net.fetch("VL53_SPI_SEL")
+    spi_sel += tof["SPI_I2C_N"]
+    pullup(spi_sel, v_opt, "47k")      # HIGH -> SPI   VERIFIED-DS DS14310 p7
+    pullup(cs_vl53, v_opt, "47k")      # NCS pullup    VERIFIED-DS DS14310 p7
+    tof["I2C_RST"] += GND              # RSVD-to-GND   VERIFIED-DS DS14310 p7
     tof["LPN"] += Net.fetch("LPN_VL53")
     int_vl53 = Net.fetch("INT_VL53")
     tof["INT"] += int_vl53

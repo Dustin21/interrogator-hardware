@@ -1,4 +1,4 @@
-# VERIFY closure log — H2 stage-2 (+ H2.5 rounds 2-3)
+# VERIFY closure log — H2 stage-2 (+ H2.5 rounds 2-3, H2.6 final wave)
 
 **Date:** 2026-07-12 · Method: `pdftotext` (+ `pdftoppm` page renders for
 drawing figures) over the STAGED datasheet PDFs in
@@ -16,6 +16,14 @@ green after all circuit fixes below.
 LMP91000 SNAS506I, BL54L15 EZ-DS v1.9) closed the last 3 closable items.
 2 more footprints promoted to E1; LMP91000 and BL54L15 symbols renumbered
 to real package pins (netlist regenerated). ERC 0/0, 19/19 green.
+
+**H2.6 final wave (items 30+):** the three ST datasheets landed (DS14791 =
+STM32N657, DS14310 = VL53L8CH, DS13838 = VD66GY). The N657 was rebuilt on the
+real 142-ball VFBGA142 map — **the routing blocker is closed**; the supply
+scheme audit it enabled found 3 real power bugs (core buck divider = 1.145 V,
+3V3 divider = 2.59 V, missing HSE crystal) plus the PWR_ON/sequencing fixes.
+VL53L8CH closed on its own DS; VD66GY captured (DNP). ERC 0/0, 19/19 green;
+`interrogator_v1.kicad_pcb` declared stale pending the H3 rebuild.
 
 ## Closed (datasheet-verified)
 
@@ -64,16 +72,26 @@ Bonus extractions used for footprints: A121 full 50-ball named map (DS p8-9)
 | 28 | LMP91000 pin map + addr | Real WSON-14 map: **1 DGND, 2 MENB (act-low), 3 SCL, 4 SDA, 5 NC, 6 VDD, 7 AGND, 8 VOUT, 9 C2, 10 C1, 11 VREF, 12 WE, 13 RE, 14 CE, DAP→AGND**. Old model was 11 sequentially-numbered pins with one GND and NO VREF/NC — netlist binds pads by number, so the WSON-14 would have been scrambled (SCL on VOUT etc.). Addr **0x48 confirmed** (fixed 1001000). MENB may tie to GND when sole LMP91000 on the bus. REFCN default 0x20 → REF_SOURCE = **internal (VDD) reference** | SNAS506I p3 (Pin Functions), p20 (§7.5.1 addr, §7.5.2 MENB), p22 (§7.6.4 REFCN) | **Bug fixed**: symbol renumbered to real pins; AGND/DGND split (both → GND); **VREF added** (0R to AIR rail — internal-ref register default, external-ref option preserved for H3); NC pin 5 + DAP-as-pin-15 EP added; MENB→GND retained (legal per §7.5.2). Manifest: WSON-14 entry → E1 notes |
 | 29 | BL54L15 pad map + land pattern + antenna keepout | Full **39-pad map** extracted; GND = 1/16/27/39, VDD_nRF = 26 (1.7–3.5 V), SWDIO/SWDCLK/NRESET = 5/6/7, UARTE00 TXD/RXD = 3 (P2.08)/4 (P2.07), I2C = 10 (P2.01, dedicated CLK pin)/9 (P2.00, adjacent per Note 2), NFC = 15/14, XL1/XL2 = 25/24 (optional 32 kHz crystal — reserved NC), Geiger count in = 31 (P0.04, GRTC clock-capable); all EN/INT/GPIO assignments as wired (P0.x/P1.x/P2.x per lib_parts comments). Land pattern: pads **0.45×0.60 @ 0.75** in a U (bottom 1-16 span 11.25, pin 1 at antenna end; left 17-27 span 7.50; top 28-39 span 8.25); module 14×10. **Antenna keep-out: 5.00×8.50 no-copper-any-layer under the antenna end + ≥15 mm beyond BOTH board edges; module must sit on the host-PCB edge** (dev-board reference ~5×28.6) | EZ-DS-BL54L15 v1.9 Table 1 p10-13 (pin map + notes), Fig 11 p25 (land + keep-out), §7.3.1 p21, §7.3.2 p22 (metal ≥20-40 mm) | Symbol renumbered from sequential E0 to real pads; **3 missing GND pads + XL1/XL2 added** (crystal pads NC with reservation comment). Footprint: 32-pad numeric castellated placeholder replaced by real 39-pad E1 land with keep-out drawn on Dwgs.User. **ECO-H3**: keep-out + mandatory board-edge placement constrain the radio_ble floorplan corner — verify at zone repack |
 
-## Still open — with reasons (updated 2026-07-12, round 3)
+## Closed — H2.6 final wave (2026-07-12, ST datasheet drop)
+
+| # | Item | Verdict | Evidence | Circuit action |
+|---|------|---------|----------|----------------|
+| 30 | STM32N657 VFBGA142 ball map (**was the routing blocker**) | **Full 142-ball map extracted** (count = 142 exactly, no dupes; grid 15×15 rows A-R × cols 1-15, 0.5 pitch, body 8×8, D1/E1 7.00, ball Ø0.31 typ). Package constrains peripherals: **I2C1 not bonded** (bus A → I2C2 PB10/PB11, bus B → I2C4 PE13/PE14); **USART2_RX not bonded** (sentinel link → UART4 PA12/PA11); SDMMC1 CMD is on **PH2** (not PD2); XSPI boot flash = dedicated PN port (XSPIM_P2, DQS0/NCS1/IO0-7/CLK = PN0/PN1/PN2-5+PN8-11/PN6); **BOOT1 = PA6** (non-dedicated boot pin §3.6). IO domains (Table 18 fn 1/6/9): GPIO→VDD, SDMMC group→VDDIO4, PN port→VDDIO3. Supply audit (Table 24 p139, §3.4 p25-27): VDDCORE 0.782-0.842 V VOS-low / 0.858-0.921 V VOS-high (800 MHz); **PWR_ON handshake required with an external VCORE supply** (Fig 3 p27); SMPS bypass config = VDDSMPS/VDDA18PMU still fed 1.8 V, VLXSMPS/VFBSMPS floating (Fig 2 p26); "VDD must be present before any other supply" (Table 24 fn1); USB RTXRTUNE **200 Ω** (Table 123 p219), CSI REXT **200 Ω** (Table 122 p218); HSE 16-48 MHz (p13) | DS14791 Rev 9: Table 18 p88-112, Fig 7 p87, Table 24 p139-140, §3.4.4/3.4.7 p26-27, §3.6 p14, Tables 122/123 p218-219, Fig 67 + Table 128 p235-236 | Symbol rebuilt with all 142 real balls (24 NC modeled). **5 real bugs fixed:** (1) core buck FB 100k/110k = **1.145 V** on a 0.921 V-max rail → 34.8k/100k = 0.809 V + Q_VSEL/255k leg → 0.891 V under `N6_VCORE_SEL` (800 MHz overdrive); (2) 3V3_SYS FB 332k/100k = **2.59 V** → 449k/100k = 3.294 V; (3) 1V8 FB 187k/100k = 1.72 V → 200k/100k = 1.800 V (TPS62823/TLV62568 VFB=0.6 V re-verified in their DS); (4) **no HSE crystal existed** — USB-HS PHY PLL can't run from HSI RC → X_HSE 48 MHz 3225 added on PH0/PH1; (5) core buck EN moved EN_N6 → **PWR_ON** (D2) per Fig 3, 1V8 EN moved EN_N6 → 3V3_SYS rail (VDD-first sequencing). VBAT→3V3_AON (RTC alive in ambient), PDR_ON→1V8, V08CAP cap added, TXRTUNE/REXT 200 Ω fitted. Footprint: numeric placeholder **deleted** → `generated/ST_VFBGA142` E1. **Board file now stale — H3 rebuild** (noted in H2_REPORT) |
+| 31 | VL53L8CH exact DS (was anchored on VL53L8CX) | **CH-specific DS confirms the CX anchor 1:1**: pin map identical (Table 3 p7 — A1 GPIO1/INT, A2 LPn, A3 IOVDD, A4 SDA/MOSI, A5 SCL/MCLK, A6/A7 RSVD→GND, B1 GPIO2, B4 thermal→GND, B7 CORE_1V8, C1 SPI_I2C_N, C2 NCS, C4 AVDD 3.3V, C5 MISO); **IOVDD 1.2/1.8 V only re-confirmed** (ECO-H3 stands); SPI strap = C1 **via 47 kΩ** to IOVDD (not a hard tie), NCS needs its own 47 k pullup. Fig 30 p33 gives the real substrate pad drawing: 14 pads 0.500×0.515 @ 0.750 non-cumulative, rows 2.115 c-c, B1/B7 0.535×0.500, B4 thermal 2.316×1.200, margins check vs the 0.100 pad-to-substrate callout | VL53L8CH DS14310 Rev 9 p1-2, Table 3 p7, Fig 30 p33, §10 notes p32 (thermal pad required, AN5897) | Straps corrected: SPI_I2C_N direct tie → 47 k pullup; 47 k pullup added on CS_VL53_N. Footprint `ST_VL53L8_LGA16` regenerated from the real drawing (pitch was E0-guessed 0.85/1.0 → real 0.75/2.115) → **E1** |
+| 32 | VD66GY capture (DNP in v1) | Part is a **bare die** (115 bonding pads) — the FPC mates a module built on it. Supplies **2.8 V (VANA) / 1.8 V (VDDIO) / 1.15 V (VCORE)**; MIPI CSI-2 **1-2 lanes ≤1.5 Gbps/lane** (2-lane wiring OK, N657 PHY OK); **XSHUTDOWN active-low** (CAM_RSTN polarity ✓); **CLKIN external clock required** (CAM_XCLK ✓); I2C control (CCI on I2C-A ✓) | VD66GY DS13838 Rev 9 p2/p4 (Table 2), p12, Table 6 p15 | No rewire (DNP). **ECO-H3 note** on J_CAM: FPC carries only 3V3_OPTICAL + 1V8 — module must carry local 2.8 V + 1.15 V LDOs, or repurpose two reserved pins (19-24) as rail feeds |
+
+## Still open — with reasons (updated 2026-07-12, H2.6)
 
 | Item | Status / needed file |
 |------|----------------------|
-| STM32N657 VFBGA142 ball map (**blocks routing**) | DS14791 still pending (ST browser download queued) → `STM32N657/datasheet/DS14791*.pdf` |
-| AS7058 ball-SIGNAL map + I2C addr (0x30 unconfirmed) | Short DS DS001085 verified the A1..G6 grid geometry (footprint E1) but **lacks the ball map and the address — full DS DS001573 is NDA-gated, FAE contact queued** |
-| VL53L8CH exact DS | Still anchored on the VL53L8CX DS14161 (pads/straps verified there); VL53L8CH-specific DS nice-to-have |
-| VD66GY | DNP in v1 — no action |
+| AS7058 ball-SIGNAL map + I2C addr (0x30 unconfirmed) | Short DS DS001085 verified the A1..G6 grid geometry (footprint E1) but **lacks the ball map and the address — full DS DS001573 is NDA-gated, FAE contact queued**. Only remaining open item. |
 
 H3 footprint touch-ups carried (not blocking, tracked in manifest notes):
 CYPD3177 EP 2.6 vs DS 2.75 typ; BQ25620 RYK land = E1 approximation
 (overlay-verify vs TI 4226526/A); BL54L15/SGX-4CO micro-offsets per DS
-Note 5 ("may modify land dimensions") — overlay-verify at H3.
+Note 5 ("may modify land dimensions") — overlay-verify at H3. New at H2.6:
+**AN5967** (N657 cap counts/values, via-in-pad + land guidance for the
+VFBGA142 fanout) and **AN5897** (VL53L8 land pattern fine print) should be
+staged before H3; N657 decoupling counts and the 48 MHz crystal load caps
+(10 pF) are E0 until then. `interrogator_v1.kicad_pcb` is stale (placeholder
+N657 footprint) — H3's first act is the `build_board.py` rebuild.

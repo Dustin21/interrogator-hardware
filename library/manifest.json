@@ -6,10 +6,10 @@
  "coverage": {
   "components_json_parts": 38,
   "footprint_harvested": 20,
-  "footprint_generated_E0": 7,
+  "footprint_generated_E0": 5,
   "footprint_to_generate": 0,
   "coverage": "38/38",
-  "footprint_generated_E1": 11
+  "footprint_generated_E1": 13
  },
  "parts": [
   {
@@ -25,10 +25,10 @@
    "components_json_name": "VL53L8CH ToF 8x8 raw",
    "part": "VL53L8CH",
    "symbol_source": "skidl-custom",
-   "footprint_source": "generated-E0",
+   "footprint_source": "generated-E1",
    "footprint_file": "generated/ST_VL53L8_LGA16.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "Pad names from VL53L8CX DS14161 Table 3 p6-7 (staged); col/row pitch E0-estimated from 6.4x3.0 body \u2014 overlay-verify vs Fig.33 before fab. ECO-H3: IOVDD is 1.2/1.8V only."
+   "evidence_tier": "E1",
+   "verify_notes": "Pad names + REAL land geometry now from the CH-specific DS14310 Rev 9: Fig 30 p33 (pads 0.5x0.515 @0.75 non-cumulative, rows +/-1.0575, B1/B7 0.535x0.5 @+/-2.57, B4 thermal 2.316x1.2 -> GND per AN5897); pin map re-verified identical to the CX anchor (Table 3 p7). Land drawn 1:1 -- AN5897 land pattern not staged, overlay-verify at H3. ECO-H3: IOVDD is 1.2/1.8V only (re-confirmed)."
   },
   {
    "components_json_name": "TCS3448 14ch VIS",
@@ -178,10 +178,10 @@
    "components_json_name": "STM32N657 VFBGA142",
    "part": "STM32N657X0",
    "symbol_source": "skidl-custom",
-   "footprint_source": "generated-E0",
-   "footprint_file": "generated/ST_VFBGA142_PLACEHOLDER.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "VFBGA142 0.5mm; ball map is a NUMERIC 12x12 PLACEHOLDER \u2014 must be replaced from DS14791 before any routing."
+   "footprint_source": "generated-E1",
+   "footprint_file": "generated/ST_VFBGA142.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "REAL 142-ball map from DS14791 Rev 9 Table 18 p88-112 (VFBGA142 column; cross-checked vs Fig 7 ballout p87); body 8x8, e=0.5, 15x15 grid A-R x 1-15, ball 0.31 typ (Fig 67/Table 128 p235-236); NSMD land O0.27. AN5967 land/via-in-pad guidance not staged -- overlay-verify at H3 fanout. Placeholder 12x12 numeric grid DELETED; interrogator_v1.kicad_pcb is stale until the H3 rebuild."
   },
   {
    "components_json_name": "Octal NOR flash",
@@ -459,6 +459,14 @@
    "footprint_file": "RF_Antenna.pretty/Antenova_SR4G013_GPS.kicad_mod",
    "evidence_tier": "E0",
    "verify_notes": "Official Antenova SR4G013 GNSS antenna harvested (P/N selection E0); generic generated/GNSS_CHIP_ANT_3216.kicad_mod kept as fallback."
+  },
+  {
+   "part": "X_HSE 48MHz crystal (3225)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Crystal.pretty/Crystal_SMD_3225-4Pin_3.2x2.5mm.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "H2.6 ADD: N657 HSE reference (16-48 MHz per DS14791 p13; 48 MHz matches ST N6 ref design) -- USB HS PHY PLL cannot run from HSI RC. Load caps 10pF E0, set per chosen crystal CL."
   }
  ]
 }

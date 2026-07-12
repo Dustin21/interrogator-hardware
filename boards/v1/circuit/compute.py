@@ -4,7 +4,7 @@ from pathlib import Path
 
 from skidl import Net, Part, TEMPLATE  # NC is a skidl builtin
 
-from lib_parts import STM32N657, NOR_OCTAL, BL54L15
+from lib_parts import STM32N657, NOR_OCTAL, BL54L15, XTAL_3225
 from util import join, C, R, decouple, gnd, tp, pullup
 
 ESPRESSIF_SYM = str(Path(__file__).resolve().parents[3]
@@ -19,14 +19,84 @@ def build_compute():
     aon = Net.fetch("3V3_AON")
 
     # ================= STM32N657 application MCU ==========================
-    n6 = STM32N657(ref="U_N657", footprint="generated:ST_VFBGA142_PLACEHOLDER")
-    n6["VDD_CORE1 VDD_CORE2"] += vcore
-    n6["VDD18_1 VDD18_2"] += v18
-    n6["VDD33_1 VDD33_2 VDD33_3 VDD33_4"] += v3sys
-    n6["VSS1 VSS2 VSS3 VSS4"] += GND
-    decouple(vcore, n=2)
-    decouple(v18, n=2)
+    # Real VFBGA142 ball map — VERIFIED-DS DS14791 Rev 9 Table 18 p88-112
+    # (see lib_parts.py). Supply plan (Table 24 p139 + §3.4 p25-27):
+    #   VDDCORE (M5-M9)  <- VDD_CORE_N6 buck: 0.81V at boot (VOS low), raised
+    #                       to 0.89V by VCORE_SEL for 800MHz overdrive.
+    #   VDD (F12/G12/H12), VDDIO4 (D8, SDMMC->ESP32), VDD33USB <- 3V3_SYS.
+    #   VDDIO3 (K12/L12) <- 1V8 (XSPI NOR runs at 1.8V).
+    #   VDDA18* group + VDDSMPS (bypass, Fig 2 p26) + PDR_ON <- 1V8.
+    #   VDDCSI <- VDD_CORE_N6 (range = VDDCORE, Table 24).
+    #   VBAT <- 3V3_AON (backup domain alive in ambient mode).
+    # Cap counts/values per-rail: AN5967 not staged — E0, verify at H3.
+    n6 = STM32N657(ref="U_N657", footprint="generated:ST_VFBGA142")
+    n6["VDDCORE1 VDDCORE2 VDDCORE3 VDDCORE4 VDDCORE5"] += vcore
+    n6["VDDCSI"] += vcore
+    n6["VDD1 VDD2 VDD3"] += v3sys
+    n6["VDDIO4 VDD33USB"] += v3sys
+    n6["VDDIO3_1 VDDIO3_2"] += v18
+    n6["VDDA18CSI VDDA18PLL VDDA18USB VDDA18ADC VDDA18AON VDDA18PMU"] += v18
+    n6["VDDSMPS1 VDDSMPS2 VDDSMPS3"] += v18   # bypass config, Fig 2 p26
+    n6["VSSSMPS1 VSSSMPS2 VSSSMPS3"] += GND
+    n6["VLXSMPS1 VLXSMPS2 VLXSMPS3"] += NC    # SMPS off/bypass — no coil
+    n6["VFBSMPS"] += NC
+    n6["VSS1 VSS2 VSS3 VSS4 VSS5 VSS6 VSS7 VSS8"] += GND
+    n6["VSSA VSSAON VSSAPMU"] += GND
+    n6["PDR_ON"] += v18                       # PDR enabled (1.62-1.98V, Table 24)
+    # V08CAP: backup-regulator output — external cap only (value per AN5967, E0)
+    v08 = Net.fetch("N6_V08CAP")
+    v08 += n6["V08CAP"]
+    c08 = C("1uF")
+    v08 += c08[1]
+    GND += c08[2]
+    # VBAT backup domain from the always-on rail (RTC keeps time with EN_N6 off)
+    n6["VBAT"] += aon
+    decouple(aon, n=1)
+    # ADC reference pair: VREF+ <- 1V8 (<= VDD18ADC, Table 24), VREF- <- GND
+    n6["VREF_P"] += v18
+    n6["VREF_N"] += GND
+    decouple(v18, n=1)
+    # PWR_ON handshake: N6 requests the external VCORE buck (§3.4.7 Fig 3
+    # p27 — device startup with VCORE from an external SMPS). Net consumed
+    # by U_CORE EN in power.py; 100k pulldown keeps the buck off during VDD
+    # ramp. VCORE_SEL switches the buck divider 0.81V -> 0.89V (VOS high).
+    rpo = R("100k")
+    join("N6_PWR_ON", n6["PWR_ON"], rpo[1])
+    GND += rpo[2]
+    join("N6_VCORE_SEL", n6["VCORE_SEL"])
+    decouple(vcore, n=4, bulk_uF=10)          # 5 VDDCORE balls (AN5967 E0)
+    decouple(v18, n=4)                        # VDDA18 group + VDDIO3
     decouple(v3sys, n=4)
+    # USB PHY / CSI PHY reference resistors — 200R 1% to GND
+    # VERIFIED-DS DS14791 Table 123 p219 (RTXRTUNE) + Table 122 p218 (REXT)
+    rtx = R("200R 1%")
+    n6["OTG1_TXRTUNE"] += rtx[1]
+    GND += rtx[2]
+    rcsi = R("200R 1%")
+    n6["CSI_REXT"] += rcsi[1]
+    GND += rcsi[2]
+    # HSE crystal: 48 MHz (HSE range 16-48 MHz, DS p13) — required reference
+    # for the USB HS PHY PLL + CSI PLL; there was NO crystal in the stage-1
+    # model (HSI RC is not a legal USB-HS reference). Load caps E0.
+    xt = XTAL_3225(ref="X_HSE", footprint="Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm")
+    xt.value = "48MHz"
+    join("N6_OSC_IN", n6["OSC_IN"], xt["X1"])
+    join("N6_OSC_OUT", n6["OSC_OUT"], xt["X2"])
+    xt["GND1"] += GND
+    xt["GND2"] += GND
+    cx1, cx2 = C("10pF"), C("10pF")
+    join("N6_OSC_IN", cx1[1])
+    join("N6_OSC_OUT", cx2[1])
+    GND += cx1[2], cx2[2]
+    # LSE not fitted — PC14/PC15 stay NC (input-only, DS Table 18)
+    n6["PC14_OSC32_IN"] += NC
+    n6["PC15_OSC32_OUT"] += NC
+    # unused second USB PHY, CC (external CYPD3177), reserved + spare GPIO
+    n6["OTG1_ID UCPD1_CC1 UCPD1_CC2"] += NC
+    n6["OTG2_HSDM OTG2_HSDP OTG2_ID OTG2_TXRTUNE"] += NC
+    n6["RSVD_C3 RSVD_A4"] += NC               # keep floating (Table 18 fn4)
+    n6["XSPI_NCLK XSPI_NCS2"] += NC
+    n6["PA0_NC PA2_NC PA15_NC PB0_NC PD1_NC PE7_NC PG14_NC"] += NC
 
     # SPI1 sensor bus
     join("SPI1_SCK", n6["SPI1_SCK"])
@@ -42,12 +112,17 @@ def build_compute():
     # see idle-high bus only when their domain is also on — level note: all
     # bus devices are 3.3V-IO parts except MAX30102 (VERIFY, abs-max OK) and
     # ENS161/A121 (VDDIO pins fed from 3.3V domains).
+    # Bus A = I2C2 (PB10/PB11), bus B = I2C4 (PE13/PE14) — I2C1 is not bonded
+    # on VFBGA142 (VERIFIED-DS DS14791 Table 18: only I2C1_SMBA on PB4).
+    # Note: no ball in the Table 18 dump carries the "_f" (Fm+ 20mA drive)
+    # I/O flag — 1MHz on bus A relies on the 2.2k pullups; confirm rise
+    # times at H3 bring-up (peripheral timing supports Fm+ regardless).
     i2ca_sda, i2ca_scl = Net.fetch("I2CA_SDA"), Net.fetch("I2CA_SCL")
     i2cb_sda, i2cb_scl = Net.fetch("I2CB_SDA"), Net.fetch("I2CB_SCL")
-    n6["I2C1_SDA"] += i2ca_sda
-    n6["I2C1_SCL"] += i2ca_scl
-    n6["I2C2_SDA"] += i2cb_sda
-    n6["I2C2_SCL"] += i2cb_scl
+    n6["I2CA_SDA"] += i2ca_sda
+    n6["I2CA_SCL"] += i2ca_scl
+    n6["I2CB_SDA"] += i2cb_sda
+    n6["I2CB_SCL"] += i2cb_scl
     pullup(i2ca_sda, v3sys, "2.2k")   # 2.2k for 1MHz Fm+ on I2C-A
     pullup(i2ca_scl, v3sys, "2.2k")
     pullup(i2cb_sda, v3sys, "4.7k")   # 400kHz on I2C-B
@@ -93,6 +168,16 @@ def build_compute():
     boot += rboot[1]
     GND += rboot[2]
     tp(boot)
+    # BOOT1 (= PA6 default boot pin, VERIFIED-DS DS14791 §3.6 p14): strap
+    # low -> external-flash boot from XSPI NOR; testpoint allows forcing
+    # serial/dev boot. PA6 is reserved as strap-only (not reused for SPI —
+    # it is sampled at reset release).
+    boot1 = Net.fetch("N6_BOOT1")
+    boot1 += n6["BOOT1"]
+    rboot1 = R("10k")
+    boot1 += rboot1[1]
+    GND += rboot1[2]
+    tp(boot1)
 
     # Interrupt fan-in
     for s in ("INT_VL53", "INT_BNO", "DRDY_ADS", "INT_MAX", "INT_AS7058",

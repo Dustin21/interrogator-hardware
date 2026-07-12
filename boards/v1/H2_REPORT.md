@@ -229,10 +229,29 @@ outline valid closed polygon with 1500–2600 mm² sanity, board file loads with
 Edge.Cuts + ≥30 footprints + DRC baseline captured. **Full suite: 19/19
 passed** (11 ingest + 8 H2).
 
+## H2.6 update (2026-07-12) — N657 ball map landed, board file now STALE
+
+DS14791 Rev 9 arrived: the STM32N657 model was rebuilt on the **real 142-ball
+VFBGA142 map** (Table 18) and `ST_VFBGA142_PLACEHOLDER` (numeric 12×12 grid —
+wrong ball count layout AND wrong refs) was **deleted**, replaced by
+`generated/ST_VFBGA142` (E1, 15×15 A-R×1-15 sparse grid). Consequence:
+**`board/interrogator_v1.kicad_pcb` is stale** — it still embeds the
+placeholder footprint and pre-H2.6 netlist. Do NOT trust it; rebuilding via
+`build_board.py` is H3's first act (per plan). Netlist + ERC + tests are the
+source of truth in the meantime. Also landed in H2.6: real VDDCORE plan
+(0.81 V boot / 0.89 V VOS-high via `N6_VCORE_SEL`), `PWR_ON`-gated core buck,
+VDD-first rail sequencing, HSE crystal add, three buck FB-divider value bugs
+fixed (core would have received **1.145 V** — over the 0.921 V max),
+VL53L8CH closed on its own DS (DS14310), VD66GY captured (DNP notes).
+AN5967 (N6 hardware getting-started) and AN5897 (VL53L8 integration) are the
+two remaining app notes worth staging before H3 fanout (cap counts,
+via-in-pad, land fine print).
+
 ## NEXT (H3 routing)
 
-1. Drop in DS14791 → replace `ST_VFBGA142_PLACEHOLDER` with the real ball
-   map; renumber E0 logical pins to package pads (kills the 392 unbound pads).
+1. ~~Drop in DS14791 → replace `ST_VFBGA142_PLACEHOLDER`~~ **DONE at H2.6**
+   (real ball map, E1 footprint). First H3 act: re-run `build_board.py`
+   against the new netlist/footprints (board file stale, see above).
 2. Execute the two ECOs: A121 VDIG/VRX/VTX → 1V8; VL53L8CH IOVDD/CORE_1V8 →
    1V8 (level-shift or run SPI1 domain at 1.8 V).
 3. Placement refinement: absorb the 77 overlap-fallback parts (decouplers to

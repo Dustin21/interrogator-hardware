@@ -3,9 +3,13 @@
 VBAT (1S LiPo, J_BATT) -> BQ29700+dual-NFET protection (low-side)
  -> BQ25620 charger/powerpath (VBUS via CYPD3177 USB-C PD sink) -> VSYS
 VSYS -> TPS62840 -> 3V3_AON     (always-on sentinel rail, 60nA IQ)
-VSYS -> TPS62823 -> VDD_CORE_N6 (N657 core, EN_N6-gated)
+VSYS -> TPS62823 -> VDD_CORE_N6 (N657 core 0.81/0.89V, gated by N6 PWR_ON
+                                 handshake per DS14791 Fig 3; VOS-high leg
+                                 switched by N6_VCORE_SEL)   ** H2.6 fix **
 VSYS -> TPS62823 -> 3V3_SYS     (main 3.3V, EN_N6-gated)  ** STAGE-1 ADD **
-VSYS -> TLV62568 -> 1V8         (N657 VDD18 / NOR / ENS161 core, EN_N6-gated)
+VSYS -> TLV62568 -> 1V8         (N657 VDDA18*/VDDIO3 / NOR / ENS161 core;
+                                 EN from 3V3_SYS rail — VDD-first sequencing
+                                 per DS14791 Table 24 fn1)   ** H2.6 fix **
 3V3_SYS -> 6x TPS22916 -> 3V3_{OPTICAL,AIR,CONTACT,RADAR,GNSS,WIFI} (EN_* from sentinel)
 VSYS    -> TPS22916 #7 -> VACC (pogo accessory power, EN_ACC)      ** STAGE-1 ADD **
 
@@ -21,7 +25,7 @@ from skidl import Net, POWER
 
 from lib_parts import (CYPD3177, BQ25620, BQ27427, BQ29700, DUAL_NFET,
                        TPS62840, TPS62823, TLV62568, TPS22916, J_BATT,
-                       USB_C_16P)
+                       USB_C_16P, NFET_SOT23)
 from util import join, C, R, L, decouple, gnd, tp
 
 
@@ -238,18 +242,40 @@ def build_power():
     vcore.drive = POWER  # L/C buck output
     # TPS62823 — VERIFIED-DS SLVSDV6C p3: no MODE pin exists (stage-1 model
     # had a phantom one); AGND+PGND to GND, PG/NC left floating per DS.
+    # N657 VDDCORE — VERIFIED-DS DS14791 Table 24 p139: SoC Run VOS low =
+    # 0.782-0.842V (0.81 typ), VOS high (800MHz overdrive) = 0.858-0.921V
+    # (0.89 typ). The stage-1 100k/110k divider gave 1.145V (VFB=0.6V,
+    # SLVSDV6C p5) — OVER the 0.921V operating max: REAL BUG, fixed.
+    # Two-level divider: 34.8k/100k -> 0.809V at boot (VOS low, legal in
+    # every mode); N6 GPIO N6_VCORE_SEL switches a 255k leg in parallel
+    # (via Q_VSEL) -> 0.891V before firmware raises VOS high for 800MHz.
+    # EN comes from N6_PWR_ON (DS14791 §3.4.7 Fig 3 p27: with an external
+    # VCORE supply the N657 asserts PWR_ON once VDD/VDDA18AON are valid and
+    # the external regulator must then bring VDDCORE up) — NOT from EN_N6
+    # directly; 100k pulldown on the net (compute.py) keeps it off during
+    # the VDD ramp. Whole-domain gating still works: EN_N6 off -> VDD off
+    # -> PWR_ON low -> core buck off.
     u_core = TPS62823(ref="U_CORE", footprint="Package_TO_SOT_SMD:SOT-583-8")
     u_core["VIN"] += vsys
-    u_core["EN"] += en_n6
+    u_core["EN"] += Net.fetch("N6_PWR_ON")   # VERIFIED-DS DS14791 Fig 3 p27
     u_core["PG"] += NC
     u_core["NC"] += NC
     l_core = L("470nH")
     u_core["SW"] += l_core[1]
     vcore += l_core[2]
-    rfb1, rfb2 = R("100k"), R("110k")   # FB divider for ~0.8V core (values E0)
+    rfb1, rfb2 = R("34.8k"), R("100k")  # 0.809V VOS-low  VERIFIED-DS Table 24
     vcore += rfb1[1]
     u_core["FB"] += rfb1[2], rfb2[1]
     GND += rfb2[2]
+    # VOS-high leg: 255k to GND via NFET -> FB bottom = 100k||255k -> 0.891V
+    rfb3 = R("255k")
+    q_vsel = NFET_SOT23(ref="Q_VSEL", footprint="Package_TO_SOT_SMD:SOT-23")
+    u_core["FB"] += rfb3[1]
+    join("VSEL_LEG", rfb3[2], q_vsel["D"])
+    q_vsel["S"] += GND
+    rg_vsel = R("100k")                 # gate pulldown: boots at 0.81V
+    join("N6_VCORE_SEL", q_vsel["G"], rg_vsel[1])
+    GND += rg_vsel[2]
     u_core["AGND"] += GND
     u_core["PGND"] += GND
     cin2 = C("10uF", bulk=True)
@@ -268,7 +294,9 @@ def build_power():
     l_sys = L("470nH")
     u_sys["SW"] += l_sys[1]
     v3sys += l_sys[2]
-    rfa, rfb = R("332k"), R("100k")     # ~3.3V divider (values E0)
+    # VFB = 0.6V (VERIFIED-DS SLVSDV6C p5) -> 449k/100k = 3.294V. The old
+    # E0 332k/100k gave only 2.59V — every "3.3V" domain undervolted: BUG.
+    rfa, rfb = R("449k"), R("100k")
     v3sys += rfa[1]
     u_sys["FB"] += rfa[2], rfb[1]
     GND += rfb[2]
@@ -283,11 +311,17 @@ def build_power():
     v18.drive = POWER  # L/C buck output
     u18 = TLV62568(ref="U_1V8", footprint="Package_TO_SOT_SMD:SOT-23-5")
     u18["VIN"] += vsys
-    u18["EN"] += en_n6
+    # EN from the 3V3_SYS RAIL (not EN_N6): DS14791 Table 24 fn1 p140 — the
+    # N657's VDD "must be present before any other supply". Sequencing the
+    # 1V8 rail (VDDA18*/VDDIO3) behind the 3.3V rail satisfies that with no
+    # extra parts; TLV62568 EN is VIN-tolerant (SLVSD89B p3).
+    u18["EN"] += v3sys
     l18 = L("2.2uH")
     u18["SW"] += l18[1]
     v18 += l18[2]
-    r18a, r18b = R("187k"), R("100k")   # ~1.8V divider (values E0)
+    # VFB = 0.6V (VERIFIED-DS SLVSD89B p4) -> 200k/100k = 1.800V exactly.
+    # The old E0 187k/100k gave 1.722V — inside most abs-mins but sloppy.
+    r18a, r18b = R("200k"), R("100k")
     v18 += r18a[1]
     u18["FB"] += r18a[2], r18b[1]
     GND += r18b[2]
