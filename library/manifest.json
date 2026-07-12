@@ -1,0 +1,461 @@
+{
+ "generated": "2026-07-12",
+ "stage": "H2 stage-1",
+ "note": "Footprint provenance: 'kicad-official' files are from KiCad 7.0.11 official libraries (Ubuntu archive package \u2014 the GitHub mirrors KiCad/kicad-footprints and KiCad/kicad-symbols are stale 2020 snapshots because KiCad development moved to GitLab, which is unreachable from this environment); 'espressif' from github.com/espressif/kicad-libraries (shallow clone). SnapEDA/easyeda2kicad/vendor portals blocked -> TO-GENERATE list is deliberate and substantial.",
+ "symbol_note": "All non-generic symbols are SKiDL programmatic templates in boards/v1/circuit/lib_parts.py (tier E0 pin maps).",
+ "coverage": {
+  "components_json_parts": 38,
+  "footprint_harvested": 20,
+  "footprint_to_generate": 18
+ },
+ "parts": [
+  {
+   "components_json_name": "MLX90642 thermal 32x24",
+   "part": "MLX90642",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_TO_SOT_THT.pretty/TO-39-4.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Generic TO-39-4; verify MLX lens-cap variant + pin-circle orientation vs MLX90642 DS."
+  },
+  {
+   "components_json_name": "VL53L8CH ToF 8x8 raw",
+   "part": "VL53L8CH",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE|vendor-blocked(easyeda2kicad offline)",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "LGA-16-ish optical module; no official footprint (only VL53L0X/L1X). Generate from ST DS drawing."
+  },
+  {
+   "components_json_name": "TCS3448 14ch VIS",
+   "part": "TCS3448",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE|vendor-blocked(easyeda2kicad offline)",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "ams OLGA/OQFN; generate from DS. AS7343-family land pattern likely reusable."
+  },
+  {
+   "components_json_name": "AS7331 UV A/B/C",
+   "part": "AS7331",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE|vendor-blocked(easyeda2kicad offline)",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "OLGA-16 3.65x2.6; generate from ams DS."
+  },
+  {
+   "components_json_name": "AS7421 64ch NIR +",
+   "part": "AS7421",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE|vendor-blocked(easyeda2kicad offline)",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "OLGA10-class 3.5x3.5 per RS listing; generate from DS. I2C addr 0x64 VERIFY."
+  },
+  {
+   "components_json_name": "MLX90632 spot FIR +",
+   "part": "MLX90632",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE|vendor-blocked(easyeda2kicad offline)",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "SFN/QFN 3x3; generate from Melexis DS."
+  },
+  {
+   "components_json_name": "VD66GY camera (DNP)",
+   "part": "VD66GY via J_CAM 24p FPC",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "Camera is a module on FPC; generate 24p 0.5mm FPC connector footprint (DNP in v1)."
+  },
+  {
+   "components_json_name": "BME688 gas/T/RH/P",
+   "part": "BME688",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_LGA.pretty/Bosch_LGA-8_3x3mm_P0.8mm_ClockwisePinNumbering.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Official BME680 LGA-8 3x3; BME688 is same package \u2014 verify pad map vs BST-BME688-DS000."
+  },
+  {
+   "components_json_name": "SGP41 VOC/NOx",
+   "part": "SGP41",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "DFN 2.44x2.44x0.85; official lib only has SGP40-class DFN-4 2x2 \u2014 sizes differ, generate from Sensirion DS."
+  },
+  {
+   "components_json_name": "ENS161 4-el MOX +",
+   "part": "ENS161",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE|vendor-blocked(easyeda2kicad offline)",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "LGA-9 3x3; generate from ScioSense DS. 1.8V core rail note in circuit."
+  },
+  {
+   "components_json_name": "SCD41 true CO2 +",
+   "part": "SCD41",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Sensor.pretty/Sensirion_SCD4x-1EP_10.1x10.1mm_P1.25mm_EP4.8x4.8mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Official SCD4x footprint \u2014 direct match."
+  },
+  {
+   "components_json_name": "SHT41 ref T/RH +",
+   "part": "SHT41",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Sensor_Humidity.pretty/Sensirion_DFN-4_1.5x1.5mm_P0.8mm_SHT4x_NoCentralPad.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Official SHT4x footprint \u2014 direct match."
+  },
+  {
+   "components_json_name": "BMV080 PM2.5",
+   "part": "BMV080",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE|vendor-blocked(easyeda2kicad offline)",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "4.2x3.5x3 element w/ flex; generate from Bosch DS. I2C addr 0x57 VERIFY."
+  },
+  {
+   "components_json_name": "MAX30102 PPG",
+   "part": "MAX30102",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "OptoDevice.pretty/Maxim_OLGA-14_3.3x5.6mm_P0.8mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Official Maxim OLGA-14 (MAX3010x package) \u2014 verify glass window keepout. 1.8V core / 3V3 bus tolerance VERIFY."
+  },
+  {
+   "components_json_name": "AS7058 PPG/ECG/BioZ",
+   "part": "AS7058",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE|vendor-blocked(easyeda2kicad offline)",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "WLCSP42 2.82x2.55; generate ball map from ams DS. I2C addr 0x30 VERIFY."
+  },
+  {
+   "components_json_name": "A121 60GHz radar",
+   "part": "A121",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE|vendor-blocked(easyeda2kicad offline)",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "fcCSP 5.5x5.2 AiP; generate from Acconeer DS incl. antenna keepout. Supply domains VERIFY (1.8V?)."
+  },
+  {
+   "components_json_name": "MMC5983MA nT mag +",
+   "part": "MMC5983MA",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_LGA.pretty/LGA-16_3x3mm_P0.5mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Generic LGA-16 3x3 P0.5; verify pad map vs Memsic DS."
+  },
+  {
+   "components_json_name": "TMAG5273 mT hall",
+   "part": "TMAG5273",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Standard SOT-23-6. Variant A1 default addr 0x35 VERIFY."
+  },
+  {
+   "components_json_name": "STM32N657 VFBGA142",
+   "part": "STM32N657X0",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "VFBGA142 0.5mm; generate from DS14791. Circuit models used-signals only; full ball map at footprint stage."
+  },
+  {
+   "components_json_name": "Octal NOR flash",
+   "part": "MX25UW6445G-class octal NOR",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "BGA-24 5x5 (xccela-class); part selection + footprint at stage-2."
+  },
+  {
+   "components_json_name": "BL54L15 BLE sentinel",
+   "part": "Ezurio BL54L15",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE|vendor-blocked(easyeda2kicad offline)",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "10x14 module; generate land pattern from Ezurio DS; antenna keepout per module manual."
+  },
+  {
+   "components_json_name": "ESP32-C6-MINI WiFi",
+   "part": "ESP32-C6-MINI-1",
+   "symbol_source": "espressif",
+   "footprint_source": "espressif",
+   "footprint_file": "Espressif.pretty/ESP32-C6-MINI-1.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Symbol+footprint from espressif/kicad-libraries (github). SDIO GPIO map VERIFY vs C6 DS."
+  },
+  {
+   "components_json_name": "BNO086 IMU raw+fused",
+   "part": "BNO086",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_LGA.pretty/LGA-28_5.2x3.8mm_P0.5mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Generic LGA-28 5.2x3.8 matches BNO08x package class \u2014 verify pad map vs CEVA DS."
+  },
+  {
+   "components_json_name": "ADS131M04 24b 4ch",
+   "part": "ADS131M04",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "TI RTE?/WQFN-20 \u2014 confirm package code, then use/adapt official Texas WQFN generic."
+  },
+  {
+   "components_json_name": "PIN radiation det +",
+   "part": "BPW34S-class PIN + OPA381 + TLV3201 chain",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "OptoDevice.pretty/Osram_BPW34S-SMD.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "PIN diode official; charge-amp (MSOP-8 TO-GENERATE) + comparator SOT-23-5 official; shield can TO-GENERATE."
+  },
+  {
+   "components_json_name": "MEMS mic +",
+   "part": "Knowles-class PDM bottom-port",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Sensor_Audio.pretty/Knowles_LGA-5_3.5x2.65mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Official Knowles LGA-5; confirm exact mic P/N at BOM freeze; port hole in landing flat."
+  },
+  {
+   "components_json_name": "SGX-4CO electrochem +",
+   "part": "SGX-4CO + LMP91000 AFE",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "4-series TH cell footprint TO-GENERATE; LMP91000 WSON-14 TO-GENERATE. Cell life 2-5yr \u2014 serviceable path (R2)."
+  },
+  {
+   "components_json_name": "CYPD3177 USB-C PD",
+   "part": "CYPD3177",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_DFN_QFN.pretty/HVQFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Generic QFN-24 4x4; verify vs Infineon QFN24 drawing + strap resistor values E0."
+  },
+  {
+   "components_json_name": "BQ25620 charger 3.5A",
+   "part": "BQ25620",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_DFN_QFN.pretty/Texas_RTE_WQFN-16-1EP_3x3mm_P0.5mm_EP1.2x0.8mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Class placeholder \u2014 confirm BQ25620 package code (WQFN) + pad map vs TI DS."
+  },
+  {
+   "components_json_name": "BQ27427 gauge",
+   "part": "BQ27427",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_BGA.pretty/Texas_DSBGA-9_1.62mmx1.58mm_Layout3x3_P0.5mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Official TI DSBGA-9; verify BQ27427 YZF ball map + integrated-sense topology."
+  },
+  {
+   "components_json_name": "TPS62840 sentinel buck",
+   "part": "TPS62840",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_TO_SOT_SMD.pretty/SOT-583-8.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Official SOT-583-8; verify TPS62840 pin order (pinout E0 in circuit)."
+  },
+  {
+   "components_json_name": "TPS62823 core buck",
+   "part": "TPS62823 (x2: VDD_CORE_N6 + 3V3_SYS stage-1 add)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_TO_SOT_SMD.pretty/SOT-583-8.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Official SOT-583-8; second instance U_SYS3V3 is a stage-1 add \u2014 components.json update needed."
+  },
+  {
+   "components_json_name": "TLV62568 1V8 buck",
+   "part": "TLV62568",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_TO_SOT_SMD.pretty/SOT-23-5.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Official SOT-23-5; verify pin order."
+  },
+  {
+   "components_json_name": "BQ29700+FET protect",
+   "part": "BQ29700 + dual NMOS",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_SON.pretty/WSON-6_1.5x1.5mm_P0.5mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "BQ29700 DSE-6-class on WSON-6 1.5x1.5 (verify); dual FET on WSON-6 2x2 (Package_SON.pretty/WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm.kicad_mod)."
+  },
+  {
+   "components_json_name": "Load switches x6",
+   "part": "TPS22916 x7 (6 domains + accessory stage-1 add)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "CSP-4 0.76x0.76-class; generate ball map from TI DS. components.json 'x6' becomes x7."
+  },
+  {
+   "components_json_name": "IQS7222A touch",
+   "part": "IQS7222A",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_DFN_QFN.pretty/QFN-20-1EP_3x3mm_P0.4mm_EP1.65x1.65mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Generic QFN-20 3x3 P0.4; verify vs Azoteq DS. On SENTINEL_I2C @0x44 (collision-avoid, wake source)."
+  },
+  {
+   "components_json_name": "DRV2605L haptic",
+   "part": "DRV2605L",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_SO.pretty/VSSOP-10_3x3mm_P0.5mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Official VSSOP-10 (DGS) \u2014 direct match."
+  },
+  {
+   "components_json_name": "MIA-M10Q GNSS RAWX",
+   "part": "MIA-M10Q-01B",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE|vendor-blocked(easyeda2kicad offline)",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "4.5x4.5 SiP LGA; generate from u-blox integration manual; RF keepout corner. -01B orderability still OPEN (H2 gate)."
+  }
+ ],
+ "supporting_parts": [
+  {
+   "part": "J_USB USB-C 16P",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Connector_USB.pretty/USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "GCT USB4105 official footprint."
+  },
+  {
+   "part": "TC2030 SWD x2",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Connector.pretty/Tag-Connect_TC2030-IDC-NL_2x03_P1.27mm_Vertical.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "Official Tag-Connect NL footprint."
+  },
+  {
+   "part": "J_BATT JST-ACH 3P",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Connector_JST.pretty/JST_ACH_BM03B-ACHSS-GAN-ETF_1x03-1MP_P1.20mm_Vertical.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "Connector family TBC at DFM."
+  },
+  {
+   "part": "J_RF SMA",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Connector_Coaxial.pretty/SMA_Amphenol_132134_Vertical.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "Survey input; may become U.FL at DFM."
+  },
+  {
+   "part": "J_POGO 6P mag ring",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "Custom pogo landing ring (ADR-0002)."
+  },
+  {
+   "part": "J_TOUCH FPC13 / J_CAM FPC24 / LRA pads / electrodes / piezo / shield can / SGX cell",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "Mechanical-custom footprints, generate at stage-2."
+  },
+  {
+   "part": "AD8317 RF detector",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "LFCSP-8; generate from ADI DS."
+  },
+  {
+   "part": "OPA381 charge amp",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "MSOP-8; official generics exist, map pins at stage-2."
+  },
+  {
+   "part": "TLV3201 comparator",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_TO_SOT_SMD.pretty/SOT-23-5.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": ""
+  },
+  {
+   "part": "74LVC1G08 UV interlock AND",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_TO_SOT_SMD.pretty/SOT-353_SC-70-5.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": ""
+  },
+  {
+   "part": "LMP91000 CO potentiostat",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "WSON-14; generate from TI DS. Fixed I2C addr 0x48."
+  },
+  {
+   "part": "NFETs / diodes / LEDs / R / C / L / testpoints",
+   "symbol_source": "kicad-official (Device lib)",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Resistor_SMD.pretty, Capacitor_SMD.pretty, Inductor_SMD.pretty, LED_SMD.pretty, Diode_SMD.pretty, Package_TO_SOT_SMD.pretty, TestPoint.pretty",
+   "evidence_tier": "E1",
+   "verify_notes": "Generic passives, 0402/0805 defaults."
+  },
+  {
+   "part": "GNSS chip antenna",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "TO-GENERATE",
+   "footprint_file": null,
+   "evidence_tier": "E0",
+   "verify_notes": "Select antenna P/N at stage-2 (or use MIA-M10Q w/ external patch)."
+  }
+ ]
+}
