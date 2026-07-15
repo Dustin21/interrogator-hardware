@@ -86,3 +86,22 @@ The cloud sandbox egress proxy allows only GitHub, so these official vendor file
   - NOT OBTAINED. ST publishes the SATEL-VL53L8 breakout schematic PDF at this URL, but www.st.com is blocked by the network proxy (CONNECT 403 policy denial), so it could not be downloaded. No SparkFun/Adafruit VL53L8CX board exists as an allowed fallback (only Pololu #3419 carries VL53L8CX, which is outside the allowed fallback sources).
 - **step**: https://www.st.com/en/imaging-and-photonics-solutions/vl53l8cx.html
   - NOT OBTAINED. st.com is blocked by the network proxy (CONNECT 403). Additionally, ST's product page delivers EDA symbols/footprints/3D models only via third parties (UltraLibrarian/SamacSys), which require registration/login.
+## TXU0304 (added H3.0 — VL53L8CH SPI level shifter)
+- **datasheet**: https://www.ti.com/lit/ds/symlink/txu0304.pdf
+  - NOT OBTAINED (www.ti.com blocked by egress proxy, CONNECT 403). The circuit models the TSSOP-14 pin numbering as **pinout E0 (provisional)** — MUST be verified against the DS before H3.2 pad binding (lib_parts.py TXU0304).
+
+## PCA9306 (added H3.0 — TCS3448 1.8V I2C segment)
+- **datasheet**: https://www.ti.com/lit/ds/symlink/pca9306.pdf (or NXP https://www.nxp.com/docs/en/data-sheet/PCA9306.pdf)
+  - NOT OBTAINED (ti.com/nxp.com blocked by egress proxy, CONNECT 403). DCU/VSSOP-8 pin map modeled from the standard 1 GND / 2 VREF1 / 3 SDA1 / 4 SCL1 / 5 SCL2 / 6 SDA2 / 7 VREF2 / 8 EN order — **pinout E0**, verify before H3.2 pad binding (lib_parts.py PCA9306).
+
+
+## MMC5983MA (added at H3.2)
+- **datasheet**: https://www.memsinc.com/mems/magnetic-sensors (MMC5983MA datasheet PDF)
+  - NOT STAGED: memsinc.com not in registry_assets and blocked by the egress proxy. The LGA-16 pin map is
+    unverified — circuit pins 1-6 are PROVISIONAL-E0 and footprint pads 7-16 are declared NC-pending
+    (boards/v1/netlist/nc_pins.json). Do not route the MMC fanout until this lands.
+
+## TXU0304 / PCA9306 / OPA381 / AD8317 / MX25UW6445G / dual protection FET (reminder)
+- Symbols are PROVISIONAL-E0 (H3.0/H3.2); each part's unbound placeholder pads are declared in nc_pins.json.
+  Stage TI SCDS41x (TXU0304), PCA9306 DS, OPA381 (SBOS338), AD8317 DS, Macronix MX25UW6445G DS, and the
+  chosen CSD-class FET DS before H3.3 routes their fanout.

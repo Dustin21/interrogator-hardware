@@ -80,11 +80,40 @@ Bonus extractions used for footprints: A121 full 50-ball named map (DS p8-9)
 | 31 | VL53L8CH exact DS (was anchored on VL53L8CX) | **CH-specific DS confirms the CX anchor 1:1**: pin map identical (Table 3 p7 — A1 GPIO1/INT, A2 LPn, A3 IOVDD, A4 SDA/MOSI, A5 SCL/MCLK, A6/A7 RSVD→GND, B1 GPIO2, B4 thermal→GND, B7 CORE_1V8, C1 SPI_I2C_N, C2 NCS, C4 AVDD 3.3V, C5 MISO); **IOVDD 1.2/1.8 V only re-confirmed** (ECO-H3 stands); SPI strap = C1 **via 47 kΩ** to IOVDD (not a hard tie), NCS needs its own 47 k pullup. Fig 30 p33 gives the real substrate pad drawing: 14 pads 0.500×0.515 @ 0.750 non-cumulative, rows 2.115 c-c, B1/B7 0.535×0.500, B4 thermal 2.316×1.200, margins check vs the 0.100 pad-to-substrate callout | VL53L8CH DS14310 Rev 9 p1-2, Table 3 p7, Fig 30 p33, §10 notes p32 (thermal pad required, AN5897) | Straps corrected: SPI_I2C_N direct tie → 47 k pullup; 47 k pullup added on CS_VL53_N. Footprint `ST_VL53L8_LGA16` regenerated from the real drawing (pitch was E0-guessed 0.85/1.0 → real 0.75/2.115) → **E1** |
 | 32 | VD66GY capture (DNP in v1) | Part is a **bare die** (115 bonding pads) — the FPC mates a module built on it. Supplies **2.8 V (VANA) / 1.8 V (VDDIO) / 1.15 V (VCORE)**; MIPI CSI-2 **1-2 lanes ≤1.5 Gbps/lane** (2-lane wiring OK, N657 PHY OK); **XSHUTDOWN active-low** (CAM_RSTN polarity ✓); **CLKIN external clock required** (CAM_XCLK ✓); I2C control (CCI on I2C-A ✓) | VD66GY DS13838 Rev 9 p2/p4 (Table 2), p12, Table 6 p15 | No rewire (DNP). **ECO-H3 note** on J_CAM: FPC carries only 3V3_OPTICAL + 1V8 — module must carry local 2.8 V + 1.15 V LDOs, or repurpose two reserved pins (19-24) as rail feeds |
 
+## Closed — H3.2 pad-binding audit (2026-07-14/15)
+
+The zero-unbound-pad gate forced a full netlist-pin ↔ package-pad audit of
+every part; the sequential "E0" symbols that survived rounds 1-3 were
+re-checked against the staged PDFs. **Nine more real wiring bugs found and
+fixed** (every one would have scrambled or disabled the part):
+
+| # | Item | Verdict | Evidence | Circuit action |
+|---|------|---------|----------|----------------|
+| 33 | SGP41 real DFN-6 map | 1 VDD, 2 VSS, 3 SDA, 4 n/a→GND, **5 VDDH ("must be connected to one single supply with VDD") — MISSING: the hotplate had no feed**, 6 SCL; die pad = GND | SGP41 DS Table 6 p7 | Symbol renumbered; VDDH→3V3_AIR; pad 4 + EP grounded |
+| 34 | SCD41 real 21-pad map | Old pins 1-4 all landed on DNC pads — **the sensor was completely unconnected**. Real: 6/20/21(×4) GND, 7 VDD, 9 SCL, 10 SDA, **19 VDDH→VDD (missing)**; DNC pads solder to floating lands | SCD4x DS Table 6 p5 | Symbol rebuilt (21 pads); VDDH fed; 14 DNC declared |
+| 35 | SHT41 real DFN-4 map | 1 SDA, 2 SCL, 3 VDD, 4 VSS — old model had VDD on pad 1 (=SDA) and SCL on pad 4 (=VSS): full scramble | SHT4x DS v7.1 Fig 18 p16 | Symbol renumbered |
+| 36 | BME688 real LGA-8 map | 1 GND, 2 CSB, 3 SDI, 4 SCK, 5 SDO, 6 VDDIO, 7 GND, 8 VDD (numbering CLOCKWISE top view) — old sequential symbol put VDD on GND and CSB on GND | bst-bme688-ds000 Table 26 p51 | Symbol renumbered; GND2 added |
+| 37 | MAX30102 real OLGA-14 map | 2 SCL, 3 SDA, 4 PGND, **9+10 VLED+ (two pads)**, 11 VDD, 12 GND, 13 INT; 1/5/6/7/8/14 N.C. (solder, no net) — old sequential symbol scrambled all of it | MAX30102 DS p8 | Symbol renumbered; both VLED pads fed; 6 NC declared |
+| 38 | AS7331 real OLGA16 map + REXT | 1/2/5/6/15/16 VSSA, 3 VDDA, 4 **REXT (3.3 MΩ ±1% to VSSA, TC≤50ppm/K — MISSING: the ADC reference had no return)**, 7 A1, 8 SYN, 9 READY, 10 VDDD, 11 VSSD, 12 SDA, 13 SCL, 14 A0. Package is a QUAD (4/side) — the dual-row E0 footprint was the wrong SHAPE | AS7331 DS001047 Fig 3/4 p7-8, elec. char. table, Fig 59 p64 | Symbol rebuilt; 3.3M REXT added; footprint regenerated (quad, E1) |
+| 39 | ADS131M04 package + real map | Package CONFIRMED = **WQFN-20 RUK 3×3 0.4mm** (footprint in use is correct); real pin order ≠ sequential; **CAP pin 16 (digital LDO, 220nF to DGND) MISSING**; EP→AGND | SBAS890D Table 5-1 p4 + RUK0020B | Symbol renumbered; 220nF CAP added; EP grounded |
+| 40 | BNO086 real LGA-28 map | 9 **CAP (100nF) missing**; 10 **CLKSEL0 (int. pulldown) selects a 32k CRYSTAL when low — none is fitted: strap HIGH for the internal osc (SPI-legal)**; 15/16 **ENV_SCL/SDA must be pulled up even with no env sensor ("SW polls at reset")**; 1/7/8/12/13/21-24 RESV NC; 26/27 XL NC | BNO08x DS Fig 1-6 p10, Fig 1-8 p11, n7 p19, Fig 1-20 p18 | Symbol rebuilt (28 pins); CAP cap + CLKSEL0 strap + 2×2.2k ENV pullups added |
+| 41 | A121 real 50-ball map + XTAL | Symbol rebuilt on the real ball map (VRX C2/D1, VTX C9/D10, VDIG J9, VIO K9, SPI J2/K2/K3/K6, INT K8, EN F10); **RESET_N (J1) "must be connected to VIO" — was unmodeled**; **XIN/XOUT (J10/H10): "the built-in oscillator requires an external 24 MHz crystal" — NO crystal existed: the radar would never clock**; Analog0/1, CTRL, GPIO1-4, PLL_RF_TEST → GND per DS | A121 DS v1.8 Table 1 p8-9, p9, §6.1-6.2 p19 (BOM: X1 24MHz + 8pF caps) | Symbol rebuilt (50 balls); X_A121 24MHz + 2×8pF added; RESET_N→VIO |
+| 42 | BMV080 real 13-pin flex order | Real: 1 VDDL (laser 3.3V), 2 VSSA, 3 VDDA, 4 CSB, 5 SDA, 6 SCL, 7 PS, 8 VDDIO, 9 VSSD, 10 VDDD, 11 MISO, 12 IRQ, 13 **DNC "keep floating"** — old single-VDD sequential symbol scrambled every strap; three separate supplies + split grounds now modeled | bst-bmv080-ds000 Table 11 p27, Fig 24 p26, Table 13 p31 | Symbol renumbered; VDDL/VDDA/VDDD/VDDIO→3V3_AIR (all in range), MPs grounded |
+| 43 | VL53L8CH pads bound + GPIO2 | Symbol renumbered to the real A1..C7 pad names (netlist binds by number — the sequential symbol left every pad netless); **GPIO2 (B1) needs its 47k pullup to IOVDD even unused** (DS fits it); RSVD A6/A7/C6 + thermal B4 → GND | DS14310 Table 3 p7, Fig 5 p8 | Renumbered; 47k GPIO2 pullup added; grounds wired |
+| 44 | MIA-M10Q + CYPD3177 + C6 pad completion | All remaining MIA pads = "leave open"/Reserved (17 modeled NC incl VCC_RF/LNA_EN — passive antenna); CYPD 3/4/7/8/12/13/16/17/20/21 NC per DS ("leave unconnected"/no-HPI app), **VDC_OUT (11) → VBUS_C** (output monitor; direct path, no VBUS FET fitted) | UBX-22015849 Table 10 p9-11; 002-25383 Table 1 p5-6 + Fig 3 p7 | 17+10 pins modeled/declared; VDC_OUT wired |
+
+Not closable, declared PROVISIONAL-E0 with do-not-route notes:
+**AS7058** (9 signals bound to placeholder balls A1-B3; 33 balls NC-pending —
+full DS NDA-gated) and **MMC5983MA** (Memsic DS not staged; pins 1-6
+provisional, 7-16 NC-pending — added to docs/MISSING_VENDOR_ASSETS.md).
+NOR/OPA381/AD8317/dual-FET placeholder pads declared NC-pending (E0 parts).
+
 ## Still open — with reasons (updated 2026-07-12, H2.6)
 
 | Item | Status / needed file |
 |------|----------------------|
-| AS7058 ball-SIGNAL map + I2C addr (0x30 unconfirmed) | Short DS DS001085 verified the A1..G6 grid geometry (footprint E1) but **lacks the ball map and the address — full DS DS001573 is NDA-gated, FAE contact queued**. Only remaining open item. |
+| AS7058 ball-SIGNAL map + I2C addr (0x30 unconfirmed) | Short DS DS001085 verified the A1..G6 grid geometry (footprint E1) but **lacks the ball map and the address — full DS DS001573 is NDA-gated, FAE contact queued**. H3.2: signals bound to PROVISIONAL-E0 balls so the netlist↔pad audit stays complete; do not route. |
+| MMC5983MA pin map | Memsic DS not staged (H3.2 finding — in docs/MISSING_VENDOR_ASSETS.md); pins PROVISIONAL-E0, pads 7-16 NC-pending; do not route. |
 
 H3 footprint touch-ups carried (not blocking, tracked in manifest notes):
 CYPD3177 EP 2.6 vs DS 2.75 typ; BQ25620 RYK land = E1 approximation

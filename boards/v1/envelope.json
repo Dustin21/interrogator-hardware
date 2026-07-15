@@ -1,28 +1,16 @@
 {
- "board_shape": "bean (Product Stone plan inset 3.5mm \u2014 boards/v1/outline.json)",
- "board_bbox_w_mm": 67.9,
- "board_bbox_h_mm": 39.9,
+ "board_shape": "DERIVED rounded-rectangle (ADR-0004: min-area pack, bean containment removed)",
+ "board_bbox_w_mm": 47.7,
+ "board_bbox_h_mm": 44.7,
  "board_t_mm": 1.6,
- "board_area_mm2": 2064.9,
- "prev_rect_mm": [
-  60,
-  46
- ],
- "prev_rect_area_mm2": 2760.0,
- "area_vs_old_rect": "75% of the old 60x46 rectangle",
+ "board_area_mm2": 2128.7,
+ "prev_bean_area_mm2": 2064.9,
+ "area_vs_bean": "103% of the 2065mm2 bean (but fully rectangular \u2014 zero wasted corners, straight route channels)",
  "max_comp_top_mm": 6.5,
- "max_comp_bot_mm": 4.0,
- "stack_mm": 12.1,
- "device_target_mm": [
-  75,
-  48,
-  19
- ],
- "chassis_buffer_mm": {
-  "wall": 1.6,
-  "clearance": 1.9
- },
+ "max_comp_bot_mm": 18.0,
+ "stack_mm": 26.1,
+ "note_battery": "cell is a MATING part (LP503450-class 50x34x5.2mm) via J_BATT \u2014 excluded from board area; stacks behind the compute face in the enclosure.",
  "layers": 6,
  "process": "JLCPCB 6L through-via + POFV",
- "sensor_count": 38
+ "sensor_count": 41
 }

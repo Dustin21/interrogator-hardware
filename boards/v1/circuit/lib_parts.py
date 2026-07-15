@@ -63,7 +63,18 @@ def _seq(defs):
 #    (which moves to PB4, tri-stated by CS pullups at reset).
 # IO supply domains (Table 18 footnotes 1/6/9): general GPIO -> VDD (3V3),
 # PN port -> VDDIO3 (1V8, NOR domain), SDMMC group PC8-12/PH2 -> VDDIO4 (3V3).
-# OPT124 bits + VDDIOxVRSEL registers must match the chosen rail voltages (fw).
+# OPT124 bits + VDDIOxVRSEL registers must match the chosen rail voltages —
+# fw config for this board: VDD=3.3V (OPT124 bit17/VDDIOVRSEL), VDDIO3=1.8V
+# (bit15/VDDIO3VRSEL), VDDIO4=3.3V (bit14/VDDIO4VRSEL). VFBGA142 bonds no
+# VDDIO2/VDDIO5 balls (Table 18 fn5/10 pins absent on the 142 column).
+# H3.0 1.8V-IO ECO: the two unused PN-port balls (VDDIO3 = 1.8V domain,
+# Table 18 fn9) are repurposed as native-1.8V GPIO for the VL53L8CH:
+#   PN7  (F14, XSPIM_P2_NCLK unused — single-ended NOR) -> INT_VL53 input
+#   PN12 (K14, XSPIM_P2_NCS2 unused)                    -> LPN_VL53 output
+# PN7 is a boot-ROM pin (fn7) but only as XSPI NCLK output during flash
+# boot — legal against the open-drain INT + 47k pullup (OPTICAL domain is
+# off at boot). This removes any 3.3V drive into the 1.8V-only VL53 pins
+# without spending shifter channels; PE8/PG10 return to the spare pool.
 STM32N657 = mkpart("STM32N657", "U", [
     # --- core / IO / analog supplies ------------------------------------
     ("M5", "VDDCORE1", PWR), ("M6", "VDDCORE2", PWR), ("M7", "VDDCORE3", PWR),
@@ -164,10 +175,8 @@ STM32N657 = mkpart("STM32N657", "U", [
     ("G15", "XSPI_CLK", OUT),       # PN6  XSPIM_P2_CLK
     ("D14", "XSPI_CS_N", OUT),      # PN1  XSPIM_P2_NCS1
     ("J15", "XSPI_DQS", BI),        # PN0  XSPIM_P2_DQS0
-    ("F14", "XSPI_NCLK", NCP),      # PN7  differential clk — unused (SDR/DTR NOR)
-    ("K14", "XSPI_NCS2", NCP),      # PN12 second CS — unused
     # --- interrupt / data-ready inputs (R7: INT wired for every sensor) ----
-    ("D12", "INT_VL53", IN),        # PE8
+    ("F14", "INT_VL53", IN),        # PN7 — VDDIO3 (1.8V) domain GPIO, H3.0 ECO
     ("B14", "INT_BNO", IN),         # PE1
     ("B15", "DRDY_ADS", IN),        # PE2
     ("A14", "INT_MAX", IN),         # PE0
@@ -187,12 +196,14 @@ STM32N657 = mkpart("STM32N657", "U", [
     ("L2", "EN_UV_REQ", OUT),       # PF14
     ("M1", "EN_WHITE", OUT),        # PF15
     ("M14", "RSTN_BNO", OUT),       # PG2
-    ("P15", "LPN_VL53", OUT),       # PG10
+    ("K14", "LPN_VL53", OUT),       # PN12 — VDDIO3 (1.8V) domain GPIO, H3.0 ECO
     ("R13", "VCORE_SEL", OUT),      # PG13 — VOS-high (0.89V) request to core buck
     # --- unused GPIO balls (kept NC; available for H3 reallocation) ---------
     ("R14", "PA0_NC", NCP), ("P12", "PA2_NC", NCP), ("L15", "PA15_NC", NCP),
     ("C14", "PB0_NC", NCP), ("B12", "PD1_NC", NCP), ("A12", "PE7_NC", NCP),
     ("P9", "PG14_NC", NCP),
+    ("D12", "PE8_NC", NCP),         # freed by INT_VL53 -> PN7 (H3.0)
+    ("P15", "PG10_NC", NCP),        # freed by LPN_VL53 -> PN12 (H3.0)
 ], description="STM32N657X0 app MCU + NPU, VFBGA142 — real ball map (VERIFIED-DS DS14791 Rev 9 Table 18)")
 
 # HSE crystal for the N657 (USB HS PHY PLL + CSI/PLL reference; HSE range
@@ -203,13 +214,18 @@ XTAL_3225 = mkpart("XTAL_3225", "X", [
 ], description="48 MHz HSE crystal, 3225 (N657 USB-HS/CSI clock reference)")
 
 # Octal xSPI NOR flash (MX25UW6445G-class, BGA24 / SOPB) — N6 is flashless.
-# pinout E0
+# pinout E0 — BOTH the symbol numbering AND the generated numeric-pad BGA24
+# footprint are placeholders that agree by construction (pins 1-14 <-> pads
+# 1-14); pads 15-24 declared NC-pending. Renumber symbol + footprint
+# together to the real MX25UW ball map when the Macronix DS is staged
+# (docs/MISSING_VENDOR_ASSETS.md).
 NOR_OCTAL = mkpart("NOR_OCTAL_XSPI", "U", _seq([
     ("VCC", PWR), ("VSS", PWR),
     ("CS_N", IN), ("CLK", IN), ("DQS", OUT), ("RESET_N", IN),
     ("DQ0", BI), ("DQ1", BI), ("DQ2", BI), ("DQ3", BI),
     ("DQ4", BI), ("DQ5", BI), ("DQ6", BI), ("DQ7", BI),
-]), description="Octal xSPI NOR flash for STM32N657 (MX25UW6445G-class)")
+]) + [(n, f"PEND_{n}", NCP) for n in range(15, 25)],
+    description="Octal xSPI NOR flash for STM32N657 (MX25UW6445G-class; pins PROVISIONAL-E0)")
 
 # Ezurio BL54L15 module (nRF54L15) — always-on sentinel MCU + BLE.
 # VERIFIED-DS EZ-DS-BL54L15 v1.9 Table 1 p10-13: real 39-pad map.
@@ -280,52 +296,159 @@ BL54L15 = mkpart("BL54L15", "U", [
 # NCS needs its own 47k pullup to IOVDD (Table 3). No separate I2C_RST pin —
 # C1 doubles as I2C-interface reset (toggle 0-1-0). Our I2C_RST model pin
 # lands on GND-strapped RSVD.
-# NOTE-ECO(H3): IOVDD is 1.2/1.8 V ONLY (DS14310 p1 features + Table 3 A3 —
-# re-confirmed on the CH-specific DS); currently fed 3V3_OPTICAL — move
-# IOVDD (+ CORE_1V8) to the 1V8 rail and level-shift or run SPI1 at 1.8V.
-VL53L8CH = mkpart("VL53L8CH", "U", _seq([
-    ("AVDD", PWR), ("IOVDD", PWR), ("GND", PWR),
-    ("SCLK", IN), ("MOSI", IN), ("MISO", TRI), ("NCS", IN),
-    ("SPI_I2C_N", IN),   # strap HIGH (47k to IOVDD) -> SPI mode  VERIFIED-DS p7
-    ("I2C_RST", IN),     # legacy model pin -> RSVD/GND           VERIFIED-DS p7 (no such pin)
-    ("LPN", IN), ("INT", OC),
-]), description="ST VL53L8CH 8x8 ToF, SPI mode (straps in copper)")
+# ECO EXECUTED (H3.0): IOVDD is 1.2/1.8 V ONLY (DS14310 p1 features + Table 3
+# A3) — IOVDD + CORE_1V8 now fed from the gated 1V8_OPTICAL sub-rail;
+# AVDD stays 3.3 V (3V3_OPTICAL). VERIFIED-DS DS14310 §3.3 p11: the device
+# requires THREE supplies (AVDD 3.3V fixed, CORE_1V8 1.8V fixed, IOVDD
+# 1.2/1.8V) and "if IOVDD is 1.8V, the same supply may be used for both
+# IOVDD and CORE_1V8"; supplies may be applied in any order — so the gated
+# 3.3/1.8 pair needs no sequencing parts. The old model had NO CORE_1V8 pin
+# (the part would have been held in reset): pin added. SPI level shift:
+# TXU0304 (see sensors_spi.py); INT/LPn go native-1.8V to N657 PN7/PN12.
+# H3.2 pad-binding fix: symbol renumbered from sequential 1-12 to the REAL
+# substrate pad names (the footprint pads are named A1..C7 — the netlist
+# binds by NUMBER, so the sequential symbol left every VL53 pad netless).
+# VERIFIED-DS DS14310 Rev 9 Table 3 p7 (full 17-pad list re-extracted):
+# A1 GPIO1(INT), A2 LPn, A3 IOVDD, A4 SDA/MOSI, A5 SCL/MCLK, A6 RSVD1->GND,
+# A7 RSVD2->GND, B1 GPIO2 (defaults OD tristate; 47k pullup to IOVDD
+# REQUIRED, used as SYNC input — Fig 5 p8 shows the pullup fitted even when
+# unused), B4 thermal pad->GND (AN5897), B7 CORE_1V8, C1 SPI_I2C_N,
+# C2 NCS, C3 GND, C4 AVDD, C5 MISO, C6 RSVD3->GND, C7 Ground.
+VL53L8CH = mkpart("VL53L8CH", "U", [
+    ("C4", "AVDD", PWR), ("A3", "IOVDD", PWR), ("B7", "CORE_1V8", PWR),
+    ("C3", "GND", PWR), ("C7", "GND2", PWR),
+    ("A6", "RSVD1", PWR), ("A7", "RSVD2", PWR), ("C6", "RSVD3", PWR),  # ->GND p7
+    ("B4", "THERMAL", PWR),                       # ->GND plane (AN5897)
+    ("A5", "SCLK", IN), ("A4", "MOSI", IN), ("C5", "MISO", TRI), ("C2", "NCS", IN),
+    ("C1", "SPI_I2C_N", IN),  # strap HIGH (47k to IOVDD) -> SPI  VERIFIED-DS p7
+    ("B1", "GPIO2", OC),      # SYNC in / OD out — 47k pullup to IOVDD req'd (p7)
+    ("A2", "LPN", IN), ("A1", "INT", OC),
+], description="ST VL53L8CH 8x8 ToF, SPI mode; AVDD 3.3V + IOVDD/CORE 1.8V; real A1..C7 pads (VERIFIED-DS DS14310 Table 3 p7)")
 
-# BNO086 IMU, SPI (SHTP) mode: PS1=HIGH, PS0/WAKE used as WAKE. pinout E0
-# VERIFIED-DS BNO085 DS p9 Fig 1-5: PS1=1, PS0=1 -> SPI; p18: both pins must
-# be high at reset, after which PS0 is repurposed as active-low WAKE (p19) —
-# matches our 10k-pullup + host-GPIO topology. Real pins: 5=PS1, 6=PS0/WAKE
-# (p10). I2C fallback addr would be 0x4A/0x4B via SA0 (p14). CLOSED.
-BNO086 = mkpart("BNO086", "U", _seq([
-    ("VDD", PWR), ("VDDIO", PWR), ("GND", PWR),
-    ("PS0_WAKE", IN), ("PS1", IN),
-    ("H_CSN", IN), ("H_SCLK", IN), ("H_MOSI", IN), ("H_MISO", TRI),
-    ("H_INTN", OC), ("NRST", IN), ("BOOTN", IN),
-]), description="CEVA/Bosch BNO086 IMU, SPI mode, raw+fused")
+# BNO086 IMU, SPI (SHTP) mode: PS1=HIGH, PS0/WAKE used as WAKE.
+# H3.2 pad-binding fix: symbol renumbered from sequential 1-12 to the REAL
+# LGA-28 map — VERIFIED-DS BNO08x-Datasheet v1.17 Fig 1-6 p10:
+# 1/7/8/12/13/21/22/23/24 = RESV ("Reserved. No connect."), 2/25 GND,
+# 3 VDD, 28 VDDIO, 4 BOOTN (10k pullup to VDDIO, note 4 p18), 5 PS1,
+# 6 PS0/WAKE (host GPIO, notes 5/6 p18-19), 9 CAP (100nF to GND — was
+# MISSING from the model), 10 CLKSEL0 (internal pulldown; p11 Fig 1-8:
+# 0 = 32k crystal [not fitted!] -> must strap HIGH for the internal
+# oscillator, legal for SPI — was MISSING: the part would have waited for
+# an absent crystal), 11 NRST, 14 H_INTN, 15/16 ENV_SCL/ENV_SDA (must be
+# pulled up even with no environmental sensor fitted — note 7 p19, "SW
+# polls for sensors at reset"; pullups were MISSING), 17 SA0/H_MOSI,
+# 18 H_CSN, 19 H_SCL/SCK/RX, 20 H_SDA/H_MISO/TX, 26 XOUT32/CLKSEL1
+# (internal pulldown, low/NC = internal osc), 27 XIN32 (unused, NC).
+BNO086 = mkpart("BNO086", "U", [
+    (3, "VDD", PWR), (28, "VDDIO", PWR), (2, "GND", PWR), (25, "GND2", PWR),
+    (6, "PS0_WAKE", IN), (5, "PS1", IN),
+    (18, "H_CSN", IN), (19, "H_SCLK", IN), (17, "H_MOSI", IN), (20, "H_MISO", TRI),
+    (14, "H_INTN", OC), (11, "NRST", IN), (4, "BOOTN", IN),
+    (9, "CAP", PAS),          # 100nF to GND (Fig 1-6 p10)
+    (10, "CLKSEL0", IN),      # strap HIGH = internal osc (Fig 1-8 p11)
+    (15, "ENV_SCL", BI), (16, "ENV_SDA", BI),  # pullup req'd, no sensor (p19 n7)
+    (26, "XOUT32_CLKSEL1", NCP), (27, "XIN32", NCP),  # internal-osc mode: unused
+    (1, "RESV1", NCP), (7, "RESV7", NCP), (8, "RESV8", NCP), (12, "RESV12", NCP),
+    (13, "RESV13", NCP), (21, "RESV21", NCP), (22, "RESV22", NCP),
+    (23, "RESV23", NCP), (24, "RESV24", NCP),
+], description="CEVA BNO086 IMU, SPI mode, raw+fused; real LGA-28 map (VERIFIED-DS BNO08x DS Fig 1-6 p10)")
 
-# ADS131M04 24-bit 4ch simultaneous delta-sigma ADC, WQFN-20-ish. pinout E0
-ADS131M04 = mkpart("ADS131M04", "U", _seq([
-    ("AVDD", PWR), ("DVDD", PWR), ("AGND", PWR), ("DGND", PWR),
-    ("AIN0P", IN), ("AIN0N", IN),   # piezo (differential)
-    ("AIN1P", IN), ("AIN1N", IN),   # PIN radiation charge-amp (energy proxy)
-    ("AIN2P", IN), ("AIN2N", IN),   # accessory analog 2 / spare
-    ("AIN3P", IN), ("AIN3N", IN),   # CO potentiostat VOUT / spare
-    ("SCLK", IN), ("DIN", IN), ("DOUT", TRI), ("CS_N", IN),
-    ("DRDY_N", OUT), ("SYNC_RESET_N", IN), ("CLKIN", IN),
-]), description="TI ADS131M04 4ch 24b simultaneous ADC (piezo + PIN + spares)")
+# ADS131M04 24-bit 4ch simultaneous delta-sigma ADC.
+# H3.2 pad-binding fix: package CONFIRMED as the RUK WQFN-20 3x3 0.4-pitch
+# (VERIFIED-DS SBAS890D mech. drawing RUK0020B — exact match for the
+# QFN-20-1EP_3x3mm_P0.4mm footprint in use; the only other package is
+# TSSOP-20 PW with DIFFERENT pin numbers). Symbol renumbered from the
+# sequential E0 order to the real RUK map — VERIFIED-DS Table 5-1 p4 (WQFN
+# column): 1 AIN0P, 2 AIN0N, 3 AIN1N, 4 AIN1P, 5 AIN2P, 6 AIN2N, 7 AIN3N,
+# 8 AIN3P, 9 SYNC/RESET, 10 CS, 11 DRDY, 12 SCLK, 13 DOUT, 14 DIN,
+# 15 CLKIN, 16 CAP (digital LDO out, 220nF to DGND — was MISSING from the
+# model), 17 DGND, 18 DVDD, 19 AVDD, 20 AGND; thermal pad (21) -> AGND.
+ADS131M04 = mkpart("ADS131M04", "U", [
+    (19, "AVDD", PWR), (18, "DVDD", PWR), (20, "AGND", PWR), (17, "DGND", PWR),
+    (1, "AIN0P", IN), (2, "AIN0N", IN),   # piezo (differential)
+    (4, "AIN1P", IN), (3, "AIN1N", IN),   # PIN radiation charge-amp (energy proxy)
+    (5, "AIN2P", IN), (6, "AIN2N", IN),   # accessory analog 2 / spare
+    (8, "AIN3P", IN), (7, "AIN3N", IN),   # CO potentiostat VOUT / spare
+    (12, "SCLK", IN), (14, "DIN", IN), (13, "DOUT", TRI), (10, "CS_N", IN),
+    (11, "DRDY_N", OUT), (9, "SYNC_RESET_N", IN), (15, "CLKIN", IN),
+    (16, "CAP", PWO),                     # digital LDO out — 220nF to DGND (p4)
+    (21, "EP", PWR),                      # thermal pad -> AGND (Table 5-1 p4)
+], description="TI ADS131M04 4ch 24b ADC, WQFN-20 RUK real pin map (VERIFIED-DS SBAS890D Table 5-1 p4)")
 
-# Acconeer A121 60 GHz radar, fcCSP — SPI-only per DS. pinout E0
-A121 = mkpart("A121", "U", _seq([
-    ("VIO1", PWR), ("VIO2", PWR), ("GND", PWR),
-    # VERIFIED-DS A121 DS v1.8 p10 Table 2: VRX/VTX/VDIG are 1.8 V rails
-    # (abs-max 2.0 V — 3V3 would destroy them); VIO may be 1.8 V or 3.3 V
-    # (abs-max 3.63 V). SPI is mode 0, max clock 50 MHz (p17 Table 12).
-    # Model pins: VIO1=VIO (may stay 3V3_RADAR), VIO2=VDIG+VRX+VTX bundle.
-    # NOTE-ECO(H3): feed VIO2 bundle from 1V8 (EN-gated / A121 ENABLE
-    # hibernate), NOT from 3V3_RADAR as currently wired.
-    ("SPI_SCLK", IN), ("SPI_MOSI", IN), ("SPI_MISO", TRI), ("SPI_SS_N", IN),
-    ("INTERRUPT", OUT), ("ENABLE", IN),
-]), description="Acconeer A121 pulsed coherent radar, Sparse-IQ raw")
+# Acconeer A121 60 GHz radar, fcCSP50 — SPI-only per DS.
+# H3.2 pad-binding fix: symbol rebuilt on the REAL 50-ball map (the 9-pin
+# sequential E0 symbol left all 50 footprint pads netless). VERIFIED-DS
+# A121-Datasheet v1.8 Table 1 p8-9 + Fig 3.1 p7: VRX = C2/D1, VTX = C9/D10,
+# VDIG = J9, VIO = K9 (all supplies); SPI_SS J2, SPI_CLK K2, SPI_MISO K3,
+# SPI_MOSI K6, INTERRUPT K8, ENABLE F10; RESET_N J1 "must be connected to
+# VIO"; XIN J10 / XOUT H10 — the built-in oscillator REQUIRES an external
+# 24 MHz crystal (p9 + §6.2 p19: BOM Table 13 = X1 24MHz + C5/C6 tuning
+# caps; 8pF for CL=9pF/Cstray=5pF example) — the old model had NO crystal:
+# the sensor would never clock. Grounded-by-DS balls: 27x GND ("solid
+# ground plane"), Analog0 A2 / Analog1 B1 ("NC or ground; ground
+# recommended"), CTRL A9 + GPIO1 F1 + GPIO2 H1 + GPIO3 B10 + GPIO4 K5
+# ("for future use, connect to ground"), PLL_RF_TEST E10 ("must be
+# connected to solid ground plane").
+# Rails (VERIFIED-DS p10 Table 2): VRX/VTX/VDIG 1.8V-only (abs-max 2.0V,
+# VRX/VTX must never exceed VDIG — trivially met, shared rail); VIO 1.8 or
+# 3.3V. ECO H3.0: VRX/VTX/VDIG <- gated 1V8_RADAR; VIO <- 3V3_RADAR.
+A121 = mkpart("A121", "U", [
+    ("K9", "VIO", PWR),
+    ("J9", "VDIG", PWR), ("C2", "VRX1", PWR), ("D1", "VRX2", PWR),
+    ("C9", "VTX1", PWR), ("D10", "VTX2", PWR),
+    ("K2", "SPI_SCLK", IN), ("K6", "SPI_MOSI", IN), ("K3", "SPI_MISO", TRI),
+    ("J2", "SPI_SS_N", IN),
+    ("K8", "INTERRUPT", OUT), ("F10", "ENABLE", IN),
+    ("J1", "RESET_N", IN),        # "must be connected to VIO" (Table 1 p8)
+    ("J10", "XIN", PAS), ("H10", "XOUT", PAS),   # 24MHz crystal (§6.2 p19)
+    # DS-mandated grounds: Analog0/1, CTRL, GPIO1-4, PLL_RF_TEST (Table 1 p8)
+    ("A2", "ANALOG0", PWR), ("B1", "ANALOG1", PWR), ("A9", "CTRL", PWR),
+    ("F1", "GPIO1", PWR), ("H1", "GPIO2", PWR), ("B10", "GPIO3", PWR),
+    ("K5", "GPIO4", PWR), ("E10", "PLL_RF_TEST", PWR),
+] + [(b, f"GND_{b}", PWR) for b in
+     ("A3", "A4", "A5", "A6", "A7", "A8", "B2", "B9", "C1", "C10", "D2", "D9",
+      "E1", "E2", "E9", "F2", "F9", "G1", "G10", "H2", "H9", "J3", "J5", "J6",
+      "J8", "K4", "K7")],
+    description="Acconeer A121 radar, real fcCSP50 ball map + 24MHz XTAL (VERIFIED-DS v1.8 Table 1 p8-9)")
+
+
+# ============================================================================
+# LEVEL TRANSLATION (H3.0 1.8V-IO ECOs)
+# ============================================================================
+
+# TXU0304 — 4-bit fixed-direction translator (3x A->B, 1x B->A), used for the
+# VL53L8CH SPI branch: SCLK/MOSI/NCS down to 1.8V, MISO up to 3.3V.
+# Direction-fixed (not TXB auto-sense) = clean push-pull SPI to >50MHz and
+# Ioff/partial-power-down: with VCCB (1V8_OPTICAL) gated off the B port is
+# Hi-Z, so the shifter doubles as bus isolation for the powered-down domain.
+# pinout E0 — TXU0304 DS (TI SCDS41x) not staged; TSSOP-14 pin numbers are
+# PROVISIONAL, verify before H3.2 pad binding (docs/MISSING_VENDOR_ASSETS.md).
+TXU0304 = mkpart("TXU0304", "U", _seq([
+    ("VCCA", PWR), ("A1", IN), ("A2", IN), ("A3", IN),   # 3.3V side inputs
+    ("A4", TRI),                                          # 3.3V side output (MISO up)
+    ("NC1", NCP), ("GND", PWR), ("NC2", NCP),
+    ("B4", IN),                                           # 1.8V side input (MISO)
+    ("B3", OUT), ("B2", OUT), ("B1", OUT),                # 1.8V side outputs
+    ("CE", IN), ("VCCB", PWR),
+]), description="TI TXU0304 4-bit fixed-dir level shifter (VL53L8CH SPI 3.3<->1.8V)")
+
+# PCA9306 — 2-bit bidirectional I2C level translator (pass-FET, auto
+# direction). Bridges the 3.3V I2C-A bus to the TCS3448's 1.8V-only
+# SCL/SDA segment. EN driven by EN_OPTICAL: with the OPTICAL domain off the
+# switch is open and the dead 1.8V segment is isolated from the live bus.
+# pinout per DCU (VSSOP-8): 1 GND, 2 VREF1, 3 SDA1, 4 SCL1, 5 SCL2, 6 SDA2,
+# 7 VREF2, 8 EN — pinout E0, PCA9306 DS not staged; verify before H3.2
+# (docs/MISSING_VENDOR_ASSETS.md).
+PCA9306 = mkpart("PCA9306", "U", [
+    (1, "GND", PWR),
+    (2, "VREF1", PWR),    # low-side (1.8V) reference
+    (3, "SDA1", BI), (4, "SCL1", BI),      # 1.8V side
+    (5, "SCL2", BI), (6, "SDA2", BI),      # 3.3V side
+    (7, "VREF2", IN),     # high-side reference — modeled IN, not PWR: it is
+                          # deliberately tied to the EN node (GPIO-driven,
+                          # 200k to 3V3) per the PCA9306 switched-EN app
+    (8, "EN", IN),
+], description="TI/NXP PCA9306 2-bit I2C level translator (TCS3448 1.8V segment)")
 
 
 # ============================================================================
@@ -351,43 +474,74 @@ MLX90632 = mkpart("MLX90632", "U", [
     (5, "ADDR", IN), (6, "EP", PWR),
 ], description="Melexis MLX90632 medical spot FIR, SFN 3x3, I2C-A 0x3A (ADDR=GND, VERIFIED-DS p10)")
 
-MAX30102 = mkpart("MAX30102", "U", _seq([
-    ("VDD", PWR),        # 1.8V analog supply
-    ("VLED_P", PWR),     # LED supply (3.3V domain rail)
-    ("GND", PWR), ("PGND", PWR),
-    ("SDA", BI), ("SCL", BI), ("INT_N", OC),
-]), description="MAX30102 PPG, I2C-A 0x57; VDD=1V8, VLED=3V3_CONTACT")
-# pinout E0 (OLGA-14; unused NC pads omitted).
-# VERIFIED-DS MAX30102 DS p2 (Abs Max): "All Other Pins to GND -0.3V to +6.0V"
-# and p28: designed to be tolerant of any supply sequence -> SDA/SCL pulled to
-# 3V3 with VDD=1.8V is within ratings. CLOSED.
+# H3.2 pad-binding fix: symbol renumbered from sequential 1-7 to the REAL
+# OLGA-14 map — VERIFIED-DS MAX30102 DS p8 (Pin Description): 1/5/6/7/8/14 =
+# N.C. ("No Connection. Connect to PCB pad for mechanical stability." — pads
+# fitted, electrically open), 2 SCL, 3 SDA, 4 PGND, 9+10 VLED+ (two pads,
+# both must be fed), 11 VDD, 12 GND, 13 INT (OD, active low).
+# VERIFIED-DS p2 (Abs Max): "All Other Pins to GND -0.3V to +6.0V" and p28:
+# tolerant of any supply sequence -> SDA/SCL on the 3V3 bus with VDD=1.8V
+# is within ratings. CLOSED.
+MAX30102 = mkpart("MAX30102", "U", [
+    (11, "VDD", PWR),        # 1.8V analog supply
+    (9, "VLED_P1", PWR), (10, "VLED_P2", PWR),  # LED supply (3.3V domain rail)
+    (12, "GND", PWR), (4, "PGND", PWR),
+    (3, "SDA", BI), (2, "SCL", BI), (13, "INT_N", OC),
+    (1, "NC1", NCP), (5, "NC5", NCP), (6, "NC6", NCP),
+    (7, "NC7", NCP), (8, "NC8", NCP), (14, "NC14", NCP),
+], description="MAX30102 PPG, I2C-A 0x57; real OLGA-14 map (VERIFIED-DS p8); VDD=1V8, VLED=3V3_CONTACT")
 
-AS7058 = mkpart("AS7058", "U", _seq([
-    ("VDD", PWR), ("VDDIO", PWR), ("GND", PWR),
-    ("SCL", BI), ("SDA", BI), ("INT", OUT),
-    ("ECG_INP", IN), ("ECG_INN", IN), ("ECG_REF", OUT),
-]), description="ams AS7058 PPG/ECG/BioZ AFE, I2C-A 0x30 # VERIFY addr (short DS silent)")
-# pinout E0 (WLCSP42 subset). PARTIAL-DS AS7058_DS001085_short p9 Fig 2:
-# WLCSP42 grid confirmed = rows A-G x cols 1-6, 0.4 mm pitch, die 2.545x2.815
-# (footprint geometry now E1) — but the SHORT DS carries NO ball-signal map
-# and NO I2C address. Full DS (DS001573) is NDA-gated; FAE contact queued.
-# Digital pins are VIOVDD-referred (short DS p10 abs-max) -> 3.3V bus OK.
+# AS7058 — ball-SIGNAL map still OPEN (the only remaining VERIFY item).
+# PARTIAL-DS AS7058_DS001085_short p9 Fig 2: WLCSP42 grid confirmed =
+# rows A-G x cols 1-6, 0.4 mm pitch, die 2.545x2.815 (footprint geometry
+# E1) — but the SHORT DS carries NO ball-signal map and NO I2C address.
+# Full DS (DS001573) is NDA-gated; FAE contact queued.
+# H3.2 pad-binding: the 9 used signals are bound to PROVISIONAL-E0 ball
+# positions (corner block A1..B3) purely so the netlist<->pad binding is
+# complete and auditable; the remaining 33 balls are declared NC-pending.
+# DO NOT ROUTE the AS7058 fanout until DS001573 lands — every ball below
+# WILL move. Digital pins are VIOVDD-referred (short DS p10 abs-max) ->
+# 3.3V bus OK.
+AS7058 = mkpart("AS7058", "U", [
+    ("A1", "VDD", PWR), ("A2", "VDDIO", PWR), ("A3", "GND", PWR),      # PROVISIONAL-E0
+    ("A4", "SCL", BI), ("A5", "SDA", BI), ("A6", "INT", OUT),          # PROVISIONAL-E0
+    ("B1", "ECG_INP", IN), ("B2", "ECG_INN", IN), ("B3", "ECG_REF", OUT),  # PROVISIONAL-E0
+] + [(b, f"PEND_{b}", NCP) for b in
+     ("B4", "B5", "B6", "C1", "C2", "C3", "C4", "C5", "C6",
+      "D1", "D2", "D3", "D4", "D5", "D6", "E1", "E2", "E3", "E4", "E5", "E6",
+      "F1", "F2", "F3", "F4", "F5", "F6", "G1", "G2", "G3", "G4", "G5", "G6")],
+    description="ams AS7058 PPG/ECG/BioZ AFE, I2C-A 0x30 # VERIFY addr+ballmap (DS001573 NDA-gated; balls PROVISIONAL-E0)")
 
 
 # ============================================================================
 # SENSORS — I2C-B (air/optical/mag, 400 kHz)
 # ============================================================================
 
-BME688 = mkpart("BME688", "U", _seq([
-    ("VDD", PWR), ("VDDIO", PWR), ("GND", PWR),
-    ("SCK", BI), ("SDI", BI),
-    ("SDO", IN),    # strap HIGH -> addr 0x77
-    ("CSB", IN),    # strap HIGH -> I2C mode
-]), description="Bosch BME688 gas/T/RH/P, I2C-B 0x77 (SDO=1)")  # pinout E0
+# H3.2 pad-binding fix: symbol renumbered from sequential 1-7 to the REAL
+# LGA-8 map — VERIFIED-DS bst-bme688-ds000 §7.1 Table 26 p51: 1 GND, 2 CSB,
+# 3 SDI, 4 SCK, 5 SDO ("cannot be left floating", p44), 6 VDDIO, 7 GND,
+# 8 VDD. (Old sequential symbol had VDD on pad 1 = GND and CSB on pad 7 =
+# GND — supply/strap scramble.) Numbering is CLOCKWISE in top view (p51).
+BME688 = mkpart("BME688", "U", [
+    (8, "VDD", PWR), (6, "VDDIO", PWR), (1, "GND", PWR), (7, "GND2", PWR),
+    (4, "SCK", BI), (3, "SDI", BI),
+    (5, "SDO", IN),    # strap HIGH -> addr 0x77
+    (2, "CSB", IN),    # strap HIGH -> I2C mode
+], description="Bosch BME688 gas/T/RH/P, I2C-B 0x77 (SDO=1); real LGA-8 map (VERIFIED-DS p51)")
 
-SGP41 = mkpart("SGP41", "U", _seq([
-    ("VDD", PWR), ("GND", PWR), ("SDA", BI), ("SCL", BI),
-]), description="Sensirion SGP41 VOC/NOx, I2C-B 0x59 (fixed)")  # pinout E0
+# H3.2 pad-binding fix: symbol renumbered to the REAL DFN-6 map —
+# VERIFIED-DS SGP41 DS Table 6 p7: 1 VDD, 2 VSS, 3 SDA, 4 "n/a — connect
+# to ground (no electrical function)", 5 VDDH (hotplate supply — "VDD and
+# VDDH must be connected to one single supply"; MISSING from the old model:
+# the heater had no feed), 6 SCL; die pad internally GND, solder for
+# mechanical stability. (Old sequential symbol put SCL on pad 4 = the n/a
+# pad and left real SCL pad 6 netless.)
+SGP41 = mkpart("SGP41", "U", [
+    (1, "VDD", PWR), (2, "GND", PWR), (3, "SDA", BI), (6, "SCL", BI),
+    (5, "VDDH", PWR),        # hotplate supply — tie to VDD (Table 6 p7)
+    (4, "DNC_GND", PWR),     # "connect to ground" (Table 6 p7)
+    (7, "EP", PWR),          # die pad = GND; solder for mech stability (p7)
+], description="Sensirion SGP41 VOC/NOx, I2C-B 0x59 (fixed); real DFN-6 map (VERIFIED-DS Table 6 p7)")
 
 # VERIFIED-DS ENS161-Datasheet v1.1 p5 Table 1: 1 MOSI/SDA, 2 SCLK/SCL,
 # 3 MISO/ADDR (high -> 0x53, low -> 0x52), 4 VDD, 5 VDDIO, 6 INTn, 7 CSn
@@ -403,9 +557,21 @@ ENS161 = mkpart("ENS161", "U", [
     (8, "GND", PWR), (9, "GND2", PWR),
 ], description="ScioSense ENS161 4-el MOX, I2C-B 0x53 (VERIFIED-DS p5); VDD=1V8")
 
-SCD41 = mkpart("SCD41", "U", _seq([
-    ("VDD", PWR), ("GND", PWR), ("SDA", BI), ("SCL", BI),
-]), description="Sensirion SCD41 photoacoustic CO2, I2C-B 0x62 (fixed)")  # pinout E0
+# H3.2 pad-binding fix: symbol rebuilt on the REAL 21-pad map — VERIFIED-DS
+# SCD4x_Datasheet §2.3 Table 6 p5: 6 GND, 7 VDD, 9 SCL, 10 SDA, 19 VDDH
+# ("supply IR source — must be tied to VDD on the customer PCB"; MISSING
+# from the old model: the photoacoustic emitter had no feed), 20 GND,
+# 21 = the four large center pads (all numbered 21) = GND; pads 1-5, 8,
+# 11-18 = DNC "solder to a floating pad on the customer PCB". (Old
+# sequential symbol bound VDD/GND/SDA/SCL to pads 1-4 — ALL of which are
+# DNC pads: the sensor was completely unconnected.)
+SCD41 = mkpart("SCD41", "U", [
+    (7, "VDD", PWR), (6, "GND", PWR), (10, "SDA", BI), (9, "SCL", BI),
+    (19, "VDDH", PWR),      # IR source supply — tie to VDD (Table 6 p5)
+    (20, "GND2", PWR), (21, "EP_GND", PWR),   # 4 center pads share number 21
+] + [(n, f"DNC{n}", NCP) for n in
+     (1, 2, 3, 4, 5, 8, 11, 12, 13, 14, 15, 16, 17, 18)],
+    description="Sensirion SCD41 photoacoustic CO2, I2C-B 0x62 (fixed); real 21-pad map (VERIFIED-DS Table 6 p5)")
 
 # VERIFIED-DS TCS3448 DS001121 v2-00: addr = 0x59 (Table 8 p19) — the AS7343
 # family anchor 0x39 is REFUTED. 0x59 collides with SGP41 (fixed 0x59) on
@@ -420,11 +586,22 @@ TCS3448 = mkpart("TCS3448", "U", [
     (5, "PGND", PWR), (6, "GPIO", IN), (7, "INT_N", OC), (8, "SDA", BI),
 ], description="ams TCS3448 14ch VIS spectral, I2C-A 0x59 (VERIFIED-DS p19); 1.8V-only part")
 
-AS7331 = mkpart("AS7331", "U", _seq([
-    ("VDD", PWR), ("GND", PWR), ("SDA", BI), ("SCL", BI),
-    ("A0", IN), ("A1", IN),    # both LOW -> 0x74
-    ("READY", OUT), ("SYN", IN),
-]), description="ams AS7331 UV A/B/C, I2C-B 0x74 (A1A0=00)")  # pinout E0
+# H3.2 pad-binding fix: symbol rebuilt on the REAL OLGA16 map — VERIFIED-DS
+# AS7331 DS001047 Fig 3/4 p7-8: 1/2/5/6/15/16 VSSA, 3 VDDA, 4 REXT
+# (EXTERNAL 3.3 MOhm +/-1% reference resistor to VSSA, TC<=50ppm/K —
+# Electrical Characteristics p~12; MISSING from the old model: the ADC
+# reference had no return), 7 A1, 8 SYN, 9 READY, 10 VDDD, 11 VSSD,
+# 12 SDA, 13 SCL, 14 A0. No NC pins on this package. (Old sequential
+# symbol bound VDD to pad 1 = VSSA and SCL to pad 4 = REXT — scramble.)
+AS7331 = mkpart("AS7331", "U", [
+    (3, "VDDA", PWR), (10, "VDDD", PWR),
+    (1, "VSSA1", PWR), (2, "VSSA2", PWR), (5, "VSSA3", PWR), (6, "VSSA4", PWR),
+    (15, "VSSA5", PWR), (16, "VSSA6", PWR), (11, "VSSD", PWR),
+    (4, "REXT", PAS),          # 3.3M 1% to VSSA (VERIFIED-DS elec. char.)
+    (12, "SDA", BI), (13, "SCL", BI),
+    (14, "A0", IN), (7, "A1", IN),    # both LOW -> 0x74
+    (9, "READY", OUT), (8, "SYN", IN),
+], description="ams AS7331 UV A/B/C, I2C-B 0x74 (A1A0=00); real OLGA16 map (VERIFIED-DS Fig 4 p7-8)")
 
 # VERIFIED-DS AS7421 DS000667 v2-00: addr 0x64 CONFIRMED (Fig 21 p23).
 # Pin map (Fig 3/4 p6-7): 1 INT (OD, pull to 1.8 or 3.3V), 2 VDD, 3 GND,
@@ -440,14 +617,25 @@ AS7421 = mkpart("AS7421", "U", [
     (11, "EP_GND", PWR), (12, "EP_LEDA", PWR),
 ], description="ams AS7421 64ch NIR + 4 integrated NIR LEDs, I2C-B 0x64 (VERIFIED-DS p23)")
 
-SHT41 = mkpart("SHT41", "U", _seq([
-    ("VDD", PWR), ("GND", PWR), ("SDA", BI), ("SCL", BI),
-]), description="Sensirion SHT41 ref T/RH, I2C-B 0x44 (fixed)")  # pinout E0
+# H3.2 pad-binding fix: symbol renumbered to the REAL DFN-4 map —
+# VERIFIED-DS SHT4x_Datasheet v7.1 §5.4 Fig 18 p16: 1 SDA, 2 SCL, 3 VDD,
+# 4 VSS. (Old sequential symbol had VDD on pad 1 = SDA and SCL on pad 4 =
+# VSS — full scramble.) Die pad not connected to any pin; no copper under
+# the sensor besides the pin pads (p15-16).
+SHT41 = mkpart("SHT41", "U", [
+    (3, "VDD", PWR), (4, "GND", PWR), (1, "SDA", BI), (2, "SCL", BI),
+], description="Sensirion SHT41 ref T/RH, I2C-B 0x44 (fixed); real DFN-4 map (VERIFIED-DS Fig 18 p16)")
 
-MMC5983MA = mkpart("MMC5983MA", "U", _seq([
-    ("VDD", PWR), ("VDDIO", PWR), ("GND", PWR),
-    ("SDA", BI), ("SCL", BI), ("INT_DRDY", OUT),
-]), description="Memsic MMC5983MA nT mag, I2C-B 0x30")  # pinout E0
+# MMC5983MA — Memsic DS is NOT staged (not in registry_assets; added to
+# docs/MISSING_VENDOR_ASSETS.md). The 6 used signals stay on PROVISIONAL-E0
+# sequential pins 1-6 of the generic LGA-16 footprint; pads 7-16 are
+# declared NC-pending. DO NOT ROUTE the MMC fanout until the Memsic DS
+# lands — these pins WILL move.
+MMC5983MA = mkpart("MMC5983MA", "U", [
+    (1, "VDD", PWR), (2, "VDDIO", PWR), (3, "GND", PWR),        # PROVISIONAL-E0
+    (4, "SDA", BI), (5, "SCL", BI), (6, "INT_DRDY", OUT),       # PROVISIONAL-E0
+] + [(n, f"PEND_{n}", NCP) for n in range(7, 17)],
+    description="Memsic MMC5983MA nT mag, I2C-B 0x30 # VERIFY pin map (DS not staged; pins PROVISIONAL-E0)")
 
 TMAG5273 = mkpart("TMAG5273", "U", [
     (1, "SCL", BI), (2, "GND", PWR), (3, "SDA", BI),
@@ -457,14 +645,28 @@ TMAG5273 = mkpart("TMAG5273", "U", [
     # (A2 also 0x35; B1=0x22, C1=0x78, D1=0x44). Order the A1 variant. CLOSED.
 ], description="TI TMAG5273A1 hall, I2C-B 0x35 (VERIFIED-DS p16)")
 
-BMV080 = mkpart("BMV080", "U", _seq([
-    ("VDD", PWR), ("VDDIO", PWR), ("GND", PWR),
-    ("SDA", BI), ("SCL", BI), ("IRQ", OUT),
-    # VERIFIED-DS bst-bmv080-ds000 p26/p32: PS (protocol select) to VDDIO
-    # selects I2C (low = SPI); CSB and MISO become address straps and must
-    # not float: CSB=1 & MISO=1 -> addr 0x57 (Table 14, p32).
-    ("PS", IN), ("CSB", IN), ("MISO_ADDR", IN),
-]), description="Bosch BMV080 PM2.5, I2C-B 0x57 (VERIFIED-DS: PS=VDDIO, CSB=MISO=1)")  # pinout E0
+# H3.2 pad-binding fix: symbol renumbered to the REAL 13-position flex
+# pin order — VERIFIED-DS bst-bmv080-ds000 Table 11 p27 (flex numbering
+# 01->13, Fig 24 p26): 1 VDDL (laser supply 3.3V, >1uF to VSSA), 2 VSSA,
+# 3 VDDA (ADC supply 2.5-3.3V), 4 CSB (I2C addr bit 1), 5 MOSI/SDA,
+# 6 SCK/SCL, 7 PS (protocol select: VDDIO = I2C), 8 VDDIO (1.2-3.3V),
+# 9 VSSD, 10 VDDD (2.5-3.3V), 11 MISO (I2C addr bit 0), 12 IRQ,
+# 13 "Do not connect — keep floating, no GND, no voltage". CSB=1 & MISO=1
+# -> addr 0x57 (Table 14 p32/31). The old sequential symbol had one VDD/GND
+# and scrambled every strap (e.g. PS on flex pin 7 was correct only by
+# luck of the draw — VDD sat on the LASER supply pin etc.). ZIF MP nail
+# pads -> GND. NOTE Fig 11 p16-17: flex 01->13 numbering vs the Molex
+# 503566-1302 contact numbering — footprint pads 1-13 follow the FLEX
+# order; overlay-verify against the Molex drawing at fab (footprint E1
+# note carries this).
+BMV080 = mkpart("BMV080", "U", [
+    (1, "VDDL", PWR), (3, "VDDA", PWR), (10, "VDDD", PWR), (8, "VDDIO", PWR),
+    (2, "VSSA", PWR), (9, "VSSD", PWR),
+    (5, "SDA", BI), (6, "SCL", BI), (12, "IRQ", OUT),
+    (7, "PS", IN), (4, "CSB", IN), (11, "MISO_ADDR", IN),
+    (13, "DNC", NCP),          # "keep floating" (Table 11 p27)
+    ("MP1", "MP1", PAS), ("MP2", "MP2", PAS),   # ZIF nail pads -> GND
+], description="Bosch BMV080 PM2.5, I2C-B 0x57; real 13-pin flex map (VERIFIED-DS Table 11 p27)")
 
 
 # ============================================================================
@@ -476,10 +678,13 @@ BPW34 = mkpart("PIN_BPW34", "D", [
     (1, "A", PAS), (2, "K", PAS),
 ], description="BPW34S-class large-area PIN photodiode, light-tight cavity")
 
-# Charge-sensitive amplifier (OPA381-class placeholder) # pinout E0
+# Charge-sensitive amplifier (OPA381-class placeholder) # pinout E0 —
+# MSOP-8 pads 6-8 declared NC-pending; renumber to the real OPA381 pin map
+# when the TI DS is staged (docs/MISSING_VENDOR_ASSETS.md).
 OPA381 = mkpart("OPA381", "U", _seq([
     ("V+", PWR), ("V-", PWR), ("+IN", IN), ("-IN", IN), ("OUT", OUT),
-]), description="OPA381-class transimpedance/charge amp for PIN detector")
+]) + [(n, f"PEND_{n}", NCP) for n in (6, 7, 8)],
+    description="OPA381-class transimpedance/charge amp for PIN detector (pins PROVISIONAL-E0)")
 
 # Fast comparator (TLV3201-class) # pinout E0
 TLV3201 = mkpart("TLV3201", "U", _seq([
@@ -491,11 +696,15 @@ SHIELD_CAN = mkpart("SHIELD_CAN", "SH", [
     (1, "S1", PAS), (2, "S2", PAS), (3, "S3", PAS), (4, "S4", PAS),
 ], description="Shield can, radiation charge-amp cavity (light-tight)")
 
-# AD8317 RF log detector (module-level placeholder) # pinout E0
+# AD8317 RF log detector (module-level placeholder) # pinout E0 —
+# LFCSP-8 pads 7/8 + EP pad 9 declared NC-pending; renumber (and bind the
+# EP once its internal tie is known) when the ADI DS is staged
+# (docs/MISSING_VENDOR_ASSETS.md).
 AD8317 = mkpart("AD8317", "U", _seq([
     ("VPOS", PWR), ("GND", PWR), ("INHI", IN), ("INLO", IN),
     ("VOUT", OUT), ("TADJ", PAS),
-]), description="AD8317 1M-10GHz RF power detector -> N657 ADC_IN0")
+]) + [(7, "PEND_7", NCP), (8, "PEND_8", NCP), (9, "PEND_EP", NCP)],
+    description="AD8317 1M-10GHz RF power detector -> N657 ADC_IN0 (pins PROVISIONAL-E0)")
 
 # MEMS PDM microphone (bottom port) # pinout E0
 PDM_MIC = mkpart("PDM_MIC", "MK", _seq([
@@ -510,6 +719,13 @@ PDM_MIC = mkpart("PDM_MIC", "MK", _seq([
 # unused), D2+E2 reserved pair (connect to each other), F9/G7 reserved
 # (to GND — DS recommends 0R for dual-band/crystal-variant compat, fn17/18),
 # C4 RESET_N (open), remaining pads = GND. All other reserved pads left open.
+# H3.2 pad-binding completion: the remaining 17 pads modeled explicitly —
+# VERIFIED-DS UBX-22015849 Table 10 p9-11 (re-extracted; GND list of 22
+# re-confirmed exact): A4 RTC_I / A6 EXTINT / C7 SAFEBOOT_N / D1 SDA /
+# E1 SCL / F7 PIO6 = "leave open if not used"; C6 VCC_RF (filtered supply
+# for an external active antenna/LNA — SR4G013 is passive, leave open);
+# H9 LNA_EN (drives external LNA, unused); C1/C5/D9/E7/G9/J1/J2/J3/J7 =
+# "Reserved — leave open".
 MIA_M10Q = mkpart("MIA_M10Q", "U", [
     ("B1", "VCC", PWR), ("J4", "V_IO", PWR), ("J5", "V_BCKP", PWR),
     ("J6", "VIO_SEL", IN), ("C4", "RESET_N", IN),
@@ -517,10 +733,15 @@ MIA_M10Q = mkpart("MIA_M10Q", "U", [
     ("B9", "RF_IN", IN),
     ("A5", "RTC_O", OUT), ("D2", "RSVD_D2", PAS), ("E2", "RSVD_E2", PAS),
     ("F9", "RSVD_F9", PAS), ("G7", "RSVD_G7", PAS),
-] + [(p, f"GND_{p}", PWR) for p in
+    ("A4", "RTC_I", NCP), ("A6", "EXTINT", NCP), ("C7", "SAFEBOOT_N", NCP),
+    ("D1", "I2C_SDA", NCP), ("E1", "I2C_SCL", NCP), ("F7", "PIO6", NCP),
+    ("C6", "VCC_RF", NCP), ("H9", "LNA_EN", NCP),   # passive antenna: unused
+] + [(p, f"RSVD_{p}", NCP) for p in
+     ("C1", "C5", "D9", "E7", "G9", "J1", "J2", "J3", "J7")]
+  + [(p, f"GND_{p}", PWR) for p in
      ("A1", "A2", "A3", "A8", "A9", "B2", "B8", "C3", "C9", "E3", "E4", "E9",
       "F1", "F3", "F4", "G3", "G4", "G5", "G6", "H8", "J8", "J9")],
-    description="u-blox MIA-M10Q GNSS (RAWX), UART + PPS, M-LGA53 (VERIFIED-DS p9-11)")
+    description="u-blox MIA-M10Q GNSS (RAWX), UART + PPS, full M-LGA53 map (VERIFIED-DS Table 10 p9-11)")
 
 # GNSS chip antenna
 ANT_GNSS = mkpart("ANT_GNSS", "AE", [
@@ -579,6 +800,16 @@ PIEZO = mkpart("PIEZO", "PZ", [
 # not an open-drain active-low. Package: QFN-24 4x4 P0.5, EP 2.75 typ (p20).
 # D+/D- (16/17) leave unconnected; VBUS_FET_EN/SAFE_PWR_EN/VDC_OUT unused —
 # VBUS_C feeds the BQ25620 input directly (charger tolerates the 9V contract).
+# H3.2 pad-binding completion — VERIFIED-DS 002-25383 Table 1 p5-6, full
+# QFN-24 pin list: previously-unmodeled pins added. 16 D- / 17 D+ / 20 DNU1 /
+# 21 DNU2 = "Leave this pin unconnected" (Table 1 p5); 7 HPI_INT / 8 GPIO_1 =
+# marked no-connect in the Fig 3 app diagram p7 when HPI unused; 12/13
+# HPI_SDA/SCL = host I2C slave, no host here -> NC per the no-HPI app
+# diagram; 3 VBUS_FET_EN / 4 SAFE_PWR_EN = PFET gate drivers, unused (no
+# VBUS FET in this design) -> NC; 11 VDC_OUT = "connect to the output
+# (drain) side of the VBUS PFETs" — our VBUS path is DIRECT to the BQ25620
+# input, so the monitor ties to VBUS_C itself (the 'output' equals the
+# input with no FET fitted).
 CYPD3177 = mkpart("CYPD3177", "U", [
     (18, "VBUS", PWR), (19, "GND", PWR), (22, "VSS", PWR), (25, "EP", PWR),
     (15, "CC1", BI), (14, "CC2", BI),
@@ -586,7 +817,13 @@ CYPD3177 = mkpart("CYPD3177", "U", [
     (1, "VBUS_MIN", IN), (2, "VBUS_MAX", IN),     # divider-strap voltage window
     (5, "ISNK_COARSE", IN), (6, "ISNK_FINE", IN), # divider-strap current request
     (9, "FAULT", OUT), (10, "FLIP", OUT),  # both actively driven high/low (p6)
-], description="CYPD3177 autonomous USB-C PD sink; VDDD dividers request 5-9V/3A (VERIFIED-DS p8)")
+    (11, "VDC_OUT", IN),                   # VBUS output monitor -> VBUS_C (direct path)
+    (3, "VBUS_FET_EN", NCP), (4, "SAFE_PWR_EN", NCP),   # gate drivers unused
+    (7, "HPI_INT", NCP), (8, "GPIO_1", NCP),            # NC per Fig 3 p7
+    (12, "HPI_SDA", NCP), (13, "HPI_SCL", NCP),         # no HPI host in v1
+    (16, "DM", NCP), (17, "DP", NCP),                   # "leave unconnected" p5
+    (20, "DNU1", NCP), (21, "DNU2", NCP),               # "leave unconnected" p5
+], description="CYPD3177 autonomous USB-C PD sink; VDDD dividers request 5-9V/3A; full QFN-24 map (VERIFIED-DS Table 1 p5-6)")
 
 # TI BQ25620 I2C buck charger — VERIFIED-DS SLUSEG2D Table 6-1 p5-6:
 # WQFN-18 "RYK" 2.5x3.0 (NOT WQFN-16 RTE 3x3 as previously footprinted).
@@ -630,11 +867,15 @@ BQ29700 = mkpart("BQ29700", "U", [
     (1, "NC", NCP),
 ], description="TI BQ29700 1S Li+ protector (with dual NMOS) (VERIFIED-DS p3)")
 
-# Dual common-drain NMOS for protection (CSD-class) # pinout E0
+# Dual common-drain NMOS for protection (CSD-class) # pinout E0 —
+# WSON-6 EP (pad 7) declared NC-pending: on most CSD-class common-drain
+# duals the EP IS the shared drain, but the exact part is unpicked — bind
+# EP to PROT_MID once the FET is chosen (docs/MISSING_VENDOR_ASSETS.md).
 DUAL_NFET = mkpart("DUAL_NFET_PROT", "Q", _seq([
     ("S1", PAS), ("G1", IN), ("D1", PAS),
     ("D2", PAS), ("G2", IN), ("S2", PAS),
-]), description="Dual NMOS, battery protection series pair (low-side)")
+]) + [(7, "PEND_EP", NCP)],
+    description="Dual NMOS, battery protection series pair (low-side) (pins PROVISIONAL-E0)")
 
 # TPS62840 60nA-IQ buck -> 3V3_AON.
 # VERIFIED-DS SLVSEC6D p4-5 Pin Functions (DLC SON-8): 1 GND, 2 VIN, 3 MODE
@@ -723,6 +964,7 @@ ELECTRODE = mkpart("ELECTRODE", "E", [
 
 J_BATT = mkpart("CONN_BATT_3P", "J", [
     (1, "BATT+", PAS), (2, "NTC", PAS), (3, "BATT-", PAS),
+    ("MP", "MP", PAS),   # metal retention tabs -> GND (H3.2 pad binding)
 ], description="1S LiPo battery connector (JST-ACH class) + pack NTC")
 
 # USB-C 16P receptacle (GCT USB4105-GF-A)
@@ -743,7 +985,8 @@ J_POGO = mkpart("CONN_POGO_6P", "J", [
 
 # 24-pin FPC for VD66GY camera module (DNP)
 J_CAM_24P = mkpart("CONN_FPC_24P", "J",
-    [(i, f"P{i}", PAS) for i in range(1, 25)],
+    [(i, f"P{i}", PAS) for i in range(1, 25)]
+    + [("MP", "MP", PAS)],   # shell/nail pads -> GND (H3.2 pad binding)
     description="24p FPC, VD66GY camera (MIPI CSI-2) — DNP in v1")
 
 TC2030 = mkpart("TC2030", "J", [
@@ -753,7 +996,7 @@ TC2030 = mkpart("TC2030", "J", [
 
 J_SMA = mkpart("SMA_EDGE", "J", [
     (1, "SIG", PAS), (2, "GND", PWR),
-], description="SMA, RF survey input -> AD8317")
+], description="RF survey input -> AD8317 (U.FL + shell SMA pigtail, ECO-H3.2)")
 
 J_FAN = mkpart("CONN_FAN_2P", "J", [
     (1, "FAN+", PWR), (2, "FAN-", PAS),
@@ -764,5 +1007,6 @@ J_LRA = mkpart("CONN_LRA_2P", "J", [
 ], description="LRA haptic actuator pads")
 
 J_TOUCH_FPC = mkpart("CONN_TOUCH_13P", "J",
-    [(i, f"E{i-1}", PAS) for i in range(1, 13)] + [(13, "GND", PWR)],
-    description="Shell touch-electrode flex, 12 electrodes + guard GND")
+    [(i, f"E{i-1}", PAS) for i in range(1, 13)] + [(13, "GND", PWR)]
+    + [("MP1", "MP1", PAS), ("MP2", "MP2", PAS)],  # ZIF nail pads -> GND
+    description="Shell touch-electrode flex, 12 electrodes + guard GND (0.3mm ZIF, ECO-H3.2)")

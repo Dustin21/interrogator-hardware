@@ -48,12 +48,21 @@ result = {
     "counts": counts,
     "violations_by_type": dict(viol_types),
     "notes": [
-        "H3 ROUTING BASELINE — no tracks routed yet: the unconnected-pads "
-        "count is the routing todo, not a failure.",
-        "courtyard/silk overlaps come from the greedy baseline placement "
-        "(77 overlap-fallback parts) — H3 placement refinement debt.",
-        "pads with no net (E0 logical pin maps vs real package pads) are "
-        "not counted here — see build_board.py output (392).",
+        "H3.2 ROUTING BASELINE — no tracks routed yet: the unconnected-pads "
+        "count is the honest ratsnest, not a failure.",
+        "zero overlap-fallback placements and zero undeclared unbound pads "
+        "are HARD build gates in build_board.py (see nc_pins.json ledger).",
+        "WAIVED (vendor-footprint artifacts): 4x hole_clearance inside the "
+        "official GCT USB4105 footprint (its own NPTH pegs sit 0.19mm from "
+        "its own shield pads vs our 0.25 board rule).",
+        "KNOWN-OPEN (owner call): items_not_allowed = the Espressif "
+        "ESP32-C6-MINI-1 footprint ships an all-layer antenna keep-out rule "
+        "area; the ratified floorplan puts the TOP-face magnet zone "
+        "(MMC5983MA/TMAG5273), MLX90632 window and air dust opposite the "
+        "bottom-mounted module's antenna end. Flagged ECO-H3.2-E: accept "
+        "RF degradation or repack the taper. H3.3 routes no copper there.",
+        "silk_*/text_height/lib_footprint_issues are cosmetic noise, "
+        "deferred to H4 fab prep.",
     ],
 }
 OUT.write_text(json.dumps(result, indent=1))
@@ -64,8 +73,9 @@ r = subprocess.run(["kicad-cli", "pcb", "export", "svg", "--layers",
                     "F.Cu,B.Cu,Edge.Cuts", "-o", "/tmp/board_loadproof.svg",
                     str(PCB)], capture_output=True, text=True)
 print("kicad-cli load-proof:", "OK" if r.returncode == 0 else r.stderr[:400])
-# keep the board dir free of auto-created project files (CI gates on *.kicad_pro)
-for ext in (".kicad_pro", ".kicad_prl"):
-    p = PCB.with_suffix(ext)
-    if p.exists():
-        p.unlink()
+# H3.2: the .kicad_pro IS committed now — it carries the seeded netclasses
+# (checked: CI's eda glob `boards/*/*.kicad_pro` does not reach
+# boards/v1/board/). Only the per-user .kicad_prl stays untracked.
+p = PCB.with_suffix(".kicad_prl")
+if p.exists():
+    p.unlink()

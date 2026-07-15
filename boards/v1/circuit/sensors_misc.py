@@ -6,7 +6,8 @@ from skidl import Net  # NC is a skidl builtin
 
 from lib_parts import (BMV080, A121, MIA_M10Q, ANT_GNSS, PDM_MIC, J_CAM_24P,
                        BPW34, OPA381, TLV3201, SHIELD_CAN, AD8317, J_SMA,
-                       NFET_SOT23, AND_1G08, J_FAN, SGX_4CO, LMP91000)
+                       NFET_SOT23, AND_1G08, J_FAN, SGX_4CO, LMP91000,
+                       XTAL_3225)
 from util import join, C, R, LED, SCHOTTKY, decouple, gnd, tp, pullup
 
 
@@ -23,34 +24,70 @@ def build_sensors_misc():
 
     # ---------------- BMV080 PM2.5 — I2C-B 0x57 ---------------------------
     # (0x57 collides with MAX30102 only nominally — MAX30102 is on I2C-A.)
+    # H3.2 pad-binding fix (real flex pin order, VERIFIED-DS Table 11 p27):
+    # the part has THREE separate supplies (VDDL laser 3.3V / VDDA ADC /
+    # VDDD digital, all 2.5-3.3V legal) + VDDIO (1.2-3.3V) and split
+    # VSSA/VSSD grounds — the old single-VDD model scrambled the ZIF pads.
+    # All supplies <- 3V3_AIR (in-range for each, one gated domain).
     pm = BMV080(ref="U_BMV", footprint="generated:BMV080_Molex_503566-1302_ZIF13")
-    pm["VDD"] += v_air
-    pm["VDDIO"] += v_air
-    pm["GND"] += GND
+    pm["VDDL VDDA VDDD VDDIO"] += v_air
+    pm["VSSA VSSD"] += GND
     pm["SDA"] += sda_b
     pm["SCL"] += scl_b
-    # VERIFIED-DS bst-bmv080-ds000 p26: PS=VDDIO selects I2C (GND would be SPI);
-    # p32 Table 14: CSB=1, MISO=1 -> device address 0x57. Straps in copper.
+    # VERIFIED-DS bst-bmv080-ds000 p27: PS=VDDIO selects I2C (GND would be SPI);
+    # p31 Table 13: CSB(IAB1)=1, MISO(IAB0)=1 -> device address 0x57.
     pm["PS"] += v_air
     pm["CSB"] += v_air
     pm["MISO_ADDR"] += v_air
-    decouple(v_air, n=1, bulk_uF=10)
+    pm["DNC"] += NC              # pin 13: "keep floating" (Table 11 p27)
+    pm["MP1 MP2"] += GND         # ZIF nail pads
+    decouple(v_air, n=3, bulk_uF=10)   # >1uF each on VDDL/VDDA/VDDD (Table 11)
     pm["IRQ"] += Net.fetch("INT_BMV")
 
     # ---------------- A121 radar — SPI-only per DS ------------------------
     radar = A121(ref="U_A121", footprint="generated:A121_fcCSP50")
-    # VERIFIED-DS A121 v1.8 p10: VIO=1.8/3.3V OK, but VRX/VTX/VDIG are
-    # 1.8V-only (abs-max 2.0V). ECO-H3: rewire VIO2 bundle to 1V8 rail.
-    radar["VIO1"] += v_radar     # VIO — 3.3V legal per DS p10
-    radar["VIO2"] += v_radar
-    radar["GND"] += GND
+    # H3.2: symbol rebuilt on the REAL 50-ball map (VERIFIED-DS A121 v1.8
+    # Table 1 p8-9 — the 9-pin sequential symbol left all 50 pads netless).
+    # VERIFIED-DS p10: VIO=1.8/3.3V OK, but VRX/VTX/VDIG are 1.8V-only
+    # (abs-max 2.0V). ECO EXECUTED (H3.0): VDIG+VRX+VTX fed from the gated
+    # 1V8_RADAR sub-rail (same EN_RADAR as 3V3_RADAR, both levels gate
+    # together); VIO stays 3.3V -> SPI/INT/ENABLE remain 3.3V-bus
+    # compatible, no shifters.
+    v18_radar = Net.fetch("1V8_RADAR")
+    radar["VIO"] += v_radar      # K9 — 3.3V legal per DS p10
+    radar["VDIG VRX1 VRX2 VTX1 VTX2"] += v18_radar   # 1.8V-only  VERIFIED-DS p10
+    # 27 GND balls + DS-mandated grounded balls (Analog0/1, CTRL, GPIO1-4,
+    # PLL_RF_TEST — Table 1 p8: "connect to ground")
+    for p in radar.pins:
+        if p.name.startswith("GND_"):
+            p += GND
+    radar["ANALOG0 ANALOG1 CTRL GPIO1 GPIO2 GPIO3 GPIO4 PLL_RF_TEST"] += GND
+    # RESET_N "must be connected to VIO" (Table 1 p8) — H3.2 real-bug fix
+    radar["RESET_N"] += v_radar
     decouple(v_radar, n=2, bulk_uF=10)
+    decouple(v18_radar, n=4, bulk_uF=10)   # C1-C4 1uF class (BOM Table 13 p19)
     radar["SPI_SCLK"] += Net.fetch("SPI1_SCK")
     radar["SPI_MOSI"] += Net.fetch("SPI1_MOSI")
     radar["SPI_MISO"] += Net.fetch("SPI1_MISO")
     radar["SPI_SS_N"] += Net.fetch("CS_A121_N")
     radar["INTERRUPT"] += Net.fetch("IRQ_A121")
     radar["ENABLE"] += v_radar   # enabled whenever RADAR domain is powered
+    # 24 MHz crystal — H3.2 REAL-BUG FIX: "the built-in crystal oscillator
+    # REQUIRES an external crystal; supported frequency 24 MHz" (VERIFIED-DS
+    # v1.8 p9 + §6.2 p19; BOM Table 13: X1 24MHz + C5/C6 tuning caps — 8pF
+    # for the CL=9pF/Cstray=5pF worked example). The old circuit had NO
+    # crystal: the sensor would never clock.
+    xr = XTAL_3225(ref="X_A121",
+                   footprint="Crystal:Crystal_SMD_3225-4Pin_3.2x2.5mm")
+    xr.value = "24MHz"
+    join("A121_XIN", radar["XIN"], xr["X1"])
+    join("A121_XOUT", radar["XOUT"], xr["X2"])
+    xr["GND1"] += GND
+    xr["GND2"] += GND
+    cx5, cx6 = C("8pF"), C("8pF")      # §6.2 p19 example values (E0: set per XTAL CL)
+    join("A121_XIN", cx5[1])
+    join("A121_XOUT", cx6[1])
+    GND += cx5[2], cx6[2]
 
     # ---------------- MIA-M10Q GNSS ---------------------------------------
     # VERIFIED-DS UBX-22015849 p9-11: M-LGA53 pad map (footprint rebuilt —
@@ -71,6 +108,14 @@ def build_sensors_misc():
     for p in gnss.pins:
         if p.name.startswith("GND_"):
             p += GND
+    # H3.2 pad-binding completion — remaining 17 pads, all "leave open" per
+    # VERIFIED-DS Table 10 p9-11: RTC_I/EXTINT/SAFEBOOT_N/I2C pads/PIO6 =
+    # optional features unused; VCC_RF + LNA_EN = for an ACTIVE antenna
+    # (SR4G013 is passive); 9x Reserved.
+    gnss["RTC_I EXTINT SAFEBOOT_N I2C_SDA I2C_SCL PIO6 VCC_RF LNA_EN"] += NC
+    for p in gnss.pins:
+        if p.name.startswith("RSVD_") and not p.nets:
+            p += NC
     decouple(v_gnss, n=1, bulk_uF=10)
     # backup supply from always-on rail via diode (hot-start ephemeris)
     dbk = SCHOTTKY("BAT54")
@@ -109,10 +154,11 @@ def build_sensors_misc():
     #  * XSHUTDOWN reset ACTIVE LOW (Table 6) -> CAM_RSTN polarity correct.
     #  * CLKIN external input clock required (Table 6) -> CAM_XCLK correct.
     #  * I2C control (SDA/SCL, Table 6) -> CCI on I2C-A correct.
-    # NOTE-ECO(H3): FPC carries only 3V3_OPTICAL (pin 16) + 1V8 (pin 17) —
-    # the camera module must generate 2.8V and 1.15V locally (2x LDO on the
-    # module flex), or two pins of the reserved 19-24 group must be
-    # repurposed as 2V8/1V15 feeds. DNP in v1 — note only, no rewire.
+    # RATIFIED (H3.0): the camera MODULE carries its own local 2.8V (VANA)
+    # and 1.15V (VCORE) LDOs on the module flex — the FPC pinout stays
+    # 3V3_OPTICAL (16) + 1V8 (17) + CSI, and the reserved 19-24 group stays
+    # reserved (NOT repurposed as rail feeds). DNP in v1; decision recorded
+    # in boards/v1/H3_REPORT.md §H3.0-5.
     cam = J_CAM_24P(ref="J_CAM", footprint="Connector_FFC-FPC:Hirose_FH12-24S-0.5SH_1x24-1MP_P0.50mm_Horizontal")
     cam[1] += GND
     join("CSI_CKP", cam[2])
@@ -134,6 +180,7 @@ def build_sensors_misc():
     cam[18] += GND
     for i in range(19, 25):
         cam[i] += NC                    # reserved on DNP connector
+    cam["MP"] += GND                    # shell/nail pads (H3.2 pad binding)
 
     # ---------------- PIN radiation detector front-end ---------------------
     # BPW34-class PIN, charge amp (OPA381-class), comparator -> GEIGER_PULSE.
@@ -145,6 +192,9 @@ def build_sensors_misc():
 
     champ["V+"] += aon
     champ["V-"] += GND
+    for p in champ.pins:             # MSOP-8 pads 6-8: NC-pending (E0)
+        if p.name.startswith("PEND_"):
+            p += NC
     cmp_["V+"] += aon
     cmp_["V-"] += GND
     decouple(aon, n=2)
@@ -193,7 +243,11 @@ def build_sensors_misc():
 
     # ---------------- AD8317 RF survey detector ----------------------------
     rf = AD8317(ref="U_RF", footprint="generated:AD8317_LFCSP8_2x3")
-    sma = J_SMA(ref="J_RF", footprint="Connector_Coaxial:SMA_Amphenol_132134_Vertical")
+    # ECO-H3.2 (floorplan capacity): the vertical SMA (8.4x8.4 courtyard)
+    # has no legal window left — RF survey input moves to a U.FL receptacle
+    # (4.4x5.1); the external survey antenna attaches via a shell-mounted
+    # SMA pigtail (owner ratify). Same 2-pad model, same nets.
+    sma = J_SMA(ref="J_RF", footprint="Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical")
     rf["VPOS"] += v3sys
     rf["GND"] += GND
     decouple(v3sys, n=2)
@@ -208,6 +262,9 @@ def build_sensors_misc():
     GND += cin2[2]
     rf["VOUT"] += Net.fetch("RF_DET_OUT")   # -> N657 ADC_IN0
     rf["TADJ"] += GND
+    for p in rf.pins:                # LFCSP pads 7/8 + EP: NC-pending (E0)
+        if p.name.startswith("PEND_"):
+            p += NC
 
     # ---------------- UV + white illumination (interlocked) ----------------
     # UV drive = EN_UV_REQ (N657) AND INTERLOCK_OK (sentinel) — R5 safety.
@@ -271,8 +328,8 @@ def build_sensors_misc():
     # Cell: VERIFIED-DS DS-0138 Issue 3 p1/p3 — 3 pins O1.55 on 13.5 PCD;
     # pins must NOT be soldered (p3 note 1) -> PSB socket receptacles
     # (~O1.7 drill), field-replaceable cell (R2). 70±20 nA/ppm, 10R load,
-    # >24 mo life. NOTE-ECO(H3): the 13.5 PCD pad ring exceeds the ratified
-    # 14x14 floorplan envelope — zone repack at H3 (no board rebuild here).
+    # >24 mo life. ECO EXECUTED (H3.1): gas_b zone repacked — envelope now
+    # 17x17 (pads+courtyard on-board; the O20 can is also on-board here).
     cell = SGX_4CO(ref="U_CO", footprint="generated:SGX_4CO_4SERIES_TH")
     # AFE: VERIFIED-DS LMP91000 SNAS506I p3 — real WSON-14 pin map (see
     # lib_parts); split grounds DGND(1)/AGND(7), DAP -> AGND.

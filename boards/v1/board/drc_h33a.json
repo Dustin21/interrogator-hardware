@@ -1,0 +1,26 @@
+{
+ "tool": "pcbnew 7.0.11 WriteDRCReport",
+ "board": "interrogator_v1.kicad_pcb",
+ "vias": 511,
+ "tracks": 310,
+ "zones": 39,
+ "counts": {
+  "DRC violations": 881,
+  "unconnected pads": 499,
+  "Footprint errors": 0
+ },
+ "violations_by_type": {
+  "copper_sliver": 1,
+  "silk_overlap": 199,
+  "silk_over_copper": 199,
+  "text_height": 100,
+  "lib_footprint_issues": 199,
+  "silk_edge_clearance": 39,
+  "hole_clearance": 4,
+  "via_dangling": 88,
+  "items_not_allowed": 52
+ },
+ "notes": [
+  "H3.3a planes+fanout"
+ ]
+}

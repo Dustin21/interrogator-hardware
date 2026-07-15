@@ -45,7 +45,10 @@ Cell: **LP503450-class 1200 mAh (50x34x5.2mm) 1S LiPo + protection**; USB-C PD ~
 | sentinel+haptic+glow | 8.0 |
 | **total** | **457** |
 
-**Continuous interrogation ≈ 2.6 h** (bursty in practice → mixed 8–20h).
+**Continuous interrogation ≈ 2.6 h** (bursty → mixed 8–20h).
 
 Adds (MLX90632/AS7421/mic/ENS161/SCD41/SGX-CO/SHT41) are gated/duty-cycled; SCD41 + electrochem bias
 hard-gated in ambient. PIN radiation replaces BG51 on the ADS131M04 analog domain.
+
+H3.0 adders (3x TPS22916 1V8 sub-rail switches ~2 uA IQ each, PCA9306 ~0, TXU0304 ~1 uA):
+<7 uA total — below the model's resolution, absorbed in `misc/regs` (no line-item change).

@@ -17,7 +17,11 @@ def build_accessory():
     sent_sda, sent_scl = Net.fetch("SENT_SDA"), Net.fetch("SENT_SCL")
 
     # ---------------- magnetic 6-pogo accessory port (ADR-0002) -----------
-    pogo = J_POGO(ref="J_POGO", footprint="generated:POGO6_MAGRING")
+    # ECO-H3.2 (floorplan capacity): board side of the accessory port is a
+    # compact 2x3 landing field; the ADR-0002 9mm magnetic ring geometry
+    # moves to the shell part (dock pogo pins reach the lands through shell
+    # inserts). Nets unchanged; owner ratify.
+    pogo = J_POGO(ref="J_POGO", footprint="generated:POGO6_COMPACT")
     pogo["VACC"] += Net.fetch("VACC")        # switched VSYS (U_SW_ACC, EN_ACC)
     pogo["GND"] += GND
     pogo["SDA"] += sent_sda                  # accessory ID EEPROM lives at 0x50
@@ -32,10 +36,13 @@ def build_accessory():
     # ORDER CODE IQS7222Axxx001 (code 102 would be 0x57). Each VREG pin needs
     # its own 2.2uF (p45 §12.1.2); MCLR has an internal 200k pullup (ext. 10k
     # kept). TAB (pad 21) to VSS per p6 note.
-    # NOTE-ECO(H3): QFN20 exposes only NINE sensor pins (CRx0-7 + CTx8) —
-    # the 12-electrode flex cannot be driven pad-per-pin. E0-E8 are wired;
-    # E9-E11 are grounded as guards until the flex is reworked to a
-    # mutual-cap Rx/Tx matrix (or the electrode count drops to 9).
+    # RATIFIED (H3.0): QFN20 exposes only NINE sensor pins (CRx0-7 + CTx8) —
+    # v1 ships a 9-electrode SELF-CAP flex (3 of the 12 planned zones
+    # dropped: both reserves + one merged squeeze pair, see
+    # docs/user-experience.md). E0-E8 wired; the flex connector keeps its
+    # 13 positions with E9-E11 grounded as guard/shield traces, so a v1.1
+    # mutual-cap Rx/Tx matrix flex plugs into the SAME connector (CTx
+    # re-mapping is firmware + flex artwork only, no board respin).
     touch = IQS7222A(ref="U_TOUCH", footprint="Package_DFN_QFN:QFN-20-1EP_3x3mm_P0.4mm_EP1.65x1.65mm")
     touch["VDDHI"] += aon
     touch["GND"] += GND
@@ -59,12 +66,16 @@ def build_accessory():
     touch["NC1"] += NC
     touch["NC2"] += NC
     # shell electrodes on the flex connector (engraved-face field)
-    jt = J_TOUCH_FPC(ref="J_TOUCH", footprint="Connector_FFC-FPC:Hirose_FH12-13S-0.5SH_1x13-1MP_P0.50mm_Horizontal")
+    # ECO-H3.2: J_TOUCH switches from the 0.5mm FH12-13 to the same Molex
+    # 503566-1302 0.3mm ZIF the BMV080 uses (shell flex is our artwork; BOM
+    # consolidation + 101->29mm2 courtyard).
+    jt = J_TOUCH_FPC(ref="J_TOUCH", footprint="generated:ZIF13_MOLEX_503566")
     for i in range(9):               # CRx0-7 + CTx8 -> E0..E8
         join(f"TOUCH_E{i}", touch[f"E{i}"], jt[f"E{i}"])
-    for i in range(9, 12):           # unused electrodes grounded as guards
-        jt[f"E{i}"] += GND           # (ECO-H3: mutual-cap matrix rework)
+    for i in range(9, 12):           # E9-E11: guard/shield positions on the
+        jt[f"E{i}"] += GND           # v1 9-electrode flex (H3.0 ratified)
     jt["GND"] += GND
+    jt["MP1 MP2"] += GND             # ZIF nail pads (H3.2 pad binding)
 
     # ---------------- DRV2605L haptic — SENTINEL_I2C 0x5A ------------------
     # VERIFIED-DS SLOS854D p5 (DGS/VSSOP-10 pin map): REG (pin 1, 1.8V LDO
@@ -87,7 +98,10 @@ def build_accessory():
     join("LRA_N", hap["OUT_N"], lra["OUT-"])
 
     # ---------------- TAG-Connect TC2030 x2 --------------------------------
-    tc1 = TC2030(ref="J_SWD_N6", footprint="Connector:Tag-Connect_TC2030-IDC-NL_2x03_P1.27mm_Vertical")
+    # ECO-H3.2-D: TC2030 -> plain 1.27mm pad row (the TC2030 NPTH locating
+    # holes had no both-face-clear window left on the packed bean); same
+    # 6-signal order as the TC2030 cable, debug via pogo bar/soldered leads.
+    tc1 = TC2030(ref="J_SWD_N6", footprint="generated:SWD_PADROW_6")
     tc1["VTREF"] += v3sys
     tc1["SWDIO"] += Net.fetch("N6_SWDIO")
     tc1["NRST"] += Net.fetch("N6_NRST")
@@ -97,7 +111,7 @@ def build_accessory():
     tc1["SWO"] += swo1
     tp(swo1)
 
-    tc2 = TC2030(ref="J_SWD_BL", footprint="Connector:Tag-Connect_TC2030-IDC-NL_2x03_P1.27mm_Vertical")
+    tc2 = TC2030(ref="J_SWD_BL", footprint="generated:SWD_PADROW_6")  # ECO-H3.2-D
     tc2["VTREF"] += aon
     tc2["SWDIO"] += Net.fetch("BL_SWDIO")
     tc2["NRST"] += Net.fetch("BL_RESET_N")

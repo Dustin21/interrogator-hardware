@@ -1,0 +1,43 @@
+harvest 10s; unconnected edges: 616
+  xspi XSPI_CS_N: +1 fail 0 len 13.0
+  xspi XSPI_D2: +1 fail 0 len 14.9
+  xspi XSPI_D5: +1 fail 0 len 14.3
+  xspi XSPI_D6: +1 fail 0 len 17.9
+  xspi XSPI_D7: +0 fail 1 len 0.0
+  xspi XSPI_DQS: +1 fail 0 len 8.2
+  xspi XSPI_CLK: +1 fail 0 len 8.5
+  xspi XSPI_D0: +1 fail 0 len 10.5
+  xspi XSPI_D1: +1 fail 0 len 14.9
+  xspi XSPI_D3: +0 fail 1 len 0.0
+  xspi XSPI_D4: +1 fail 0 len 9.4
+  kelvin CO_WE: +0 fail 1 len 0.0 vias 0
+  kelvin CO_RE: +1 fail 0 len 14.9 vias 1
+  kelvin CO_CE: +1 fail 0 len 22.2 vias 1
+  kelvin CO_VREF: +1 fail 0 len 9.9 vias 0
+  kelvin CO_AFE_OUT: +2 fail 0 len 46.2 vias 3
+  rad RAD_IN: +3 fail 0 len 28.0
+  rad RAD_VREF: +3 fail 0 len 29.3
+  rad RAD_VTH: +2 fail 0 len 7.1
+  rad PIN_BIAS: +2 fail 0 len 7.7
+  rad RAD_ANALOG: +5 fail 0 len 38.7
+  rad GEIGER_PULSE: +2 fail 0 len 52.9
+  rad SHIELD_RAD: +4 fail 0 len 38.1
+  clk N6_OSC_IN: +2 fail 0 len 38.1 vias 3
+  clk N6_OSC_OUT: +2 fail 0 len 41.1 vias 2
+  clk A121_XIN: +2 fail 0 len 12.7 vias 0
+  clk A121_XOUT: +2 fail 0 len 16.5 vias 1
+  clk CLK_ADS: +2 fail 0 len 50.2 vias 3
+  pairs: {"CSI_CKP/CSI_CKN": {"p_mm": 10.49, "n_mm": 0.0, "delta_mm": 10.487, "vias": [2, 1], "failed": 1}, "CSI_D0P/CSI_D0N": {"p_mm": 12.82, "n_mm": 0.0, "delta_mm": 12.82, "vias": [2, 1], "failed": 1}, "CSI_D1P/CSI_D1N": {"p_mm": 12.82, "n_mm": 0.0, "delta_mm": 12.817, "vias": [2, 1], "failed": 1}, "USB_DP/USB_DM": {"p_mm": 36.67, "n_mm": 41.57, "delta_mm": -4.902, "vias": [2, 4], "failed": 1}}
+  xspi pre-match: {'XSPI_CS_N': 13.03, 'XSPI_D2': 14.92, 'XSPI_D5': 14.3, 'XSPI_D6': 17.92, 'XSPI_D7': 0.0, 'XSPI_DQS': 8.25, 'XSPI_CLK': 8.49, 'XSPI_D0': 10.54, 'XSPI_D1': 14.91, 'XSPI_D3': 0.0, 'XSPI_D4': 9.36}
+  xspi post-match spread: 17.92mm
+  group SDIO: +4 fail 4 len 115mm
+  group I2C: +56 fail 6 len 598mm
+  group SPI1: +16 fail 15 len 336mm
+  group UART: +10 fail 6 len 235mm
+  group EN: +12 fail 18 len 375mm
+  group CLK: +0 fail 2 len 0mm
+  group RF: +1 fail 3 len 52mm
+  group CAM: +0 fail 2 len 0mm
+unconnected edges after H3.3b: 464
+failed nets: ['ATTN_N6:exhausted/exhausted/exhausted', 'ATTN_N6:unroutable', 'CAM_RSTN:exhausted/exhausted/exhausted', 'CAM_RSTN:unroutable', 'CAM_XCLK:exhausted/exhausted/exhausted', 'CAM_XCLK:unroutable', 'CO_WE:exhausted/exhausted/exhausted', 'CO_WE:unroutable', 'CSI_CKN:exhausted/exhausted/exhausted', 'CSI_CKN:unroutable', 'CSI_D0N:exhausted/exhausted/exhausted', 'CSI_D0N:unroutable', 'CSI_D1N:exhausted/exhausted/exhausted', 'CSI_D1N:unroutable', 'CS_A121_N:exhausted/exhausted/exhausted', 'CS_A121_N:unroutable', 'CS_ADS_N:exhausted/exhausted/exhausted', 'CS_ADS_N:unroutable', 'CS_BNO_N:exhausted/exhausted/exhausted', 'CS_BNO_N:unroutable', 'CS_VL53_N:exhausted/exhausted/exhausted', 'CS_VL53_N:unroutable', 'EN_ACC:exhausted/exhausted/exhausted', 'EN_ACC:unroutable', 'EN_AIR:exhausted/exhausted/exhausted', 'EN_AIR:unroutable', 'EN_CONTACT:exhausted/exhausted/exhausted', 'EN_CONTACT:unroutable', 'EN_FAN:exhausted/exhausted/exhausted', 'EN_FAN:unroutable', 'EN_GNSS:exhausted/exhausted/exhausted', 'EN_GNSS:unroutable', 'EN_HAPTIC:exhausted/exhausted/exhausted', 'EN_HAPTIC:unroutable', 'EN_N6:exhausted/exhausted/exhausted', 'EN_N6:unroutable', 'EN_RADAR:exhausted/exhausted/exhausted', 'EN_RADAR:unroutable', 'EN_UV_REQ:exhausted/exhausted/exhausted', 'EN_UV_REQ:unroutable', 'EN_WIFI:exhausted/exhausted/exhausted', 'EN_WIFI:unroutable', 'GNSS_PPS:exhausted/exhausted/exhausted', 'GNSS_PPS:unroutable', 'GNSS_RF:exhausted/exhausted/exhausted', 'GNSS_RF:unroutable', 'GNSS_RX:exhausted/exhausted/exhausted', 'GNSS_RX:unroutable', 'GNSS_TX:exhausted/exhausted/exhausted', 'GNSS_TX:unroutable', 'I2CA_SCL:exhausted/exhausted/exhausted', 'I2CA_SCL:unroutable', 'I2CA_SCL_1V8:exhausted/exhausted/exhausted', 'I2CA_SCL_1V8:unroutable', 'I2CB_SCL:exhausted/exhausted/exhausted', 'I2CB_SCL:unroutable', 'IMCU_N6_TX:exhausted/exhausted/exhausted', 'IMCU_N6_TX:unroutable', 'INT_VL53:exhausted/exhausted/exhausted', 'INT_VL53:unroutable', 'LPN_VL53:exhausted/exhausted/exhausted', 'LPN_VL53:unroutable', 'N6_PWR_ON:exhausted/exhausted/exhausted', 'N6_PWR_ON:unroutable', 'N6_VCORE_SEL:exhausted/exhausted/exhausted', 'N6_VCORE_SEL:unroutable', 'PDM_CLK:exhausted/exhausted/exhausted', 'PDM_CLK:unroutable', 'PDM_DATA:exhausted/exhausted/exhausted', 'PDM_DATA:unroutable', 'RF_DET_OUT:exhausted/exhausted/exhausted', 'RF_DET_OUT:unroutable', 'SDIO_CLK:exhausted/exhausted/exhausted', 'SDIO_CLK:unroutable', 'SDIO_D0:exhausted/exhausted/exhausted', 'SDIO_D0:unroutable', 'SDIO_D2:exhausted/exhausted/exhausted', 'SDIO_D2:unroutable', 'SDIO_D3:exhausted/exhausted/exhausted', 'SDIO_D3:unroutable', 'SENT_SCL:exhausted/exhausted/exhausted', 'SENT_SCL:unroutable', 'SPI1_MISO:exhausted/exhausted/exhausted', 'SPI1_MISO:unroutable', 'SPI1_MOSI:exhausted/exhausted/exhausted', 'SPI1_MOSI:unroutable', 'SPI1_SCK:exhausted/exhausted/exhausted', 'SPI1_SCK:unroutable', 'USB_DM:exhausted/exhausted/exhausted', 'USB_DM:unroutable', 'VL53_GPIO2:exhausted/exhausted/exhausted', 'VL53_GPIO2:unroutable', 'VL53_MOSI_1V8:exhausted/exhausted/exhausted', 'VL53_MOSI_1V8:unroutable', 'VL53_SPI_SEL:exhausted/exhausted/exhausted', 'VL53_SPI_SEL:unroutable', 'WAKE_N6:exhausted/exhausted/exhausted', 'WAKE_N6:unroutable', 'XSPI_D3:exhausted/exhausted/exhausted', 'XSPI_D3:unroutable', 'XSPI_D5:exhausted/exhausted/exhausted', 'XSPI_D5:unroutable', 'XSPI_D6:exhausted/exhausted/exhausted', 'XSPI_D6:unroutable', 'XSPI_D7:exhausted/exhausted/exhausted', 'XSPI_D7:unroutable']
+saved (2250s total)

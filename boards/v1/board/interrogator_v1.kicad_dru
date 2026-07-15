@@ -1,0 +1,13 @@
+(version 1)
+# H3.3a — via-in-pad POFV fanout regions (0.5 mm pitch, 0.2/0.4 vias):
+# JLCPCB 6L via-in-pad process; clearance/hole relaxations apply ONLY
+# inside the fanout parts' courtyards.
+(rule bga_viainpad_clearance
+  (condition "A.insideCourtyard('U_N657') || A.insideCourtyard('U_A121')")
+  (constraint clearance (min 0.09mm)))
+(rule bga_viainpad_hole
+  (condition "A.insideCourtyard('U_N657') || A.insideCourtyard('U_A121')")
+  (constraint hole_clearance (min 0.15mm)))
+(rule bga_viainpad_track
+  (condition "A.insideCourtyard('U_N657') || A.insideCourtyard('U_A121')")
+  (constraint track_width (min 0.09mm)))

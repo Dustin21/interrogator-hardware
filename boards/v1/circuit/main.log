@@ -6,727 +6,807 @@ WARNING: fp-lib-table file was not found. Component footprints are not available
 WARNING: fp-lib-table file was not found. Component footprints are not available.
 WARNING: fp-lib-table file was not found. Component footprints are not available.
 WARNING: fp-lib-table file was not found. Component footprints are not available.
-WARNING: Missing tag on USB_C_16P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:37.
-WARNING: Random tag bKXNeT0o7c generated for USB_C_16P.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag RtgorvmLRI generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag qskDyKw34g generated for TESTPOINT.
-WARNING: Missing tag on CYPD3177 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:56.
-WARNING: Random tag mLuwvHJDB3 generated for CYPD3177.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag n2WM2drv6X generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag dTWQHB2lKb generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag I0GyOLp3Kc generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag iIX61STqsy generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 63SG5zjFC1 generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 1hUoaAsBDf generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag xnIG8yy1P5 generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag FPr2ndU8dJ generated for R.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag i5EDdsYxxm generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag emlwsKu8Bm generated for TESTPOINT.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag RRUT3Ki4Ls generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag X7xHoWNEFZ generated for C.
-WARNING: Missing tag on CONN_BATT_3P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:96.
-WARNING: Random tag gDG7NWKRHX generated for CONN_BATT_3P.
-WARNING: Missing tag on BQ29700 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:115.
-WARNING: Random tag zcGJKeQYBI generated for BQ29700.
-WARNING: Missing tag on DUAL_NFET_PROT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:116.
-WARNING: Random tag ms84Icwxio generated for DUAL_NFET_PROT.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag Je3ntVSabB generated for R.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag ZNyc9RS2JT generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag KXY1EXAvVT generated for R.
-WARNING: Missing tag on BQ27427 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:147.
-WARNING: Random tag STHHzGR3uv generated for BQ27427.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag J8V7vuIPZ4 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 43_IGS9hwy generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag mdQpvzbAEQ generated for R.
-WARNING: Missing tag on BQ25620 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:174.
-WARNING: Random tag ZkjLV9iWyk generated for BQ25620.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag XSTQUvgZ8O generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag FqyeONlbxq generated for C.
-WARNING: Missing tag on L instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:34.
-WARNING: Random tag 9rSWCbFxVl generated for L.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag fxWYVTwHGL generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag vprMxMcbKU generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag pYqbnyER5W generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag aALz0SxdLp generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag xxUHwbEeKf generated for R.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag eFBK9vyTgk generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag ZW9bKK1ual generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag S6Gfy_K_CT generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag a6Z2uaZJY0 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag dsHPCNB7Q0 generated for C.
-WARNING: Missing tag on TPS62840 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:221.
-WARNING: Random tag ABrqhaZJkh generated for TPS62840.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag OkG9FLKfEl generated for R.
-WARNING: Missing tag on L instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:34.
-WARNING: Random tag Gg32AZv_Z3 generated for L.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag D5t8Ld7dYs generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag MoAlyhcVnV generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 97xPCYfQRb generated for C.
-WARNING: Missing tag on TPS62823 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:258.
-WARNING: Random tag P_Mqi7T3JD generated for TPS62823.
-WARNING: Missing tag on L instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:34.
-WARNING: Random tag T1OougteWH generated for L.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag TCImE5Ufy6 generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag UJxYpd_xSn generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag af6EYUQI9t generated for R.
-WARNING: Missing tag on NFET_SOT23 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:272.
-WARNING: Random tag YV3FLUz9t_ generated for NFET_SOT23.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag ZjcPsp2Yxd generated for R.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag dml4AZiE1F generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag Vah8vEdAA6 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag e2R30hCYI_ generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag xHy3cpKkaE generated for C.
-WARNING: Missing tag on TPS62823 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:289.
-WARNING: Random tag XSbgM_GxPd generated for TPS62823.
-WARNING: Missing tag on L instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:34.
-WARNING: Random tag HIlGjuOjW0 generated for L.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag qx8dKTSbGu generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag Kfr2m4X52s generated for R.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag eNED10tZnS generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag z7EcU6DYtN generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 2qZ1fgiel8 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag Ifwe4i7tt2 generated for C.
-WARNING: Missing tag on TLV62568 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:312.
-WARNING: Random tag KauUP352or generated for TLV62568.
-WARNING: Missing tag on L instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:34.
-WARNING: Random tag 53OXst61Cx generated for L.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag kQZPwwQXU0 generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag lI29lsECuA generated for R.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 1_lHsz6gvx generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag fNUcsMpZnw generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag NaM1YpvpJn generated for C.
-WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:337.
-WARNING: Random tag ldLdUynEuJ generated for TPS22916.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag xF094uuEhU generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag rPpB9NHShh generated for C.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag GerkxFWa0S generated for TESTPOINT.
-WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:337.
-WARNING: Random tag LSEMuMbiQy generated for TPS22916.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag TtE8DLbPc9 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag sFGPF2acIC generated for C.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag DJy5lxKSWS generated for TESTPOINT.
-WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:337.
-WARNING: Random tag KRoFGE00EC generated for TPS22916.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag ztgM18EUv3 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag tIdYMr6HCM generated for C.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag mZUnhVLlXN generated for TESTPOINT.
-WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:337.
-WARNING: Random tag 2i1mfddeB9 generated for TPS22916.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag iJwtlDtDSE generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag n2YHi2I1Za generated for C.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag IntlnnpPKA generated for TESTPOINT.
-WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:337.
-WARNING: Random tag DtWw0kggNK generated for TPS22916.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag ymbFcR5MQR generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 13KmMM0CUe generated for C.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag aBecQFvX04 generated for TESTPOINT.
-WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:337.
-WARNING: Random tag 9L3ILt1DNr generated for TPS22916.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag ycBnDzQwEt generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag wM8QzriT0D generated for C.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag rWhhTX9PsX generated for TESTPOINT.
-WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:348.
-WARNING: Random tag BvkQyaJbkl generated for TPS22916.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag Tf4ZO2Uiwp generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag z56S9QhL2K generated for C.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag Mvi47TfVrz generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag 7gxwRTBET6 generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag L4U9KY7gAX generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag U37P21u0ul generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag wo1HipqNd8 generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag 793nyuIlnD generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag 9LDK8FjA4x generated for TESTPOINT.
+WARNING: Missing tag on USB_C_16P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:45.
+WARNING: Random tag s_FlI6SgGh generated for USB_C_16P.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag LSuc2sxHi6 generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag Gn_CfbWXuT generated for TESTPOINT.
+WARNING: Missing tag on CYPD3177 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:64.
+WARNING: Random tag 4PF0uC9Hq0 generated for CYPD3177.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag RE6xJnmhdg generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag T4Bqmqv4w_ generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 2S2Gs_qvbp generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag a34UVKKlNQ generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag HWqIUMhogG generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag imiTyt5JVE generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag gkgA_yDiQk generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 0Xonuy_h5k generated for R.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag trd2YHcFr1 generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag 5Du8UqkCoa generated for TESTPOINT.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag c8gRglxi7T generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag NOqnVP3MoY generated for C.
+WARNING: Missing tag on CONN_BATT_3P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:112.
+WARNING: Random tag 25LBsMGcJ0 generated for CONN_BATT_3P.
+WARNING: Missing tag on BQ29700 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:132.
+WARNING: Random tag UMcmr4UXNK generated for BQ29700.
+WARNING: Missing tag on DUAL_NFET_PROT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:133.
+WARNING: Random tag Ul4SGQPsVp generated for DUAL_NFET_PROT.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 1PVTkgWCLU generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag tiSUwHVKOt generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag oXcJpjJ5Sq generated for R.
+WARNING: Missing tag on BQ27427 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:165.
+WARNING: Random tag 0k1ESU9oV0 generated for BQ27427.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag KM0auVfVdf generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag tLUhd2bnBu generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 52ybStpBo_ generated for R.
+WARNING: Missing tag on BQ25620 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:192.
+WARNING: Random tag i0GI9uj1wJ generated for BQ25620.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag ZyJ90ywBiz generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag zPqTT6VK6B generated for C.
+WARNING: Missing tag on L instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:35.
+WARNING: Random tag uPNUaEIovS generated for L.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag exiwXciXCp generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag Lhwz8nS_XF generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag W2anvDRabi generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag qYRjDK2STS generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 1GIP2hwxHG generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag EJMLL2DPwl generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 3dkrBQDrPF generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag kv90yj0XmE generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag iEhwWwORgD generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag FY1Zm3idQ1 generated for C.
+WARNING: Missing tag on TPS62840 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:239.
+WARNING: Random tag QHvWGYV3U8 generated for TPS62840.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag dHoMWWAE_I generated for R.
+WARNING: Missing tag on L instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:35.
+WARNING: Random tag l_LlqlfuWC generated for L.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag tO0xpHNkAq generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag USPplc_cZY generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag zDsxi9tDDw generated for C.
+WARNING: Missing tag on TPS62823 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:276.
+WARNING: Random tag ikVzbJ6k8Y generated for TPS62823.
+WARNING: Missing tag on L instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:35.
+WARNING: Random tag ulUI4xpumQ generated for L.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag wEyfCrSQlR generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag ugYQMrdmSY generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag L01k5eQA4k generated for R.
+WARNING: Missing tag on NFET_SOT23 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:290.
+WARNING: Random tag CwUCB3JMwu generated for NFET_SOT23.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag yzpwOE90Cl generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag oyf9wpovJJ generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag kJL5nq1QdC generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag qalR3Ub7x3 generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 4Zhs2AJhl2 generated for C.
+WARNING: Missing tag on TPS62823 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:307.
+WARNING: Random tag DUWbVvit_1 generated for TPS62823.
+WARNING: Missing tag on L instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:35.
+WARNING: Random tag vnDAj0ez8W generated for L.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 6A053wTJ0K generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag AnOWsON7d6 generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag l7ScZKvt0m generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag XBxkDWsII3 generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag nn_1DuHPvd generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag Uoj9lTfg7L generated for C.
+WARNING: Missing tag on TLV62568 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:330.
+WARNING: Random tag 6dUvUIhwkY generated for TLV62568.
+WARNING: Missing tag on L instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:35.
+WARNING: Random tag 4C71YtlH8c generated for L.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag adEo_1E3W4 generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag HRctiPLmM3 generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag mdz3n_CjPa generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag MSeT4bMSgZ generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 5TOcJ3e80L generated for C.
+WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:355.
+WARNING: Random tag pqrz5k4Xcx generated for TPS22916.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag pq4xos0_Da generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag vdPrja80fG generated for C.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag CyIyZKK9_Z generated for TESTPOINT.
+WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:355.
+WARNING: Random tag 48QgZNLksd generated for TPS22916.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag v2ToGozfGu generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag Tnpf_Q_LpB generated for C.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag p5VuvH739b generated for TESTPOINT.
+WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:355.
+WARNING: Random tag f5CG5hxA4_ generated for TPS22916.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag FV6mCXHiRU generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag ND7MVgWuaF generated for C.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag XwTGwlHSkp generated for TESTPOINT.
+WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:355.
+WARNING: Random tag 0aoy4ip7Z5 generated for TPS22916.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag GuvUAvSCMg generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag oZupjLb_M5 generated for C.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag Yz7ldkfTU1 generated for TESTPOINT.
+WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:355.
+WARNING: Random tag SgU4tHq4Hb generated for TPS22916.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag oM7VozGqkn generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag YY2Np_h1Pv generated for C.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag hBWnWBGVqm generated for TESTPOINT.
+WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:355.
+WARNING: Random tag bRiDE7mlzk generated for TPS22916.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 9T28Sm9K7X generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag E5XhUjY001 generated for C.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag Gkox8Ns4Sz generated for TESTPOINT.
+WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:371.
+WARNING: Random tag AW45qDsdFF generated for TPS22916.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 7TuUotjhhI generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 8F26gb3Jkh generated for C.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag ICfgj9B24Z generated for TESTPOINT.
+WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:371.
+WARNING: Random tag EC14WjoTq0 generated for TPS22916.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag ldKqvNoE4r generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag q3ZXY7ZgW5 generated for C.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag HuERmT4IkJ generated for TESTPOINT.
+WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:371.
+WARNING: Random tag Wt1chVjlfq generated for TPS22916.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 81_s4XDbXd generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag VbMZ3IFIfk generated for C.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag zgF2XushB6 generated for TESTPOINT.
+WARNING: Missing tag on TPS22916 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/power.py:382.
+WARNING: Random tag 5Bbmb_VRLF generated for TPS22916.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag nunpjARFKO generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag J99GRnDrwn generated for C.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag mZLUTWTQfM generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag V0Xs_wrh_4 generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag YBykSNhRXX generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag DvT3ZYGVSp generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag wDUL0rNjPn generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag g_3dwhq0O0 generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag sJQUovehWq generated for TESTPOINT.
 WARNING: Missing tag on STM32N657 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/compute.py:32.
-WARNING: Random tag Dno1r_AMeg generated for STM32N657.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag pkPW_0HokF generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag vZMO1aIA31 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag UDvf_Jas4b generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag Ndg4VHCsTX generated for R.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 8tVwQx5FMH generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag J8mdq2hJHf generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag a2zn5I1Fit generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag mcAgvkWUMF generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag yDkF7Of2Uy generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag CPoytgce7O generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag tZauqkA_j5 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag AEx3tSE6vv generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag eNKfzQTB7z generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag GE2NgwDYJ8 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag tlQaD30fex generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag o_VoiSWjnu generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 2u9ul8B_e1 generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag wLrg34_Q9V generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag aS7NadyBQZ generated for R.
+WARNING: Random tag yLrwoHgpCE generated for STM32N657.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 9rMZOTWiYn generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 8FZAmcqb3K generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag SOPw1uqL5r generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag Z4mLtkULTv generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 2NmePMSJTP generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 16WbHl7v9k generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag CbAVWR7Ulj generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 2w4g3AEuYw generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag PYYjFK5XjS generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag wZxABDbwBI generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag IKH0S0WkbD generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag XCjEfiUcdW generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag mfYYUYeQiB generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 4pJ1b86QQG generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag BqWYfI7iDP generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag i1tfupUaJF generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 2pPyskvpwd generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag wl77HEiuqj generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag Ea0nxydT4J generated for R.
 WARNING: Missing tag on XTAL_3225 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/compute.py:81.
-WARNING: Random tag w46FXsxoe6 generated for XTAL_3225.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag o0KPCVThiX generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag xGWLcWU2Zp generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 0kz7d3Irwk generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag adYJh6qCxO generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag UG2GNzgJe1 generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag Z7wlTiVXze generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag Kgd7QqBO44 generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 9Sf8FfznfE generated for R.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag PKyT5ohEy0 generated for TESTPOINT.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag e_XqHlbUCg generated for R.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag jacK8XpfQT generated for TESTPOINT.
-WARNING: Missing tag on NOR_OCTAL_XSPI instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/compute.py:199.
-WARNING: Random tag I9_H14dYzx generated for NOR_OCTAL_XSPI.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag XovibkKPZz generated for R.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag s4pT0oSkWI generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag i2iZZKrcPu generated for C.
-WARNING: Missing tag on BL54L15 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/compute.py:214.
-WARNING: Random tag D3XaV92sl0 generated for BL54L15.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag zRrvGg0wxx generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag PPgsZJCROS generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag gTXgzeBQs5 generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag Z6dmQGmG6P generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag ULLXiAehLG generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 5aKeV3WhoW generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag lyNUBjfj4q generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag Zl4mIIKKuB generated for R.
-WARNING: Missing tag on ESP32-C6-MINI-1/U instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/compute.py:267.
-WARNING: Random tag Ho0cgsqagB generated for ESP32-C6-MINI-1/U.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 9q6eh_Ok60 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag ub_qS31FHj generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag DMadWBi7K8 generated for R.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag xHSVj9v3Uz generated for C.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag 2ycW2UhCI9 generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag nR8AtzZMSg generated for TESTPOINT.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 3jrKBBz6tO generated for R.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag Dd8Ce6t2LL generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag rhZyYXAwDs generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag RX99HVpr0F generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag krRrvoztTh generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag kcL2XvQyD0 generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag whsGzMbXi0 generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag LxCyk_wCxd generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag bVtJkURNSv generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag Ry5wX6Y71P generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag 6mU2SGKqtt generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag pJfzbwxmMe generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag Kzo_gCRRkz generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag sKfwxNcnNg generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag 3NNArdgkjN generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag vwCTgB9IKJ generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag cJYZIU8znh generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag gWM2hj6vyL generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag EaqMsBQad7 generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag cCRIvYNItF generated for TESTPOINT.
-WARNING: Missing tag on VL53L8CH instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_spi.py:18.
-WARNING: Random tag cq7tSVdbJ9 generated for VL53L8CH.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag y0HH307eV9 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag RqIXvrBgtJ generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag UgszLUVQjd generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag NpoytmmPlk generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag vye8wwQ6by generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag fE0Tv3Hvyo generated for R.
-WARNING: Missing tag on BNO086 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_spi.py:45.
-WARNING: Random tag s2NSFVdtkN generated for BNO086.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 7bUCZ1CQC4 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag YQAWBgRlP6 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag ivNM7gBOtz generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag S2wccSceOF generated for R.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag e7zWdwFY9H generated for TESTPOINT.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag H4FOZYpofk generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag YMShrub1I4 generated for R.
-WARNING: Missing tag on ADS131M04 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_spi.py:70.
-WARNING: Random tag OB4mXb9IOE generated for ADS131M04.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag WFSgEvCsfs generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag pwmRTz2sLL generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag drhl_HR9aI generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 6DCo6ebQTt generated for R.
-WARNING: Missing tag on PIEZO instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_spi.py:87.
-WARNING: Random tag hV2XwismaM generated for PIEZO.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag GRPEGvNHYI generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 84djVrGGOb generated for R.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag FdVl4VpXEe generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag BgTD2tvFy9 generated for TESTPOINT.
-WARNING: Missing tag on MLX90642 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:61.
-WARNING: Random tag VZR1SIRVl9 generated for MLX90642.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag v72ZYw0_js generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag YMybV69xGz generated for C.
-WARNING: Missing tag on MLX90632 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:61.
-WARNING: Random tag oHCUTgmC10 generated for MLX90632.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag zRR2WEjCVX generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag m4r9MT7dNn generated for C.
-WARNING: Missing tag on MAX30102 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:85.
-WARNING: Random tag IJKGDhiirW generated for MAX30102.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag eQAgXJfuVe generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag iK7TV_XuFr generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 6wTmSktTi4 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 4ec7Ddjb2W generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag ZPW9IMM_Ps generated for R.
-WARNING: Missing tag on AS7058 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:99.
-WARNING: Random tag Yu6YeOpozE generated for AS7058.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag _dn1munvAi generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag y0KWTCb9my generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag mL_61zQMqp generated for C.
-WARNING: Missing tag on ELECTRODE instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:109.
-WARNING: Random tag 7Kt6Ksj77_ generated for ELECTRODE.
-WARNING: Missing tag on ELECTRODE instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:110.
-WARNING: Random tag n2onWDR581 generated for ELECTRODE.
-WARNING: Missing tag on ELECTRODE instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:111.
-WARNING: Random tag DzWsHeloHm generated for ELECTRODE.
-WARNING: Missing tag on BME688 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:119.
-WARNING: Random tag rh57QufDPn generated for BME688.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag EkzC3zZPPj generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag UapHJ2unyi generated for C.
-WARNING: Missing tag on SGP41 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:61.
-WARNING: Random tag RWlQa1FPiz generated for SGP41.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag VqPjY0fsSO generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag obevWJS3Oy generated for C.
-WARNING: Missing tag on ENS161 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:136.
-WARNING: Random tag Qw99LlfQ6i generated for ENS161.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag ZJCJxMpyG0 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag I8Q9XIO7gy generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag fKVu8_ym55 generated for R.
-WARNING: Missing tag on SCD41 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:61.
-WARNING: Random tag 6GEUeEUswT generated for SCD41.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag nd1GTSDgFT generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag aGFzjjUF8p generated for C.
-WARNING: Missing tag on SHT41 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:61.
-WARNING: Random tag EbI4SAcQHE generated for SHT41.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag ILH90d5kUV generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag rEHFDpzrEK generated for C.
-WARNING: Missing tag on TCS3448 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:166.
-WARNING: Random tag 5Xd724ikvv generated for TCS3448.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag C7Sg8AKgsC generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag LF0bdUOpo6 generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag wfN4LgCHXh generated for R.
-WARNING: Missing tag on AS7331 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:61.
-WARNING: Random tag 7K7MAb6ZST generated for AS7331.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag DANkEHStpy generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag UipPFpnj2B generated for C.
-WARNING: Missing tag on AS7421 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:61.
-WARNING: Random tag DuwQZ3wyAu generated for AS7421.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag CO6E97vIh2 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag I3DQAM7G4z generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag YsJh_X538z generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 71SViFeyl9 generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag pPvaDXdVlE generated for R.
-WARNING: Missing tag on MMC5983MA instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:210.
-WARNING: Random tag gdXVz3LvJg generated for MMC5983MA.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag si4NF6HteE generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag X09dQIXaAZ generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag lwQkjxnz1D generated for C.
-WARNING: Missing tag on TMAG5273 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:221.
-WARNING: Random tag JGncRUutPC generated for TMAG5273.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag D4kE0Pi3DP generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 6w0af5JxJR generated for R.
-WARNING: Missing tag on BMV080 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:26.
-WARNING: Random tag 0F9rXFdRYz generated for BMV080.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag XJYjLER5fO generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 09hPQbxzXC generated for C.
-WARNING: Missing tag on A121 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:41.
-WARNING: Random tag Vy5ORiluCK generated for A121.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag QQjHtJrsRy generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag xd8OkWpo_J generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag cBYT6ZM8jW generated for C.
-WARNING: Missing tag on MIA_M10Q instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:62.
-WARNING: Random tag UzYrIWvMTs generated for MIA_M10Q.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag FsXxTVtPxW generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag HYEUzKewjt generated for C.
-WARNING: Missing tag on D_Schottky instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:46.
-WARNING: Random tag rCgR02EAln generated for D_Schottky.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag nsCmxgT06a generated for C.
-WARNING: Missing tag on ANT_GNSS instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:89.
-WARNING: Random tag 308BoeOilT generated for ANT_GNSS.
-WARNING: Missing tag on PDM_MIC instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:94.
-WARNING: Random tag Y1xcC6esQ2 generated for PDM_MIC.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag ow1v78lM6N generated for C.
-WARNING: Missing tag on CONN_FPC_24P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:116.
-WARNING: Random tag tho9OFgy5i generated for CONN_FPC_24P.
-WARNING: Missing tag on PIN_BPW34 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:141.
-WARNING: Random tag 23Lvv05Cg2 generated for PIN_BPW34.
-WARNING: Missing tag on OPA381 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:142.
-WARNING: Random tag Ubbg01K_DD generated for OPA381.
-WARNING: Missing tag on TLV3201 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:143.
-WARNING: Random tag EvguuW9ovM generated for TLV3201.
-WARNING: Missing tag on SHIELD_CAN instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:144.
-WARNING: Random tag kTgQDvXbh1 generated for SHIELD_CAN.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 2n69ZP8dgw generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag HZgRXjTalZ generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 8nC6yWflO2 generated for R.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag UZuupP6pjx generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag B990iia8CU generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag PP02uPJ9iO generated for R.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag JoehBKwYg0 generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag F0Ou8z1z4x generated for R.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 7FcoRh1J2M generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag zs1x39Lu_5 generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 3oZtkM_Dlc generated for R.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag rGvo398jSN generated for TESTPOINT.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag Yd3Nmihmg7 generated for R.
-WARNING: Missing tag on AD8317 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:195.
-WARNING: Random tag Dg2A3lTsAq generated for AD8317.
-WARNING: Missing tag on SMA_EDGE instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:196.
-WARNING: Random tag OibtqTQinU generated for SMA_EDGE.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 27Clt9qgAV generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag jOSLBGYt37 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 56o71BfXXO generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag zqBkioxNVB generated for C.
-WARNING: Missing tag on 74LVC1G08 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:214.
-WARNING: Random tag oFphDJtRjL generated for 74LVC1G08.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag Jjo5h530nm generated for C.
-WARNING: Missing tag on NFET_SOT23 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:223.
-WARNING: Random tag q3nnNJUAhV generated for NFET_SOT23.
-WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:40.
-WARNING: Random tag CswDGR5gPo generated for LED.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag P0ytdliOxR generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag odn3EK5xj_ generated for R.
-WARNING: Missing tag on NFET_SOT23 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:235.
-WARNING: Random tag U4iU24Q6_Z generated for NFET_SOT23.
-WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:40.
-WARNING: Random tag XTlJueC_Ac generated for LED.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag SDHywvbZWg generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag FDojyKp88Z generated for R.
-WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:40.
-WARNING: Random tag 8tjT6zS0dQ generated for LED.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag Nij6aYCixS generated for R.
-WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:40.
-WARNING: Random tag 7JN0ZVrxOg generated for LED.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag FkyfoByIAB generated for R.
-WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:40.
-WARNING: Random tag pcqZQYnsCK generated for LED.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag KvK3A1bz3P generated for R.
-WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:40.
-WARNING: Random tag ajwCN2h0LJ generated for LED.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag uH5HPsfte7 generated for R.
-WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:40.
-WARNING: Random tag 4nphMPDLXO generated for LED.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag sF_HYjajhO generated for R.
-WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:40.
-WARNING: Random tag euibMeZtKs generated for LED.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 42p5KVRDC8 generated for R.
-WARNING: Missing tag on CONN_FAN_2P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:257.
-WARNING: Random tag UdC7_cjzgL generated for CONN_FAN_2P.
-WARNING: Missing tag on NFET_SOT23 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:258.
-WARNING: Random tag 8Ag5HF_YRN generated for NFET_SOT23.
-WARNING: Missing tag on D_Schottky instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:46.
-WARNING: Random tag 2fZVUH_65U generated for D_Schottky.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag DyP4Z1MUkx generated for R.
-WARNING: Missing tag on SGX_4CO instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:276.
-WARNING: Random tag ZJ671Nogti generated for SGX_4CO.
-WARNING: Missing tag on LMP91000 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:279.
-WARNING: Random tag iTEdy9A4vp generated for LMP91000.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag 9uw2IZziWH generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag ZterH96NFz generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 4Z7SdBsU3M generated for R.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag v3uA0_wTmi generated for C.
-WARNING: Missing tag on CONN_POGO_6P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:20.
-WARNING: Random tag fWDNYUSQtD generated for CONN_POGO_6P.
-WARNING: Missing tag on IQS7222A instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:39.
-WARNING: Random tag 3n6CROvzI7 generated for IQS7222A.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag i7v81mMC7s generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag AWedSezv32 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag rd6CtlXhwm generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag er85jnSu0O generated for C.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag 3HBMT4Hu0u generated for R.
-WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:28.
-WARNING: Random tag XmgBwBvs7p generated for R.
-WARNING: Missing tag on CONN_TOUCH_13P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:62.
-WARNING: Random tag FVuRXIm6GM generated for CONN_TOUCH_13P.
-WARNING: Missing tag on DRV2605L instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:73.
-WARNING: Random tag QbXCXevyut generated for DRV2605L.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag rUbd_DqZo8 generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag LCgmRcWrLx generated for C.
-WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:22.
-WARNING: Random tag Obk6dGCOVy generated for C.
-WARNING: Missing tag on CONN_LRA_2P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:85.
-WARNING: Random tag Od_6Z8M9LW generated for CONN_LRA_2P.
-WARNING: Missing tag on TC2030 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:90.
-WARNING: Random tag CxkpsBRkZd generated for TC2030.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag 4WnQN9kLXc generated for TESTPOINT.
-WARNING: Missing tag on TC2030 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:100.
-WARNING: Random tag 5yMc8MxdBi generated for TC2030.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag 8nl2ar04Vh generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag qouwZp98sN generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag GBU9UkUd9k generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag oDQyPat5po generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag dhIf6sgake generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag _cONqVZteq generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag nfjFpqfLSV generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag zGBseoxERO generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag dVadGrVNaQ generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag z9HIsraqEu generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag _BvpeFU3Z_ generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag 7yZKbD7LNl generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag w1_tlMUZPm generated for TESTPOINT.
-WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:76.
-WARNING: Random tag fHi_8cfzdW generated for TESTPOINT.
+WARNING: Random tag YjqZwE9tLk generated for XTAL_3225.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag MvZmaZGf5D generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag Expghw4_GR generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 2sNJlfaEed generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag mY_WORroWa generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag E8wCkKog4Y generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag Q5RgDe9Mvp generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag cG0dxE97fm generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag WxEVP3pH4O generated for R.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag 2HND9Wu6el generated for TESTPOINT.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag We8TMVz9O1 generated for R.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag ses5GM5x9e generated for TESTPOINT.
+WARNING: Missing tag on NOR_OCTAL_XSPI instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/compute.py:202.
+WARNING: Random tag s3Tw8ZFy1B generated for NOR_OCTAL_XSPI.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag AV8GVjvnEJ generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag G6Joftsbfd generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 9FDlIOEfr6 generated for C.
+WARNING: Missing tag on BL54L15 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/compute.py:221.
+WARNING: Random tag GdJCnpLrld generated for BL54L15.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag ZzdFMc1eEF generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 8MOVVQQTqq generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag mDFcu47fkz generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 6q926deBtq generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag bKBZkRn91d generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag y1fGhdX_3a generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag MOlWrJtUoh generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag obtpdjRnbw generated for R.
+WARNING: Missing tag on ESP32-C6-MINI-1/U instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/compute.py:274.
+WARNING: Random tag VKAhcsueAZ generated for ESP32-C6-MINI-1/U.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag fgPKitlE6i generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 5RbpWIqSuf generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag HgshrkLFsg generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag GcEfmGzCly generated for C.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag uRgYMXAfrg generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag bxIkMB97Cm generated for TESTPOINT.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag I7dZAHhU1K generated for R.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag 2bnkQNOCut generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag AuTocPfRGf generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag eP4ryra3SK generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag QtDym7C7mf generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag At2klCDvrH generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag QeAQIQPkum generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag lskW32f2l1 generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag vsak7RTZWr generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag _psRdssKs9 generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag wLJ1Sf_bCk generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag onsFLqpBWo generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag hm0Wm8kWJg generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag hRA1TWhfZy generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag bLFvhE0Cbf generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag oGKWm4clYx generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag Aghrm3Zrzx generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag cblAceHOUK generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag QUm_sjMvYe generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag MkbLFgkAm6 generated for TESTPOINT.
+WARNING: Missing tag on VL53L8CH instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_spi.py:35.
+WARNING: Random tag 1QSmNkn3qf generated for VL53L8CH.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag gpDNfwbgIw generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 0K9hJrW6Pk generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag dlsz8LorWm generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag AREHHw1G5_ generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag NbjK7dmJN4 generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag kejAfrRmi3 generated for C.
+WARNING: Missing tag on TXU0304 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_spi.py:50.
+WARNING: Random tag McEKeH6ndI generated for TXU0304.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag cWQFxROuyj generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag gbHt_LdqN6 generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 1qO5fqQrN_ generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag zm6wL5Zjq3 generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag WaIExNgVjE generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 06E8zB3neF generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 4o8cwKE23I generated for R.
+WARNING: Missing tag on BNO086 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_spi.py:100.
+WARNING: Random tag UpTlzd2ey5 generated for BNO086.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag O1ZqwSU5zA generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag cWDJBayubu generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag mBLJdCimVj generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag cAWQBEMll_ generated for R.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag YDwf0VwK18 generated for TESTPOINT.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag RYwxuz_BCi generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag ufJE_Iwe78 generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag GIfatJJj8e generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 6bpJmThWdw generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag QQMPjaz7OK generated for R.
+WARNING: Missing tag on ADS131M04 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_spi.py:150.
+WARNING: Random tag zjtyU4uMKB generated for ADS131M04.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag kkYD0u4frd generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag pqOA9GrpLL generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag M6bG7pGxRR generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 4X1Vlf3NWD generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag oMXrZLezGS generated for R.
+WARNING: Missing tag on PIEZO instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_spi.py:173.
+WARNING: Random tag XRs5YQJFB1 generated for PIEZO.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 69GpHo4_u0 generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag lBPsGgmoQA generated for R.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag WYrLMIFqVf generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag BRma3_AEyJ generated for TESTPOINT.
+WARNING: Missing tag on MLX90642 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:71.
+WARNING: Random tag ib8k9cijZS generated for MLX90642.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag UXdKHqkwoY generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag X65Ib5uIWV generated for C.
+WARNING: Missing tag on MLX90632 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:71.
+WARNING: Random tag j_hiu2nOM0 generated for MLX90632.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag uLD7bZWJ19 generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag MBzW_Hlb7Y generated for C.
+WARNING: Missing tag on MAX30102 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:97.
+WARNING: Random tag zGRPYFXScj generated for MAX30102.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag GvQd3YwauI generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag D97XZP_RXB generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag BPna2EOPSo generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag snKdqppK_i generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag uGaeBr2FwF generated for R.
+WARNING: Missing tag on AS7058 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:117.
+WARNING: Random tag UqRnWNtF32 generated for AS7058.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag nBzAPkPo8G generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 1RmiSkq2a0 generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag STSGsWgcaT generated for C.
+WARNING: Missing tag on ELECTRODE instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:136.
+WARNING: Random tag UIfcyr2tgg generated for ELECTRODE.
+WARNING: Missing tag on ELECTRODE instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:137.
+WARNING: Random tag 0_vdKW1aa8 generated for ELECTRODE.
+WARNING: Missing tag on ELECTRODE instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:144.
+WARNING: Random tag VyxcvTkplB generated for ELECTRODE.
+WARNING: Missing tag on BME688 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:152.
+WARNING: Random tag O04FixhkH0 generated for BME688.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag W5xF0foWFO generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag pKRfncjN29 generated for C.
+WARNING: Missing tag on SGP41 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:71.
+WARNING: Random tag YadmD90dyn generated for SGP41.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag ZciQMo66iY generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag F5TxVsFsBr generated for C.
+WARNING: Missing tag on ENS161 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:179.
+WARNING: Random tag 4LIXfQDNZM generated for ENS161.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 0w0rQVjO8_ generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag PJYeccasJt generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag OZpXQFrxY1 generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag Vg7iZsDHer generated for R.
+WARNING: Missing tag on SCD41 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:71.
+WARNING: Random tag 18_iwlNL_j generated for SCD41.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag G1Iyt9bgO7 generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag mFpIvv7fCT generated for C.
+WARNING: Missing tag on SHT41 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:71.
+WARNING: Random tag 8U28qamCuZ generated for SHT41.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag TUxJXxaqEm generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag _JmZTOVxb1 generated for C.
+WARNING: Missing tag on PCA9306 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:220.
+WARNING: Random tag _Qek0yx_Mm generated for PCA9306.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag aU4_jeHV1E generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag UKk5aLKJfb generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag d0EYtI7Dxa generated for R.
+WARNING: Missing tag on TCS3448 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:239.
+WARNING: Random tag hme5Ts1EMR generated for TCS3448.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag E6SOVYMyfF generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag abCCcIbYDu generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag NqlDFun_3I generated for R.
+WARNING: Missing tag on AS7331 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:258.
+WARNING: Random tag ISIyCrhz2m generated for AS7331.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag CRuQp_xpeK generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag e8nhaHRoRH generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag vFxk_nfIYP generated for R.
+WARNING: Missing tag on AS7421 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:71.
+WARNING: Random tag KdxL2XYQVF generated for AS7421.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag b_MTyZoGkV generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag ZmhnMeWXXg generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 2tad_arl9g generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag QVwO9z0S8t generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag fdqPkCbKp0 generated for R.
+WARNING: Missing tag on MMC5983MA instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:294.
+WARNING: Random tag HT9E3Txq0Y generated for MMC5983MA.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag FHoaVahAEo generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag XSRZfIPAna generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag wcWoRnQXQn generated for C.
+WARNING: Missing tag on TMAG5273 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_i2c.py:310.
+WARNING: Random tag G0hHFL8F6r generated for TMAG5273.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag er3d0BsQV8 generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 4XeXuoLHlE generated for R.
+WARNING: Missing tag on BMV080 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:32.
+WARNING: Random tag tcZCzGyMO8 generated for BMV080.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag x6HNpBs6Be generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag dxeFEBEPBv generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag tN2INfwrCr generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag xpvgfl8RRy generated for C.
+WARNING: Missing tag on A121 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:48.
+WARNING: Random tag Ov6fV7KUTm generated for A121.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag xczaYVZWg3 generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag LAS_5jEu5S generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag lrp3We4ND_ generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 435wUtZQKw generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag M1wtFQInH0 generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag r_namDro0f generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 0oU5EeDmY8 generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag oL16blhcEH generated for C.
+WARNING: Missing tag on XTAL_3225 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:80.
+WARNING: Random tag Dg1HHWy8Io generated for XTAL_3225.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag jyuwAQleEr generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag Ez04eMlVJV generated for C.
+WARNING: Missing tag on MIA_M10Q instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:99.
+WARNING: Random tag GnSk9gqlWi generated for MIA_M10Q.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag l7TJQ1r3C_ generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 4T9KLYW8ky generated for C.
+WARNING: Missing tag on D_Schottky instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:47.
+WARNING: Random tag wHAH12UEv8 generated for D_Schottky.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag GDlNHcgSed generated for C.
+WARNING: Missing tag on ANT_GNSS instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:134.
+WARNING: Random tag T9lEx5FVAY generated for ANT_GNSS.
+WARNING: Missing tag on PDM_MIC instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:139.
+WARNING: Random tag kfVuJOmOP8 generated for PDM_MIC.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag ELftAwe_N0 generated for C.
+WARNING: Missing tag on CONN_FPC_24P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:162.
+WARNING: Random tag Jzwnp766X_ generated for CONN_FPC_24P.
+WARNING: Missing tag on PIN_BPW34 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:188.
+WARNING: Random tag bUUcNPxEuP generated for PIN_BPW34.
+WARNING: Missing tag on OPA381 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:189.
+WARNING: Random tag RXItGfc8AZ generated for OPA381.
+WARNING: Missing tag on TLV3201 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:190.
+WARNING: Random tag tbC9i4kQNG generated for TLV3201.
+WARNING: Missing tag on SHIELD_CAN instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:191.
+WARNING: Random tag 6hhK2mF6ZU generated for SHIELD_CAN.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag MPXi25aCYa generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag lT5CPRJCWu generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag TjjPVihKUK generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag nWCCcyskfY generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag bnuRwYml76 generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag bFNLkQYoiw generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag JkXhaa8MLq generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag 0zV1cuAo2W generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 9G0XOcHesK generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag dm8O6yCNQQ generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag Z3D3RlO2jq generated for R.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag mH8wJYReT7 generated for TESTPOINT.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag Uwamukthb4 generated for R.
+WARNING: Missing tag on AD8317 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:245.
+WARNING: Random tag RmE9pQTSH4 generated for AD8317.
+WARNING: Missing tag on SMA_EDGE instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:250.
+WARNING: Random tag RPrZPkG21z generated for SMA_EDGE.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 50DIEFUp2Z generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag T1DpGodPE2 generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 0CJ_G20Qlz generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 20MHs3SdLP generated for C.
+WARNING: Missing tag on 74LVC1G08 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:271.
+WARNING: Random tag fyWTYqoNEN generated for 74LVC1G08.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag f0KWXnX4AY generated for C.
+WARNING: Missing tag on NFET_SOT23 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:280.
+WARNING: Random tag JUvuV_nqrI generated for NFET_SOT23.
+WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:41.
+WARNING: Random tag eEr_d6_Aus generated for LED.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag WrSVmgJM4f generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag U29NszNy1R generated for R.
+WARNING: Missing tag on NFET_SOT23 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:292.
+WARNING: Random tag IQxzntzZpW generated for NFET_SOT23.
+WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:41.
+WARNING: Random tag TTmGt_dCLq generated for LED.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag TKzp3qnfJ5 generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag gYnx3NhBH1 generated for R.
+WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:41.
+WARNING: Random tag E45eS2Prr6 generated for LED.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag HorNmD3dy0 generated for R.
+WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:41.
+WARNING: Random tag CEIkUyQKZl generated for LED.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag lxLB0NQl9Q generated for R.
+WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:41.
+WARNING: Random tag qGk3wWko8z generated for LED.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag uTfqW9RKII generated for R.
+WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:41.
+WARNING: Random tag E3F2MKRx5L generated for LED.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag W0BaJaUm1f generated for R.
+WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:41.
+WARNING: Random tag 8HTJOpRpxx generated for LED.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag fI9nTItmsM generated for R.
+WARNING: Missing tag on LED instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:41.
+WARNING: Random tag lJ5Mprmakk generated for LED.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag kYDw5HrkhL generated for R.
+WARNING: Missing tag on CONN_FAN_2P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:314.
+WARNING: Random tag E_Q3Uegi7h generated for CONN_FAN_2P.
+WARNING: Missing tag on NFET_SOT23 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:315.
+WARNING: Random tag RHd9BsfWGo generated for NFET_SOT23.
+WARNING: Missing tag on D_Schottky instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:47.
+WARNING: Random tag 8obcoi5bhj generated for D_Schottky.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag UH_DN00mlx generated for R.
+WARNING: Missing tag on SGX_4CO instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:333.
+WARNING: Random tag XG_0uXdh5p generated for SGX_4CO.
+WARNING: Missing tag on LMP91000 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/sensors_misc.py:336.
+WARNING: Random tag wkkbhTjngr generated for LMP91000.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag DdSdsSgdbx generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag tXiAhz1ETi generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag U5hNTE1VvK generated for R.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag L0495kPiPi generated for C.
+WARNING: Missing tag on CONN_POGO_6P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:24.
+WARNING: Random tag js6E63RV0P generated for CONN_POGO_6P.
+WARNING: Missing tag on IQS7222A instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:46.
+WARNING: Random tag ep3u5hDl0I generated for IQS7222A.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag OUQU52BMph generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag 0MW5Oq9t6j generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag svbUNyTZ_d generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag dkDRDdx2jd generated for C.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag rLOTQoTJCw generated for R.
+WARNING: Missing tag on R instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:29.
+WARNING: Random tag RjKL7XvX2_ generated for R.
+WARNING: Missing tag on CONN_TOUCH_13P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:72.
+WARNING: Random tag kzTcr9puP8 generated for CONN_TOUCH_13P.
+WARNING: Missing tag on DRV2605L instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:84.
+WARNING: Random tag A1_sW2VIZ7 generated for DRV2605L.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag QUkcSp4wXA generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag ZuSSN2XKm4 generated for C.
+WARNING: Missing tag on C instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:23.
+WARNING: Random tag WRygakYcq2 generated for C.
+WARNING: Missing tag on CONN_LRA_2P instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:96.
+WARNING: Random tag oGjFJwy8Wz generated for CONN_LRA_2P.
+WARNING: Missing tag on TC2030 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:104.
+WARNING: Random tag yJlh6QchkG generated for TC2030.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag n6zsi7F30D generated for TESTPOINT.
+WARNING: Missing tag on TC2030 instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/accessory.py:114.
+WARNING: Random tag lez9fD7k0t generated for TC2030.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag zGLcBimPX0 generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag EGyNdGRd6K generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag T2wJRzm7zm generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag UPDVFLlEoj generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag 7vqWd9M5Pm generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag GDOpObBLHq generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag 9EVd00I1u2 generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag 5nYV0YGw_q generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag 63tcyhOh3S generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag 1bcm1IGgQe generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag fXiyZ99rw8 generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag 5wn_lfVt9M generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag VSk2Ielj3N generated for TESTPOINT.
+WARNING: Missing tag on TESTPOINT instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/util.py:80.
+WARNING: Random tag xq3EDP4_xH generated for TESTPOINT.
 WARNING: Missing tag on  instantiated at /home/claude/interrogator-hardware/boards/v1/circuit/<frozen importlib._bootstrap>:241.
-INFO: 725 warnings found while generating netlist.
+INFO: 805 warnings found while generating netlist.
 INFO: 0 errors found while generating netlist.
 

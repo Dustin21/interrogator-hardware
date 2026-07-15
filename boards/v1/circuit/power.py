@@ -11,6 +11,14 @@ VSYS -> TLV62568 -> 1V8         (N657 VDDA18*/VDDIO3 / NOR / ENS161 core;
                                  EN from 3V3_SYS rail — VDD-first sequencing
                                  per DS14791 Table 24 fn1)   ** H2.6 fix **
 3V3_SYS -> 6x TPS22916 -> 3V3_{OPTICAL,AIR,CONTACT,RADAR,GNSS,WIFI} (EN_* from sentinel)
+1V8     -> 3x TPS22916 -> 1V8_{OPTICAL,RADAR,AIR}  ** H3.0 ADD ** — gated 1.8V
+                          sub-rails for the 1.8V-only parts (VL53L8CH IOVDD/
+                          CORE_1V8 + TCS3448 / A121 VDIG-VRX-VTX / ENS161
+                          VDD), driven by the SAME EN_* lines as their 3.3V
+                          domain siblings: the AI-decides-what-runs hardware
+                          gating invariant holds on both voltage levels, and
+                          ENS161's VDD/VDDIO now rise together (the old
+                          raw-1V8 feed left VDD up while VDDIO was gated).
 VSYS    -> TPS22916 #7 -> VACC (pogo accessory power, EN_ACC)      ** STAGE-1 ADD **
 
 STAGE-1 ADDs found during circuit capture (components.json/floorplan update needed):
@@ -81,6 +89,14 @@ def build_power():
         vddd += ru[1]
         pd[pin] += ru[2], rd[1]
         GND += rd[2]
+    # H3.2 pad-binding completion (VERIFIED-DS Table 1 p5-6, full QFN-24):
+    # VDC_OUT (11) is the VBUS-output monitor, spec'd to the drain side of
+    # the (unused) VBUS PFETs — our path is direct, so it ties to VBUS_C;
+    # D+/D-/DNU1/DNU2 "leave unconnected" (p5); HPI pins + gate drivers
+    # unused -> NC per the no-HPI application diagram (Fig 3 p7).
+    pd["VDC_OUT"] += vbus
+    pd["VBUS_FET_EN SAFE_PWR_EN HPI_INT GPIO_1 HPI_SDA HPI_SCL"] += NC
+    pd["DM DP DNU1 DNU2"] += NC
     # FAULT is driven HIGH on fault (p8 — push, not OD-low): testpoint only,
     # no pullup (old PD_FAULT_N pullup removed in compute.py).
     flt = Net.fetch("PD_FAULT")
@@ -109,6 +125,7 @@ def build_power():
     cell_n = Net.fetch("CELL_N")      # cell negative, ahead of protection FETs
     cell_n.drive = POWER              # ERC waiver W2: this IS the cell's - terminal
     cell_n += jbat["BATT-"]
+    jbat["MP"] += GND                 # retention tabs -> GND (H3.2 pad binding)
     ntc = Net.fetch("BATT_NTC")
     ntc += jbat["NTC"]
 
@@ -122,6 +139,7 @@ def build_power():
     q["S2"] += GND
     q["G1"] += prot["DOUT"]
     q["G2"] += prot["COUT"]
+    q["PEND_EP"] += NC   # WSON-6 EP: bind to PROT_MID once the FET is picked (E0)
     rv = R("330R")   # VDD RC filter per BQ297xx DS (330Ω VERIFIED-DS p14)
     packp += rv[1]   # protector monitors the true cell terminal (ahead of gauge 7mΩ)
     prot_vdd = Net.fetch("PROT_VDD")
@@ -342,6 +360,22 @@ def build_power():
         sw["GND"] += GND
         decouple(rail, n=1, bulk_uF=10)
         tp(rail)
+
+    # H3.0 ADD: gated 1.8V sub-rails (see module docstring). TPS22916 VIN
+    # range 1.4-5.5V (SLVSDO5F) — legal on the 1V8 rail; ~2uA IQ each, ~10nA
+    # off. Same EN nets as the 3.3V domain switches -> both voltage levels
+    # of a domain rise/fall together (VL53L8CH allows any supply order,
+    # DS14310 §3.3 p11; A121 VRX/VTX/VDIG share one rail; ENS161 VDD+VDDIO
+    # now sequence together).
+    for name in ["OPTICAL", "RADAR", "AIR"]:
+        sw18 = TPS22916(ref=f"U_SW1V8_{name}", footprint="generated:TPS22916_CSP4")
+        rail18 = Net.fetch(f"1V8_{name}")
+        sw18["VIN"] += v18
+        sw18["VOUT"] += rail18
+        sw18["ON"] += Net.fetch(f"EN_{name}")
+        sw18["GND"] += GND
+        decouple(rail18, n=1, bulk_uF=10)
+        tp(rail18)
 
     # STAGE-1 ADD: accessory-port switched power (from VSYS: accessories may
     # regulate locally; pogo pin carries battery-class voltage)

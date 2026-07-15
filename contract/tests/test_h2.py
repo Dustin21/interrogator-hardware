@@ -23,6 +23,9 @@ MAJOR_REFS = [
     "U_AON", "U_CORE", "U_SYS3V3", "U_1V8",
     "U_SW_OPTICAL", "U_SW_AIR", "U_SW_CONTACT", "U_SW_RADAR",
     "U_SW_GNSS", "U_SW_WIFI", "U_SW_ACC",
+    # H3.0 adds: gated 1V8 sub-rail switches + level translators + HSE xtal
+    "U_SW1V8_OPTICAL", "U_SW1V8_RADAR", "U_SW1V8_AIR",
+    "U_LS_VL53", "U_XLAT_TCS", "X_HSE",
     "U_TOUCH", "U_HAP", "U_RF", "U_ILK",
     "J_USB", "J_BATT", "J_POGO", "J_CAM", "J_RF", "J_FAN",
     "J_SWD_N6", "J_SWD_BL",
@@ -34,6 +37,8 @@ MAJOR_NETS = [
     "3V3_OPTICAL", "3V3_AIR", "3V3_CONTACT", "3V3_RADAR", "3V3_GNSS", "3V3_WIFI",
     "SPI1_SCK", "I2CA_SDA", "I2CB_SDA", "SENT_SDA", "SDIO_CLK",
     "GNSS_PPS", "GEIGER_PULSE", "INTERLOCK_OK", "EN_N6", "EN_OPTICAL",
+    # H3.0: gated 1.8V sub-rails + translated 1.8V bus segments
+    "1V8_OPTICAL", "1V8_RADAR", "1V8_AIR", "I2CA_SDA_1V8", "VL53_MISO_1V8",
 ]
 
 
@@ -98,15 +103,18 @@ BOARD = REPO / "boards" / "v1" / "board" / "interrogator_v1.kicad_pcb"
 DRC = REPO / "boards" / "v1" / "board" / "drc_baseline.json"
 
 
-def test_manifest_coverage_38_of_38_no_to_generate():
+def test_manifest_coverage_55_of_55_no_to_generate():
+    # 38 at H2 stage-2; 41 since H3.1 (crystal + H3.0 translators); 55 since
+    # H3.2 (the 14 mechanical/connector parts got packed floorplan slots —
+    # zero-overlap placement surfaced that they had none).
     m = json.loads(MANIFEST.read_text())
     cov = m["coverage"]
-    assert cov["components_json_parts"] == 38
+    assert cov["components_json_parts"] == 55
     assert cov["footprint_to_generate"] == 0, "TO-GENERATE parts remain"
     # H2.5: generated footprints may be promoted E0 -> E1 once the real
     # vendor land pattern has been overlaid; both still count as generated.
     assert (cov["footprint_harvested"] + cov["footprint_generated_E0"]
-            + cov.get("footprint_generated_E1", 0)) == 38
+            + cov.get("footprint_generated_E1", 0)) == 55
     for p in m["parts"]:
         assert "TO-GENERATE" not in p["footprint_source"], p["part"]
         assert p["footprint_source"] in ("kicad-official", "espressif",

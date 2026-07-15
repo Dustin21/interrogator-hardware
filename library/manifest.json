@@ -4,12 +4,12 @@
  "note": "Footprint provenance: 'kicad-official' files are from KiCad 7.0.11 official libraries (Ubuntu archive package \u2014 the GitHub mirrors KiCad/kicad-footprints and KiCad/kicad-symbols are stale 2020 snapshots because KiCad development moved to GitLab, which is unreachable from this environment); 'espressif' from github.com/espressif/kicad-libraries (shallow clone). SnapEDA/easyeda2kicad/vendor portals blocked -> TO-GENERATE list is deliberate and substantial. | Stage-2: 18 TO-GENERATE closed \u2014 16 parametric E0 footprints in library/footprints/generated/ (gen_footprints.py;per-file header carries dim source + overlay-verify rule) and 2 remapped to official (ADS131M04 -> generic QFN-20, camera FPC -> Hirose FH12-24). Extra officials harvested: WSON-14 (LMP91000), MSOP-8 (OPA381), FH12-13/24 FPC, Antenova SR4G013 GNSS antenna. | H2.5 (2026-07-12): 9 footprints promoted to generated-E1 from real vendor land patterns (TCS3448, AS7421, MLX90632->SFN5, MLX90642->custom TO39, ENS161 3x3 grid, AS7058 named-grid, MIA-M10Q M-LGA53, TPS22916 named balls, BQ25620 WQFN18-RYK replacing wrong RTE16); symbols remapped to real pins for BQ27427/TPS62840/TPS62823/TLV62568/DRV2605L/IQS7222A/BQ29700/CYPD3177. | H2.5 round 3 (2026-07-12): SGX-4CO footprint -> E1 (real 13.5 PCD pin circle, socket receptacles, DS-0138 Issue 3); BL54L15 -> E1 (real 39-pad LGA land pattern + antenna keep-out, EZ-DS v1.9); LMP91000 symbol renumbered to real WSON-14 pins (SNAS506I p3); BL54L15 symbol renumbered to real module pads (EZ-DS v1.9 Table 1).",
  "symbol_note": "All non-generic symbols are SKiDL programmatic templates in boards/v1/circuit/lib_parts.py (tier E0 pin maps).",
  "coverage": {
-  "components_json_parts": 38,
-  "footprint_harvested": 20,
-  "footprint_generated_E0": 5,
+  "components_json_parts": 55,
+  "footprint_harvested": 28,
+  "footprint_generated_E0": 13,
   "footprint_to_generate": 0,
-  "coverage": "38/38",
-  "footprint_generated_E1": 13
+  "coverage": "55/55",
+  "footprint_generated_E1": 14
  },
  "parts": [
   {
@@ -43,10 +43,10 @@
    "components_json_name": "AS7331 UV A/B/C",
    "part": "AS7331",
    "symbol_source": "skidl-custom",
-   "footprint_source": "generated-E0",
+   "footprint_source": "generated-E1",
    "footprint_file": "generated/AS7331_OLGA16.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "OLGA16 3.65x2.61 per AS7331 DS p65 (drawing is image -> pad grid E0-estimated). Addr 0x74 VERIFIED-DS p43."
+   "evidence_tier": "E1",
+   "verify_notes": "OLGA16 QUAD footprint regenerated from DS001047 Fig 59 p64 (H3.2 render decode: rows y=+/-1.5 pitch 0.5, cols y=+/-0.475/0.975, 0.35 lands; col x=+/-1.05 est). Old dual-row E0 was the wrong shape. Symbol renumbered to real pins (Fig 4) + 3.3M REXT added. Addr 0x74 VERIFIED-DS p43."
   },
   {
    "components_json_name": "AS7421 64ch NIR +",
@@ -217,7 +217,7 @@
    "footprint_source": "kicad-official",
    "footprint_file": "Package_LGA.pretty/LGA-28_5.2x3.8mm_P0.5mm.kicad_mod",
    "evidence_tier": "E0",
-   "verify_notes": "Generic LGA-28 5.2x3.8 matches BNO08x package class \u2014 verify pad map vs CEVA DS."
+   "verify_notes": "Generic LGA-28 5.2x3.8 P0.5; symbol rebuilt on the real BNO08x Fig 1-6 pin map (H3.2): CAP/CLKSEL0/ENV pullup fixes."
   },
   {
    "components_json_name": "ADS131M04 24b 4ch",
@@ -225,8 +225,8 @@
    "symbol_source": "skidl-custom",
    "footprint_source": "kicad-official",
    "footprint_file": "Package_DFN_QFN.pretty/QFN-20-1EP_3x3mm_P0.4mm_EP1.65x1.65mm.kicad_mod",
-   "evidence_tier": "E0",
-   "verify_notes": "Mapped to official generic QFN-20 3x3 P0.4; TI package code (RTE?) still unconfirmed \u2014 VERIFY vs TI DS."
+   "evidence_tier": "E1",
+   "verify_notes": "Package CONFIRMED WQFN-20 RUK 3x3 P0.4 (SBAS890D) \u2014 official QFN-20 footprint correct; symbol renumbered to real pins + CAP(16) 220nF + EP->AGND (H3.2)."
   },
   {
    "components_json_name": "PIN radiation det +",
@@ -319,13 +319,13 @@
    "verify_notes": "VERIFIED-DS bq2970_family p3: DSE WSON-6 1 NC/2 COUT/3 DOUT/4 VSS/5 BAT/6 V- \u2014 symbol remapped; 330R VDD RC confirmed (p14)."
   },
   {
-   "components_json_name": "Load switches x7",
-   "part": "TPS22916 x7 (6 domains + accessory stage-1 add)",
+   "components_json_name": "Load switches x10",
+   "part": "TPS22916 x10 (6 domains + accessory + 3x gated 1V8 sub-rails H3.0)",
    "symbol_source": "skidl-custom",
    "footprint_source": "generated-E1",
    "footprint_file": "generated/TPS22916_CSP4.kicad_mod",
    "evidence_tier": "E1",
-   "verify_notes": "VERIFIED-DS SLVSDO5F p3: YFP WCSP-4 0.78x0.78 @0.4, balls A1 VOUT/A2 VIN/B1 GND/B2 ON \u2014 footprint renamed to real ball names, symbol remapped."
+   "verify_notes": "VERIFIED-DS SLVSDO5F p3: YFP WCSP-4 0.78x0.78 @0.4, balls A1 VOUT/A2 VIN/B1 GND/B2 ON \u2014 footprint renamed to real ball names, symbol remapped. H3.0: +3 switches for 1V8_{OPTICAL,RADAR,AIR} gated sub-rails (same EN_* as the 3.3V siblings)."
   },
   {
    "components_json_name": "IQS7222A touch",
@@ -353,6 +353,159 @@
    "footprint_file": "generated/UBLOX_MIA_M10Q.kicad_mod",
    "evidence_tier": "E1",
    "verify_notes": "VERIFIED-DS UBX-22015849 p9/p19 + IM UBX-21028173 p83: M-LGA53 53x O0.27 pads @0.5 sparse 9x9 (named A1..J9), land 1:1 copper/mask 0.37 \u2014 castellated 20-pad placeholder replaced. V_IO supply pin added to circuit; keep RF corner (B9) quiet."
+  },
+  {
+   "components_json_name": "48MHz HSE crystal +",
+   "part": "X_HSE 48 MHz crystal (3225 4-pad)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Crystal.pretty/Crystal_SMD_3225-4Pin_3.2x2.5mm.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "H2.6 add (DS14791 p13: HSE 16-48 MHz; USB-HS PHY PLL needs a crystal reference). Promoted from supporting_parts to a floorplan part at H3.1 (placed next to the N657 A7/B7 = PH0/PH1 balls). Load caps 10 pF E0 until the crystal P/N is chosen."
+  },
+  {
+   "components_json_name": "TXU0304 SPI shifter +",
+   "part": "TXU0304PW (TSSOP-14)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_SO.pretty/TSSOP-14_4.4x5mm_P0.65mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "H3.0 add: fixed-direction 3-down/1-up shifter for the VL53L8CH SPI branch (VCCB = gated 1V8_OPTICAL -> Hi-Z isolation when domain off). PINOUT E0 -- TI DS not staged (docs/MISSING_VENDOR_ASSETS.md); verify TSSOP-14 pin numbers before H3.2 pad binding."
+  },
+  {
+   "components_json_name": "PCA9306 I2C xlate +",
+   "part": "PCA9306DCU (VSSOP-8)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Package_SO.pretty/VSSOP-8_2.4x2.1mm_P0.5mm.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "H3.0 add: 2-bit pass-FET I2C translator, 3.3V I2C-A <-> 1.8V TCS3448 segment; EN+VREF2 node driven by EN_OPTICAL (200k to 3V3_SYS) = segment isolation when OPTICAL gated off. PINOUT E0 -- DS not staged (docs/MISSING_VENDOR_ASSETS.md); verify DCU pin order before H3.2."
+  },
+  {
+   "components_json_name": "USB-C receptacle",
+   "part": "J_USB (GCT USB4105)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Connector_USB.pretty/USB_C_Receptacle_GCT_USB4105-xx-A_16P_TopMnt_Horizontal.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "Official GCT pattern. H3.2: packed slot is mid-back \u2014 enclosure needs a USB tunnel or H4 relocation (ECO-H3.2-B)."
+  },
+  {
+   "components_json_name": "GNSS chip antenna",
+   "part": "AE_GNSS (Antenova SR4G013)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "RF_Antenna.pretty/Antenova_SR4G013_GPS.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "Official Antenova pattern; slotted at the notch edge near MIA-M10Q RF corner (H3.2)."
+  },
+  {
+   "components_json_name": "Pogo landing field +",
+   "part": "J_POGO",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "generated-E0",
+   "footprint_file": "generated/POGO6_COMPACT.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "ECO-H3.2: board side = 2x3 2.54mm landing field; ADR-0002 9mm mag-ring geometry moves to the shell part. Owner ratify."
+  },
+  {
+   "components_json_name": "Touch flex ZIF +",
+   "part": "J_TOUCH (Molex 503566-1302)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "generated-E0",
+   "footprint_file": "generated/ZIF13_MOLEX_503566.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "ECO-H3.2: switched from FH12-13 (0.5mm) to the same 0.3mm Molex ZIF as BMV080 \u2014 BOM consolidation; shell flex re-pitched (our artwork)."
+  },
+  {
+   "components_json_name": "RF survey U.FL +",
+   "part": "J_RF (Hirose U.FL-R-SMT-1)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Connector_Coaxial.pretty/U.FL_Hirose_U.FL-R-SMT-1_Vertical.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "ECO-H3.2: SMA (8.4 sq courtyard, no legal window) -> U.FL + shell-mounted SMA pigtail. Owner ratify."
+  },
+  {
+   "components_json_name": "ECG land L +",
+   "part": "E_ECG_L",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "generated-E0",
+   "footprint_file": "generated/ELECTRODE_LAND_4MM.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "ECO-H3.2: 4mm board land; skin electrode moves to shell (elastomer/spring contact through the 3.5mm wall)."
+  },
+  {
+   "components_json_name": "ECG land R +",
+   "part": "E_ECG_R",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "generated-E0",
+   "footprint_file": "generated/ELECTRODE_LAND_4MM.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "ECO-H3.2: 4mm board land (see ECG land L)."
+  },
+  {
+   "components_json_name": "ECG land REF +",
+   "part": "E_ECG_REF",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "generated-E0",
+   "footprint_file": "generated/ELECTRODE_LAND_4MM.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "ECO-H3.2: was the 12mm back ring \u2014 now a 4mm land; grip-ring UX element moves to shell (ECO-H4 note)."
+  },
+  {
+   "components_json_name": "Piezo disc pads",
+   "part": "PZ1",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "generated-E0",
+   "footprint_file": "generated/PIEZO_DISC_PADS.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Contact piezo lands, fat-lobe top (H3.2 packed slot)."
+  },
+  {
+   "components_json_name": "Battery connector",
+   "part": "J_BATT (JST ACH 3p)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Connector_JST.pretty/JST_ACH_BM03B-ACHSS-GAN-ETF_1x03-1MP_P1.20mm_Vertical.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "Official JST pattern; top-face slot at the notch (battery cable reaches either face) \u2014 flag for enclosure routing."
+  },
+  {
+   "components_json_name": "SWD N6 tag-connect",
+   "part": "J_SWD_N6 (SWD pad row)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "generated-E0",
+   "footprint_file": "generated/SWD_PADROW_6.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "ECO-H3.2-D: TC2030-IDC-NL replaced by a plain 1.27mm 6-pad row \u2014 the TC2030 NPTH locating holes had no both-face-clear window on the packed bean. Debug via pogo bar/leads; revert at H4 if owner rejects."
+  },
+  {
+   "components_json_name": "SWD BL54 tag-connect",
+   "part": "J_SWD_BL (SWD pad row)",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "generated-E0",
+   "footprint_file": "generated/SWD_PADROW_6.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "ECO-H3.2-D: TC2030-IDC-NL replaced by a plain 1.27mm 6-pad row \u2014 the TC2030 NPTH locating holes had no both-face-clear window on the packed bean. Debug via pogo bar/leads; revert at H4 if owner rejects."
+  },
+  {
+   "components_json_name": "LRA pads",
+   "part": "J_LRA",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "generated-E0",
+   "footprint_file": "generated/LRA_PADS.kicad_mod",
+   "evidence_tier": "E0",
+   "verify_notes": "Haptic actuator lands (H3.2 packed slot)."
+  },
+  {
+   "components_json_name": "Fan connector",
+   "part": "J_FAN",
+   "symbol_source": "skidl-custom",
+   "footprint_source": "kicad-official",
+   "footprint_file": "Connector_PinHeader_1.00mm.pretty/PinHeader_1x02_P1.00mm_Vertical_SMD_Pin1Left.kicad_mod",
+   "evidence_tier": "E1",
+   "verify_notes": "Blower header; packed at the notch edge (H3.2)."
   }
  ],
  "supporting_parts": [
@@ -459,14 +612,6 @@
    "footprint_file": "RF_Antenna.pretty/Antenova_SR4G013_GPS.kicad_mod",
    "evidence_tier": "E0",
    "verify_notes": "Official Antenova SR4G013 GNSS antenna harvested (P/N selection E0); generic generated/GNSS_CHIP_ANT_3216.kicad_mod kept as fallback."
-  },
-  {
-   "part": "X_HSE 48MHz crystal (3225)",
-   "symbol_source": "skidl-custom",
-   "footprint_source": "kicad-official",
-   "footprint_file": "Crystal.pretty/Crystal_SMD_3225-4Pin_3.2x2.5mm.kicad_mod",
-   "evidence_tier": "E1",
-   "verify_notes": "H2.6 ADD: N657 HSE reference (16-48 MHz per DS14791 p13; 48 MHz matches ST N6 ref design) -- USB HS PHY PLL cannot run from HSI RC. Load caps 10pF E0, set per chosen crystal CL."
   }
  ]
 }

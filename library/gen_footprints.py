@@ -202,11 +202,32 @@ fp.body(6.4, 3.0)
 fp.pin1_dot(-3.5, -1.5)
 generated.append(fp.write())
 
-# 3. AS7331 OLGA16 — body 3.65x2.61 (DS p65 drawing is image); dual-row E0.
-generated.append(dual_row(
-    "AS7331_OLGA16", "ams AS7331 UV A/B/C spectral, OLGA16",
-    "AS7331 DS p7/p65: body 3.65x2.61x1.0; 16 pads dual-row E0-est pitch 0.4",
-    3.65, 2.61, 0.4, 8, 2.4, 0.6, 0.22))
+# 3. AS7331 OLGA16 — REAL outline from DS001047 v4 Fig 59 p64 (PDF p65,
+#    rendered at H3.2): QUAD arrangement — the old dual-row 8+8 guess was the
+#    wrong SHAPE. Body 2.600 x 3.650 x 1.090; 16 pads 0.300 sq (land +0.05 ->
+#    0.35). Bottom view decoded: rows of 4 at y = +/-1.5 (pitch 0.5 =
+#    "6 x (0.500)" [3 gaps x 2 rows]; middle pads +/-0.250 from CL =
+#    "4 x (0.250)"); side columns of 4 at y = +/-0.475/+/-0.975 (pitch 0.5,
+#    row-to-corner-pad offset 0.525 = "4 x (0.525)"); column x = +/-1.05
+#    (0.10 body-edge margin — the only E1-approx dim, not annotated).
+#    Pin 1 = top-left in TOP view (0.177x45deg chamfer top-right of the
+#    bottom view); numbering CW in top view: 1-4 across top L->R, 5-8 down
+#    the right, 9-12 across bottom R->L, 13-16 up the left (Fig 3 p7).
+fp = FP("AS7331_OLGA16", "ams AS7331 UV A/B/C spectral, OLGA16 quad",
+        "AS7331 DS001047 v4 Fig 59 p64: body 2.6x3.65x1.09, 16x 0.30 sq pads, "
+        "rows y=+/-1.5 pitch 0.5, cols y=+/-0.475/0.975, col x=+/-1.05 (margin est)",
+        tier="E1")
+for i in range(4):                                       # 1-4 top row, L->R
+    fp.pad(i + 1, -0.75 + i * 0.5, -1.5, 0.35, 0.35)
+for i, yy in enumerate((-0.975, -0.475, 0.475, 0.975)):  # 5-8 right col, T->B
+    fp.pad(5 + i, 1.05, yy, 0.35, 0.35)
+for i in range(4):                                       # 9-12 bottom row, R->L
+    fp.pad(9 + i, 0.75 - i * 0.5, 1.5, 0.35, 0.35)
+for i, yy in enumerate((0.975, 0.475, -0.475, -0.975)):  # 13-16 left col, B->T
+    fp.pad(13 + i, -1.05, yy, 0.35, 0.35)
+fp.body(2.6, 3.65)
+fp.pin1_dot(-1.6, -1.5)
+generated.append(fp.write())
 
 # 4. TCS3448 OLGA-8 — REAL land pattern from TCS3448 DS001121 v2-00 p51
 #    Fig 11: 2 rows of 4, pitch 0.8 (centers ±0.4/±1.2), row c-c 1.276
@@ -342,7 +363,9 @@ generated.append(ball_grid(
 #     ANTENNA KEEP-OUT (Fig 11 p25 + §7.3.1 p21): 5.00 x 8.50 no-copper-any-
 #     layer zone under the antenna end, extending >=15 mm beyond BOTH host
 #     board edges; module MUST sit on the host-PCB edge (antenna outboard).
-#     Keep-out drawn on Dwgs.User; floorplan impact -> ECO-H3.
+#     Keep-out drawn on Dwgs.User; floorplan impact -> ECO-H3
+#     (EXECUTED H3.1: module re-oriented, antenna end at the +y smooth rim,
+#     keep-out extension aims off-board; flush-to-edge slide at H3.2).
 fp = FP("BL54L15_MODULE",
         "Ezurio BL54L15 (nRF54L15) BLE module, 39-pad LGA; ANTENNA KEEP-OUT "
         "5.0x8.5 at pin-1 end + >=15mm beyond board edges, NO copper any "
@@ -359,7 +382,8 @@ for i in range(12):     # top row, left -> right
 fp.body(14.0, 10.0)
 fp.pin1_dot(5.0, 5.35)
 # antenna keep-out outline (5.0 x 8.5 inside the module; extends >=15mm
-# beyond the board edges — the extension is a board-level rule, ECO-H3)
+# beyond the board edges — the extension is a board-level rule, ECO-H3
+# executed at H3.1: rim placement makes the extension off-board air)
 for a, b in [((2.0, -5.0), (7.0, -5.0)), ((7.0, -5.0), (7.0, 3.5)),
              ((7.0, 3.5), (2.0, 3.5)), ((2.0, 3.5), (2.0, -5.0))]:
     fp.items.append(
@@ -428,8 +452,19 @@ for num, ang in ((1, 90), (2, 330), (3, 210)):     # WE, RE, CE (top view)
     fp.circle_pad(num, x, y, 2.5, kind="thru_hole",
                   layers='"*.Cu" "*.Mask"', drill=1.7)
 fp.fp_circle(0, 0, 10.15, "F.SilkS", 0.15)   # Ø20 body + tol
-fp.fp_circle(0, 0, 10.4, "F.CrtYd", 0.05)
-fp.body(0.1, 0.1, courtyard_margin=0)  # fab cross at center
+# H3.2 courtyard honesty: the CAN is not board-mounted — it plugs into the
+# 3 PSB receptacles at final assembly and floats >=1.5mm above the board
+# (receptacle standoff). Courtyard covers only the receptacle sites; the
+# can outline moves to Dwgs.User as a LOW-PROFILE region (parts <=1.0mm
+# tall allowed under the can — enforced by build_board.py's low-profile
+# mask: 0402/0603-class only).
+for _num, _ang in ((1, 90), (2, 330), (3, 210)):
+    _x = 6.75 * math.cos(math.radians(_ang))
+    _y = -6.75 * math.sin(math.radians(_ang))
+    fp.fp_circle(_x, _y, 2.1, "F.CrtYd", 0.05)
+fp.fp_circle(0, 0, 10.4, "Dwgs.User", 0.1)   # can envelope (low-profile zone)
+fp.rect_lines(0.1, 0.1, "F.Fab", 0.1)  # fab cross at center (no courtyard —
+#                                        it collided with legal under-can dust)
 generated.append(fp.write())
 
 # 18. Pogo accessory ring — 6 pads on a 9 mm circle (ADR-0002 custom, E0).
@@ -457,11 +492,77 @@ fp.circle_pad(1, 0, 0, 12.0)
 fp.fp_circle(0, 0, 6.25, "F.CrtYd", 0.05)
 generated.append(fp.write())
 
-fp = FP("PIEZO_DISC_PADS", "Piezo disc contact pads (12mm disc above)",
-        "Custom mech E0: 2 SMD pads 2x3mm at 6mm spacing")
-fp.pad(1, -3.0, 0, 2.0, 3.0)
-fp.pad(2, 3.0, 0, 2.0, 3.0)
-fp.rect_lines(9.0, 4.0, "F.CrtYd", 0.05)
+# H3.2 floorplan-capacity mech set (ECO-H3.2, owner ratify): the bean is at
+# courtyard capacity — three of OUR OWN E0 mechanical geometries shrink to
+# board-side LANDING interfaces, with the skin/dock-side geometry moving to
+# the shell (which sits 3.5 mm above the board anyway — direct skin contact
+# through the wall was never possible):
+#  * ELECTRODE_LAND_4MM: ECG L/R/REF board lands; shell electrodes contact
+#    via conductive elastomer / spring finger (nets unchanged).
+#  * POGO6_COMPACT: 6 dock contacts as a 2x3 2.54mm field; the ADR-0002
+#    9mm mag-ring GEOMETRY moves to the shell part; dock pogo pins reach
+#    the board lands through shell inserts.
+#  * ZIF13_MOLEX_503566: generic copy of the BMV080 13ckt 0.3mm ZIF —
+#    J_TOUCH switches to it from the 0.5mm FH12-13 (shell flex is our
+#    artwork; 0.3mm pitch legal) — BOM consolidates on one ZIF P/N and the
+#    connector courtyard shrinks 101 -> ~29 mm2.
+fp = FP("ELECTRODE_LAND_4MM", "ECG electrode board land, 4mm (shell electrode "
+        "contacts via elastomer/spring — ECO-H3.2)",
+        "Custom mech E0: 4mm bare-copper/gold disc, mask-defined")
+fp.circle_pad(1, 0, 0, 4.0)
+fp.fp_circle(0, 0, 2.25, "F.CrtYd", 0.05)
+generated.append(fp.write())
+
+fp = FP("POGO6_COMPACT", "Accessory dock landing field, 6 pads 2x3 @2.54 "
+        "(ADR-0002 mag-ring geometry moves to shell — ECO-H3.2)",
+        "Custom mech E0: 6x 1.8mm gold lands, 2x3 grid 2.54mm")
+n = 0
+for r in range(2):
+    for c in range(3):
+        n += 1
+        fp.circle_pad(n, -2.54 + c * 2.54, -1.27 + r * 2.54, 1.8)
+fp.body(7.0, 4.5)
+fp.pin1_dot(-3.9, -1.27)
+generated.append(fp.write())
+
+# H3.2 dust-capacity: 0.8mm testpoint land (the official 1.0mm pad carries a
+# 1.5x1.5 courtyard; 62 TPs x ~1mm2 saved closes part of the placement gap).
+fp = FP("TESTPOINT_PAD_0.8MM", "Test pad 0.7mm (flying-probe land; min 0.6)",
+        "Custom mech E0: 0.7mm bare pad, mask-defined")
+fp.circle_pad(1, 0, 0, 0.7)
+fp.fp_circle(0, 0, 0.45, "F.CrtYd", 0.05)
+generated.append(fp.write())
+
+# H3.2 (ECO-H3.2-D): TC2030-IDC-NL replaced by a plain 1.27mm SWD pad row —
+# the TC2030's three NPTH locating holes pierce the board and no both-face-
+# clear 7.2x4.2 window remained on the packed bean. Debug = soldered leads /
+# 1.27mm pogo bar; revert to TC2030 at H4 if the owner rejects the trade.
+fp = FP("SWD_PADROW_6", "SWD debug pad row, 6x 1.27mm (TC2030 replaced, ECO-H3.2-D)",
+        "Custom mech E0: 6 pads 1.0x1.5 @1.27; no NPTH")
+for i in range(6):
+    fp.pad(i + 1, -3.175 + i * 1.27, 0, 1.0, 1.5)
+fp.body(8.2, 2.0)
+fp.pin1_dot(-4.5, 0)
+generated.append(fp.write())
+
+fp = FP("ZIF13_MOLEX_503566",
+        "Shell touch-electrode flex host: Molex 503566-1302 Easy-On ZIF, "
+        "13ckt 0.3mm (same P/N as BMV080 host conn)",
+        "Molex 503566-1302 pattern E0-est (mirror of BMV080 host footprint)")
+for i in range(13):
+    fp.pad(i + 1, -1.8 + i * 0.3, -1.4, 0.18, 0.8)
+fp.pad("MP1", -2.65, 0.9, 0.7, 0.9)
+fp.pad("MP2", 2.65, 0.9, 0.7, 0.9)
+fp.body(6.0, 3.4)
+fp.pin1_dot(-1.8, -2.3)
+generated.append(fp.write())
+
+fp = FP("PIEZO_DISC_PADS", "Piezo disc lands (disc mounts shell-side, sprung/"
+        "wired to these lands — ECO-H3.2 area trade)",
+        "Custom mech E0: 2 SMD lands 1.8x2.2 at 2.6mm spacing")
+fp.pad(1, -1.3, 0, 1.8, 2.2)
+fp.pad(2, 1.3, 0, 1.8, 2.2)
+fp.rect_lines(5.0, 2.6, "F.CrtYd", 0.05)
 generated.append(fp.write())
 
 fp = FP("LRA_PADS", "LRA haptic actuator solder pads",
@@ -477,7 +578,16 @@ fp = FP("SHIELD_CAN_RAD_10x10", "Radiation charge-amp shield can 10x10 (light-ti
 for num, (sx, sy) in enumerate([(-1, -1), (-1, 1), (1, 1), (1, -1)], 1):
     fp.pad(num, sx * 4.6, sy * 4.6, 1.5, 1.5)
 fp.rect_lines(10.0, 10.0, "F.Fab", 0.1)
-fp.rect_lines(11.0, 11.0, "F.CrtYd", 0.05)
+# H3.2: courtyard only over the 4 solder-tab corners, NOT the full 11x11
+# rect — the can ENCLOSES the PIN diode + charge amp by design, so a full-
+# area courtyard would flag a false courtyard-overlap on every part inside.
+for sx, sy in [(-1, -1), (-1, 1), (1, 1), (1, -1)]:
+    cx, cy = sx * 4.6, sy * 4.6
+    for a, b in [((cx-1, cy-1), (cx+1, cy-1)), ((cx+1, cy-1), (cx+1, cy+1)),
+                 ((cx+1, cy+1), (cx-1, cy+1)), ((cx-1, cy+1), (cx-1, cy-1))]:
+        fp.items.append(
+            f'  (fp_line (start {F(a[0])} {F(a[1])}) (end {F(b[0])} {F(b[1])}) '
+            f'(stroke (width 0.05) (type solid)) (layer "F.CrtYd"))')
 generated.append(fp.write())
 
 # 24. GNSS chip antenna fallback pads (Antenova SR4G013 harvested official is

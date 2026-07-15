@@ -1,61 +1,63 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="917" height="559" font-family="Helvetica,Arial" font-size="10">
-<rect width="917" height="559" fill="white"/><g transform="translate(60,44)">
-<polygon points="0.5,238.1 4.1,257.4 10.2,276.0 18.1,293.9 27.9,310.9 39.0,327.1 51.5,342.2 65.2,356.2 79.9,369.2 95.6,380.8 112.4,391.0 130.2,399.3 148.8,405.3 168.1,408.7 187.7,409.5 207.3,408.7 226.9,407.7 246.5,407.0 266.1,407.4 285.6,409.1 305.0,412.2 324.1,416.6 343.0,422.0 361.8,427.4 380.8,432.4 399.9,436.5 419.4,438.6 439.0,438.9 458.5,437.0 477.9,433.7 496.9,429.1 515.8,423.6 534.3,417.3 552.7,410.3 570.7,402.6 588.4,394.2 605.8,385.1 622.9,375.5 639.4,365.0 655.6,353.8 671.2,341.9 686.0,329.1 700.1,315.4 713.1,300.8 724.9,285.1 734.9,268.2 742.7,250.3 746.9,231.2 745.1,211.7 738.8,193.2 729.7,175.8 718.6,159.7 706.2,144.5 692.6,130.4 678.1,117.2 662.8,104.9 647.0,93.3 630.6,82.6 613.7,72.5 596.5,63.2 578.9,54.5 561.0,46.5 542.8,39.1 524.4,32.3 505.8,26.2 487.0,20.7 468.0,15.8 448.8,11.6 429.5,8.0 410.1,5.0 390.7,2.7 371.1,1.2 351.5,0.2 331.9,0.0 312.3,0.6 292.7,1.9 273.2,4.0 253.8,6.9 234.6,10.6 215.5,15.2 196.7,20.7 178.1,27.1 160.0,34.4 142.2,42.7 124.9,51.9 108.2,62.3 92.2,73.5 76.9,85.9 62.5,99.2 49.2,113.6 37.0,128.9 26.1,145.2 16.6,162.4 9.1,180.5 3.3,199.2 0.0,218.5" fill="#134E4A" opacity="0.07" stroke="#134E4A" stroke-width="2"/>
-<rect x="38.5" y="152.89999999999998" width="88.0" height="77.0" fill="#fbeee6" opacity="0.6" rx="5"/>
-<text x="42.9" y="164.89999999999998" fill="#889" font-size="9">CONTACT</text>
-<rect x="121.0" y="157.29999999999998" width="308.0" height="116.6" fill="#dbe7f6" opacity="0.6" rx="5"/>
-<text x="125.4" y="169.29999999999998" fill="#889" font-size="9">OPTICAL</text>
-<rect x="121.0" y="94.59999999999998" width="187.0" height="47.3" fill="#dbe7f6" opacity="0.6" rx="5"/>
-<text x="125.4" y="106.59999999999998" fill="#889" font-size="9">OPTICAL2</text>
-<rect x="286.0" y="273.9" width="132.0" height="121.0" fill="#f7f2e2" opacity="0.6" rx="5"/>
-<text x="290.4" y="285.9" fill="#889" font-size="9">RAD_TOP</text>
-<rect x="440.0" y="108.89999999999998" width="176.0" height="220.0" fill="#e3f3ef" opacity="0.6" rx="5"/>
-<text x="444.4" y="120.89999999999998" fill="#889" font-size="9">AIR</text>
-<rect x="583.0" y="290.4" width="99.0" height="60.5" fill="#f2f2ea" opacity="0.6" rx="5"/>
-<text x="587.4" y="302.4" fill="#889" font-size="9">MAGNET</text>
-<rect x="643.5" y="194.7" width="71.5" height="66.0" fill="#f3e8fb" opacity="0.6" rx="5"/>
-<text x="647.9" y="206.7" fill="#889" font-size="9">RADAR</text>
-<rect x="47.3" y="152.89999999999998" width="61.599999999999994" height="36.3" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="78.1" y="150.89999999999998" text-anchor="middle" fill="#1E293B" font-size="8">MAX30102 PPG</text>
-<rect x="47.3" y="198.0" width="31.02" height="28.049999999999997" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="62.81" y="196.0" text-anchor="middle" fill="#1E293B" font-size="8">AS7058 PPG/ECG/BioZ</text>
-<rect x="129.8" y="157.29999999999998" width="105.6" height="105.6" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="182.60000000000002" y="155.29999999999998" text-anchor="middle" fill="#1E293B" font-size="8">MLX90642 thermal 32x24</text>
-<rect x="244.20000000000005" y="157.29999999999995" width="88.0" height="88.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="288.20000000000005" y="155.29999999999995" text-anchor="middle" fill="#1E293B" font-size="8">VD66GY camera</text>
-<rect x="341.00000000000006" y="157.29999999999995" width="70.4" height="33.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="376.20000000000005" y="155.29999999999995" text-anchor="middle" fill="#1E293B" font-size="8">VL53L8CH ToF 8x8 raw</text>
-<rect x="129.8" y="94.59999999999998" width="34.1" height="22.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="146.85000000000002" y="92.59999999999998" text-anchor="middle" fill="#1E293B" font-size="8">TCS3448 14ch VIS</text>
-<rect x="172.70000000000002" y="94.6" width="40.15" height="28.6" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="192.77500000000003" y="92.6" text-anchor="middle" fill="#1E293B" font-size="8">AS7331 UV A/B/C</text>
-<rect x="221.65000000000003" y="94.59999999999998" width="38.5" height="38.5" fill="#0F766E" opacity="0.85" rx="2"/>
-<text x="240.90000000000003" y="92.59999999999998" text-anchor="middle" fill="#1E293B" font-size="8">AS7421 64ch NIR</text>
-<rect x="268.95000000000005" y="94.59999999999998" width="33.0" height="33.0" fill="#0F766E" opacity="0.85" rx="2"/>
-<text x="285.45000000000005" y="92.59999999999998" text-anchor="middle" fill="#1E293B" font-size="8">MLX90632 spot FIR</text>
-<rect x="294.8" y="273.9" width="110.0" height="110.0" fill="#0F766E" opacity="0.85" rx="2"/>
-<text x="349.8" y="271.9" text-anchor="middle" fill="#1E293B" font-size="8">PIN radiation det</text>
-<rect x="448.79999999999995" y="108.9" width="111.1" height="111.1" fill="#0F766E" opacity="0.85" rx="2"/>
-<text x="504.3499999999999" y="106.9" text-anchor="middle" fill="#1E293B" font-size="8">SCD41 true CO2</text>
-<rect x="568.6999999999999" y="108.89999999999998" width="33.0" height="33.0" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="585.1999999999999" y="106.89999999999998" text-anchor="middle" fill="#1E293B" font-size="8">BME688 gas/T/RH/P</text>
-<rect x="448.79999999999995" y="228.79999999999995" width="26.84" height="26.84" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="462.21999999999997" y="226.79999999999995" text-anchor="middle" fill="#1E293B" font-size="8">SGP41 VOC/NOx</text>
-<rect x="484.44" y="228.79999999999995" width="33.0" height="33.0" fill="#0F766E" opacity="0.85" rx="2"/>
-<text x="500.94" y="226.79999999999995" text-anchor="middle" fill="#1E293B" font-size="8">ENS161 4-el MOX</text>
-<rect x="526.24" y="228.79999999999995" width="16.5" height="16.5" fill="#0F766E" opacity="0.85" rx="2"/>
-<text x="534.49" y="226.79999999999995" text-anchor="middle" fill="#1E293B" font-size="8">SHT41 ref T/RH</text>
-<rect x="448.79999999999995" y="270.59999999999997" width="66.0" height="38.5" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="481.79999999999995" y="268.59999999999997" text-anchor="middle" fill="#1E293B" font-size="8">BMV080 PM2.5</text>
-<rect x="591.8" y="290.4" width="33.0" height="33.0" fill="#0F766E" opacity="0.85" rx="2"/>
-<text x="608.3" y="288.4" text-anchor="middle" fill="#1E293B" font-size="8">MMC5983MA nT mag</text>
-<rect x="633.5999999999999" y="290.4" width="31.9" height="30.799999999999997" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="649.55" y="288.4" text-anchor="middle" fill="#1E293B" font-size="8">TMAG5273 mT hall</text>
-<rect x="652.3" y="194.7" width="60.5" height="57.2" fill="#1E3A8A" opacity="0.85" rx="2"/>
-<text x="682.55" y="192.7" text-anchor="middle" fill="#1E293B" font-size="8">A121 60GHz radar</text>
-<line x1="0" y1="458.9" x2="746.9000000000001" y2="458.9" stroke="#333"/>
-<text x="373.45000000000005" y="473.9" text-anchor="middle" font-size="11">67.9 mm (bean bbox)</text>
-<line x1="766.9000000000001" y1="0" x2="766.9000000000001" y2="438.9" stroke="#333"/>
-<text x="774.9000000000001" y="219.45" font-size="11">39.9 mm</text>
-<text x="0" y="-20" font-size="14" font-weight="bold">interrogator v1 · bean board · TOP · sensing face · 6-layer 1.6mm · green=new</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="695" height="612" font-family="Helvetica,Arial" font-size="10">
+<rect width="695" height="612" fill="white"/><g transform="translate(60,44)">
+<polygon points="502.7,491.7 504.9,491.6 507.0,491.3 509.1,490.8 511.1,490.0 513.1,489.1 514.9,488.0 516.7,486.7 518.3,485.3 519.7,483.7 521.0,481.9 522.1,480.1 523.0,478.1 523.8,476.1 524.3,474.0 524.6,471.9 524.7,469.7 524.7,22.0 524.6,19.8 524.3,17.7 523.8,15.6 523.0,13.6 522.1,11.6 521.0,9.8 519.7,8.0 518.3,6.4 516.7,5.0 514.9,3.7 513.1,2.6 511.1,1.7 509.1,0.9 507.0,0.4 504.9,0.1 502.7,0.0 22.0,0.0 19.8,0.1 17.7,0.4 15.6,0.9 13.6,1.7 11.6,2.6 9.8,3.7 8.0,5.0 6.4,6.4 5.0,8.0 3.7,9.8 2.6,11.6 1.7,13.6 0.9,15.6 0.4,17.7 0.1,19.8 0.0,22.0 0.0,469.7 0.1,471.9 0.4,474.0 0.9,476.1 1.7,478.1 2.6,480.1 3.7,481.9 5.0,483.7 6.4,485.3 8.0,486.7 9.8,488.0 11.6,489.1 13.6,490.0 15.6,490.8 17.7,491.3 19.8,491.6 22.0,491.7" fill="#134E4A" opacity="0.06" stroke="#134E4A" stroke-width="2"/>
+<rect x="28.6" y="337.70000000000005" width="125.4" height="125.4" fill="#f7f2e2" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="91.30000000000001" y="402.4" text-anchor="middle" fill="#1E293B" font-size="7">PIN radiation det</text>
+<rect x="159.5" y="344.3" width="118.80000000000001" height="118.80000000000001" fill="#e3f3ef" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="218.89999999999998" y="405.70000000000005" text-anchor="middle" fill="#1E293B" font-size="7">SCD41 true CO2</text>
+<rect x="283.80000000000007" y="354.20000000000005" width="108.9" height="108.9" fill="#dbe7f6" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="338.25000000000006" y="410.65" text-anchor="middle" fill="#1E293B" font-size="7">MLX90642 thermal 32x24</text>
+<rect x="28.6" y="242.00000000000003" width="202.39999999999998" height="90.19999999999999" fill="#dbe7f6" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="129.79999999999998" y="289.1" text-anchor="middle" fill="#1E293B" font-size="7">VD66GY camera</text>
+<rect x="236.5" y="259.6" width="79.2" height="72.6" fill="#dbe7f6" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="276.1" y="297.90000000000003" text-anchor="middle" fill="#1E293B" font-size="7">AS7421 64ch NIR</text>
+<rect x="321.2" y="268.40000000000003" width="67.1" height="63.8" fill="#f3e8fb" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="354.75" y="302.30000000000007" text-anchor="middle" fill="#1E293B" font-size="7">A121 60GHz radar</text>
+<rect x="393.79999999999995" y="270.6" width="85.8" height="61.599999999999994" fill="#dbe7f6" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="436.69999999999993" y="303.40000000000003" text-anchor="middle" fill="#1E293B" font-size="7">TXU0304 SPI shifter</text>
+<rect x="28.6" y="179.3" width="49.5" height="57.2" fill="#efeadf" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="53.349999999999994" y="209.89999999999998" text-anchor="middle" fill="#1E293B" font-size="7">RF survey U.FL</text>
+<rect x="82.5" y="185.89999999999998" width="50.599999999999994" height="50.599999999999994" fill="#efeadf" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="107.80000000000001" y="213.2" text-anchor="middle" fill="#1E293B" font-size="7">ECG land L</text>
+<rect x="137.5" y="185.89999999999998" width="50.599999999999994" height="50.599999999999994" fill="#efeadf" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="162.8" y="213.2" text-anchor="middle" fill="#1E293B" font-size="7">ECG land R</text>
+<rect x="192.5" y="192.5" width="72.6" height="44.0" fill="#e3f3ef" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="228.8" y="216.5" text-anchor="middle" fill="#1E293B" font-size="7">BMV080 PM2.5</text>
+<rect x="270.6" y="192.5" width="184.8" height="44.0" fill="#efeadf" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="363.0" y="216.5" text-anchor="middle" fill="#1E293B" font-size="7">GNSS chip antenna</text>
+<rect x="28.6" y="131.99999999999997" width="68.2" height="42.9" fill="#fbeee6" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="62.7" y="155.45" text-anchor="middle" fill="#1E293B" font-size="7">MAX30102 PPG</text>
+<rect x="102.30000000000001" y="135.29999999999998" width="77.0" height="39.6" fill="#dbe7f6" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="140.8" y="157.09999999999997" text-anchor="middle" fill="#1E293B" font-size="7">VL53L8CH ToF 8x8 raw</text>
+<rect x="184.8" y="135.29999999999998" width="39.6" height="39.6" fill="#dbe7f6" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="204.60000000000002" y="157.09999999999997" text-anchor="middle" fill="#1E293B" font-size="7">MLX90632 spot FIR</text>
+<rect x="229.89999999999998" y="135.29999999999998" width="39.6" height="39.6" fill="#e3f3ef" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="249.7" y="157.09999999999997" text-anchor="middle" fill="#1E293B" font-size="7">BME688 gas/T/RH/P</text>
+<rect x="275.0" y="135.29999999999998" width="39.6" height="39.6" fill="#e3f3ef" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="294.8" y="157.09999999999997" text-anchor="middle" fill="#1E293B" font-size="7">ENS161 4-el MOX</text>
+<rect x="320.1" y="135.29999999999998" width="39.6" height="39.6" fill="#f2f2ea" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="339.90000000000003" y="157.09999999999997" text-anchor="middle" fill="#1E293B" font-size="7">MMC5983MA nT mag</text>
+<rect x="365.20000000000005" y="135.29999999999998" width="71.5" height="39.6" fill="#e7eefb" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="400.95000000000005" y="157.09999999999997" text-anchor="middle" fill="#1E293B" font-size="7">DRV2605L haptic</text>
+<rect x="442.20000000000005" y="136.39999999999998" width="35.2" height="38.5" fill="#fbeee6" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="459.80000000000007" y="157.64999999999998" text-anchor="middle" fill="#1E293B" font-size="7">AS7058 PPG/ECG/BioZ</text>
+<rect x="28.6" y="88.0" width="46.2" height="38.5" fill="#f2f2ea" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="51.7" y="109.25" text-anchor="middle" fill="#1E293B" font-size="7">TMAG5273 mT hall</text>
+<rect x="80.30000000000001" y="91.30000000000001" width="47.3" height="35.2" fill="#dbe7f6" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="103.95000000000002" y="110.9" text-anchor="middle" fill="#1E293B" font-size="7">AS7331 UV A/B/C</text>
+<rect x="133.1" y="93.5" width="33.0" height="33.0" fill="#e3f3ef" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="149.6" y="112.0" text-anchor="middle" fill="#1E293B" font-size="7">SGP41 VOC/NOx</text>
+<rect x="171.6" y="95.69999999999999" width="58.3" height="30.799999999999997" fill="#efeadf" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="200.75" y="113.1" text-anchor="middle" fill="#1E293B" font-size="7">Piezo disc pads</text>
+<rect x="234.3" y="96.80000000000001" width="49.5" height="29.700000000000003" fill="#dbe7f6" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="259.05" y="113.65" text-anchor="middle" fill="#1E293B" font-size="7">PCA9306 I2C xlate</text>
+<rect x="289.3" y="97.9" width="40.7" height="28.6" fill="#dbe7f6" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="309.65000000000003" y="114.19999999999999" text-anchor="middle" fill="#1E293B" font-size="7">TCS3448 14ch VIS</text>
+<rect x="335.5" y="103.4" width="27.5" height="23.1" fill="#e3f3ef" opacity="0.9" stroke="#334" stroke-width="0.5" rx="2"/>
+<text x="349.25" y="116.94999999999999" text-anchor="middle" fill="#1E293B" font-size="7">SHT41 ref T/RH</text>
+<line x1="0" y1="511.70000000000005" x2="524.7" y2="511.70000000000005" stroke="#333"/>
+<text x="262.35" y="526.7" text-anchor="middle" font-size="11">47.7 mm</text>
+<line x1="544.7" y1="0" x2="544.7" y2="491.70000000000005" stroke="#333"/>
+<text x="552.7" y="245.85000000000002" font-size="11">44.7 mm</text>
+<text x="0" y="-20" font-size="14" font-weight="bold">interrogator v1 · MINIMAL board (ADR-0004) · TOP · sensing face · 6L 1.6mm</text>
 </g></svg>

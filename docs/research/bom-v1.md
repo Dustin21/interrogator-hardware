@@ -67,7 +67,8 @@ Magnetic pogo accessory port ACCEPTED. Board 60×46, chassis 66×50×18. See doc
   socket receptacles for Ø1.55 pins** (Mill-Max 0326/0305 class, drill Ø1.7); cell plugs in →
   field-replaceable, which is exactly the R2 serviceability flag ("~2-5yr life") answered.
 - Pin circle: 3× Ø1.55 pins on 13.5 mm PCD, can Ø20 × 16.5 (+3.9 pins) — footprint E1;
-  13.5 PCD pad ring slightly exceeds the ratified 14×14 envelope → ECO-H3 gas_b repack.
+  13.5 PCD pad ring slightly exceeds the ratified 14×14 envelope → ECO-H3 gas_b repack
+  (EXECUTED at H3.1: envelope 17×17, gas_b zone grown; can Ø20 stays on-board).
 - Electricals (p1): output 70±20 nA/ppm, recommended load 10 Ω, range 0-2000 ppm (overload
   5000), t90 <30 s, baseline ±2 ppm, filter capacity >20 000 ppm·h, life >24 months in air,
   −30..+50 °C, 15-90 %RH; intrinsic-safety max o/c 1.3 V / 0.3 mA @2000 ppm — comfortably

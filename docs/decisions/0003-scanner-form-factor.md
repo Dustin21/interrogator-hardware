@@ -2,6 +2,10 @@
 
 **Status:** Accepted-pending-owner-review of renders (2026-07-12). Supersedes the AirPods-case
 shell concept (chassis_v0) as the primary industrial design; chassis_v0 retained as reference.
+**PARTIALLY SUPERSEDED (2026-07-15, ADR-0004):** the *board must fit inside this form* premise
+(Engineering-consequences §1) is retired — the PCB outline is now a min-area-packing OUTPUT and
+the chassis is derived downstream from the real board. The scanner form language below remains
+the industrial-design north star.
 
 ## Owner direction
 Magic-Mouse-inspired but MORE ergonomic: a small device you grasp with a few fingers, sweep to

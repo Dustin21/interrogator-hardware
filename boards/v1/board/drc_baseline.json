@@ -1,29 +1,29 @@
 {
  "tool": "pcbnew 7.0.11 WriteDRCReport (kicad-cli 7.x has no `pcb drc`; same DRC engine)",
  "board": "interrogator_v1.kicad_pcb",
- "footprints": 330,
- "nets": 208,
+ "footprints": 400,
+ "nets": 238,
  "counts": {
-  "DRC violations": 1389,
+  "DRC violations": 767,
   "unconnected pads": 499,
   "Footprint errors": 0
  },
  "violations_by_type": {
   "silk_overlap": 199,
   "silk_over_copper": 199,
-  "solder_mask_bridge": 170,
-  "text_height": 30,
+  "solder_mask_bridge": 10,
+  "text_height": 100,
   "lib_footprint_issues": 199,
-  "silk_edge_clearance": 57,
-  "copper_edge_clearance": 9,
-  "courtyards_overlap": 154,
-  "clearance": 309,
-  "hole_clearance": 18,
-  "items_not_allowed": 45
+  "silk_edge_clearance": 22,
+  "clearance": 15,
+  "hole_clearance": 6,
+  "items_not_allowed": 17
  },
  "notes": [
-  "H3 ROUTING BASELINE \u2014 no tracks routed yet: the unconnected-pads count is the routing todo, not a failure.",
-  "courtyard/silk overlaps come from the greedy baseline placement (77 overlap-fallback parts) \u2014 H3 placement refinement debt.",
-  "pads with no net (E0 logical pin maps vs real package pads) are not counted here \u2014 see build_board.py output (392)."
+  "H3.2 ROUTING BASELINE \u2014 no tracks routed yet: the unconnected-pads count is the honest ratsnest, not a failure.",
+  "zero overlap-fallback placements and zero undeclared unbound pads are HARD build gates in build_board.py (see nc_pins.json ledger).",
+  "WAIVED (vendor-footprint artifacts): 4x hole_clearance inside the official GCT USB4105 footprint (its own NPTH pegs sit 0.19mm from its own shield pads vs our 0.25 board rule).",
+  "KNOWN-OPEN (owner call): items_not_allowed = the Espressif ESP32-C6-MINI-1 footprint ships an all-layer antenna keep-out rule area; the ratified floorplan puts the TOP-face magnet zone (MMC5983MA/TMAG5273), MLX90632 window and air dust opposite the bottom-mounted module's antenna end. Flagged ECO-H3.2-E: accept RF degradation or repack the taper. H3.3 routes no copper there.",
+  "silk_*/text_height/lib_footprint_issues are cosmetic noise, deferred to H4 fab prep."
  ]
 }

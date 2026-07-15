@@ -95,8 +95,10 @@ def build_compute():
     n6["OTG1_ID UCPD1_CC1 UCPD1_CC2"] += NC
     n6["OTG2_HSDM OTG2_HSDP OTG2_ID OTG2_TXRTUNE"] += NC
     n6["RSVD_C3 RSVD_A4"] += NC               # keep floating (Table 18 fn4)
-    n6["XSPI_NCLK XSPI_NCS2"] += NC
+    # PN7/PN12 (ex XSPI_NCLK/NCS2) are now INT_VL53/LPN_VL53 — the two spare
+    # VDDIO3-domain (1.8V) balls serve the VL53L8CH sidebands natively (H3.0)
     n6["PA0_NC PA2_NC PA15_NC PB0_NC PD1_NC PE7_NC PG14_NC"] += NC
+    n6["PE8_NC PG10_NC"] += NC                # freed by the PN7/PN12 ECO
 
     # SPI1 sensor bus
     join("SPI1_SCK", n6["SPI1_SCK"])
@@ -110,8 +112,9 @@ def build_compute():
     # I2C-A (1MHz-capable) + I2C-B (400k) — pull-ups to 3V3_SYS, the N657 IO
     # rail (present whenever the N657 is powered; sensors on gated domain rails
     # see idle-high bus only when their domain is also on — level note: all
-    # bus devices are 3.3V-IO parts except MAX30102 (VERIFY, abs-max OK) and
-    # ENS161/A121 (VDDIO pins fed from 3.3V domains).
+    # bus devices are 3.3V-IO parts except MAX30102 (+6V abs-max, closed) and
+    # ENS161/A121 (VDDIO pins fed from 3.3V domains); the 1.8V-only TCS3448
+    # sits behind a PCA9306 segment of I2C-A (sensors_i2c.py, H3.0).
     # Bus A = I2C2 (PB10/PB11), bus B = I2C4 (PE13/PE14) — I2C1 is not bonded
     # on VFBGA142 (VERIFIED-DS DS14791 Table 18: only I2C1_SMBA on PB4).
     # Note: no ball in the Table 18 dump carries the "_f" (Fm+ 20mA drive)
@@ -209,6 +212,10 @@ def build_compute():
     nor_rst += nor["RESET_N"]
     pullup(nor_rst, v18, "10k")
     decouple(v18, n=2)
+    # placeholder BGA24 pads 15-24: NC-pending until the Macronix DS lands
+    for p in nor.pins:
+        if p.name.startswith("PEND_"):
+            p += NC
 
     # ================= BL54L15 BLE sentinel ================================
     bl = BL54L15(ref="U_BL54", footprint="generated:BL54L15_MODULE")

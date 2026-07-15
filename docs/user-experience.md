@@ -38,6 +38,18 @@ BNO086 on-chip classifiers (pickup/tap/shake/stability, uA-class, INT-driven) + 
 - Electrode budget in shell/aperture plate: dish ring (2), rim slider (3), side-squeeze (2x2),
   back ECG-return/grip (1), reserve (2) = 12ch IQS7222A fully allocated.
 
+### Touch electrode decision (H3.0, ratified)
+The IQS7222A QFN20 exposes only **9 sensor pins** (CRx0-7 + CTx8, DS v1.7
+p6) — 12 self-cap zones are not drivable pad-per-pin. **v1 ships 9 self-cap
+electrodes**: dish ring (2), rim slider (3), side-squeeze (2 — one pad per
+wall instead of 2x2; "squeeze both walls" gesture unchanged), back
+ECG-return/grip (1), reserve (1). Dropped: the second reserve pair + the
+per-wall squeeze redundancy pads (3 of 12 zones). The flex connector keeps
+its 13 positions with E9-E11 grounded as guards, so a **v1.1 mutual-cap
+Rx/Tx matrix flex** on the same IQS7222A/connector can restore >12 zones
+with flex artwork + firmware only — no board respin. The gesture language
+above survives; only per-wall squeeze position resolution is deferred.
+
 ## Mounting / placed-monitor mode (ADR-0001)
 Ferrous steel target in device (passive, no field) + magnets in accessories (puck/vent-clip/
 dock). Dock magnet detected by TMAG5273 => auto placed-monitor mode (continuous fan, free
